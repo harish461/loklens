@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { EPAPER_PAGE_SIZE, EPaperList } from '@/components/EPaper'
-import { listEPapers } from '@/lib/mock'
+import { listEPapers } from '@/lib/data'
 
 import { getEPaperRange } from './epaper-data'
 

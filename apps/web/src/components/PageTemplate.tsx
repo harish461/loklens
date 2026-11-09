@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { getPage } from '@/lib/mock'
+import { getPage } from '@/lib/data'
 
 import { formatDate } from './format'
 import { Breadcrumbs } from './Navigation'

@@ -15,11 +15,14 @@ export const LISTING_PAGE_SIZE = 12
  * `/x/page/{n}`: n must be an integer ≥ 2. "1" redirects to the base path; anything else is a 404.
  * Returns the page number.
  */
+/** Helpers accept pages 1–10,000 (contract v1 draft 4); anything larger is simply not a listing page. */
+export const MAX_LISTING_PAGE = 10_000
+
 export function parsePageParam(raw: string, basePath: string): number {
   if (!/^\d+$/.test(raw)) notFound()
   const n = Number(raw)
   if (n === 1) permanentRedirect(basePath)
-  if (n < 2 || !Number.isSafeInteger(n)) notFound()
+  if (n < 2 || n > MAX_LISTING_PAGE) notFound()
   return n
 }
 

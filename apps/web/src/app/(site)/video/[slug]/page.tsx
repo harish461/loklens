@@ -5,7 +5,7 @@ import { formatDate } from '@/components/format'
 import { Breadcrumbs } from '@/components/Navigation'
 import { EmbedFacade } from '@/components/RichText/EmbedFacade'
 import ui from '@/components/ui.module.css'
-import { getVideo } from '@/lib/mock'
+import { getVideo } from '@/lib/data'
 
 import styles from '../video.module.css'
 

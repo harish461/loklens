@@ -5,7 +5,7 @@ import { ArticleCard } from '@/components/ArticleCard'
 import { Icon } from '@/components/Icon'
 import { Breadcrumbs } from '@/components/Navigation'
 import ui from '@/components/ui.module.css'
-import { search } from '@/lib/mock'
+import { search } from '@/lib/data'
 
 import styles from './search.module.css'
 
@@ -25,7 +25,8 @@ export default async function SearchPage({ searchParams }: Props) {
   const sp = await searchParams
   const q = (Array.isArray(sp.q) ? sp.q[0] : (sp.q ?? '')).trim().slice(0, 100)
   const pageRaw = Number(Array.isArray(sp.page) ? sp.page[0] : sp.page)
-  const page = Number.isInteger(pageRaw) && pageRaw > 1 ? pageRaw : 1
+  // Pages beyond the helper limit (10,000) fall back to page 1 instead of throwing.
+  const page = Number.isInteger(pageRaw) && pageRaw > 1 && pageRaw <= 10_000 ? pageRaw : 1
   const valid = q.length >= 2
   const result = valid ? await search({ q, page, pageSize: PAGE_SIZE }) : null
   const href = (n: number) => `/search?q=${encodeURIComponent(q)}${n > 1 ? `&page=${n}` : ''}`

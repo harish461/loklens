@@ -8,7 +8,7 @@ import { SectionBlock } from '@/components/SectionBlock'
 import { VideoCard } from '@/components/VideoCard'
 import { YouTubeSection } from '@/components/YouTubeSection'
 import { YouTubeStrip } from '@/components/YouTubeStrip'
-import { getHome, getSiteSettings } from '@/lib/mock'
+import { getHome, getSiteSettings } from '@/lib/data'
 import { getYouTubeLatest, YOUTUBE_CHANNEL_URL } from '@/lib/social'
 
 import styles from './home.module.css'

@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { Breadcrumbs } from '@/components/Navigation'
 import ui from '@/components/ui.module.css'
 import { VideoCard } from '@/components/VideoCard'
-import { listVideos } from '@/lib/mock'
+import { listVideos } from '@/lib/data'
 
 import styles from './video.module.css'
 

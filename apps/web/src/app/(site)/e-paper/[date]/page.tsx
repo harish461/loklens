@@ -6,7 +6,7 @@ import { EPaperDateJump, EPaperHeader, formatEPaperDate, isValidEPaperDate } fro
 import styles from '@/components/EPaper.module.css'
 import { Icon } from '@/components/Icon'
 import ui from '@/components/ui.module.css'
-import { getEPaper } from '@/lib/mock'
+import { getEPaper } from '@/lib/data'
 
 import { getEPaperNeighbours, getEPaperRange } from '../epaper-data'
 

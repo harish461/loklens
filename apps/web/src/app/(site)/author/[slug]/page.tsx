@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { LISTING_PAGE_SIZE, ListingView } from '@/components/ListingView'
-import { getAuthor, listArticles } from '@/lib/mock'
+import { getAuthor, listArticles } from '@/lib/data'
 
 export const revalidate = 300
 

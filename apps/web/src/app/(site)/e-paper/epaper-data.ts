@@ -3,7 +3,7 @@
 // read the newest 50 editions. Requested from backend: `getEPaper(date)` → `{ ...EPaper, prev, next }`
 // (or listEPapers `before`/`after` params) and min/max dates.
 import type { EPaper } from '@/lib/data/types'
-import { listEPapers } from '@/lib/mock'
+import { listEPapers } from '@/lib/data'
 
 async function recent(): Promise<EPaper[]> {
   return (await listEPapers({ page: 1, pageSize: 50 })).items // newest first

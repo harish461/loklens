@@ -69,6 +69,17 @@ export const Users: CollectionConfig = {
       access: { read: userPrivateField, create: adminField, update: adminField },
       admin: { position: 'sidebar' },
     },
+    // Payload's own auth field (merged by name): live session ids are internal, admins only.
+    {
+      name: 'sessions',
+      type: 'array',
+      access: { read: adminField },
+      fields: [
+        { name: 'id', type: 'text', required: true },
+        { name: 'createdAt', type: 'date' },
+        { name: 'expiresAt', type: 'date', required: true },
+      ],
+    },
     { name: 'bio', type: 'textarea', maxLength: 600 },
     { name: 'photo', type: 'upload', relationTo: 'media' },
     {

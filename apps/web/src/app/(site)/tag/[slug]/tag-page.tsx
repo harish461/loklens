@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { LISTING_PAGE_SIZE, ListingView } from '@/components/ListingView'
-import { getTag, listArticles } from '@/lib/mock'
+import { getTag, listArticles } from '@/lib/data'
 
 export async function TagPage({ slug, page }: { slug: string; page: number }) {
   const tag = await getTag(slug)

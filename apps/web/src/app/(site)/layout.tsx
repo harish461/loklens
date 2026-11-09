@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 import { Footer, BottomNav } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
 // TODO(data): switch to '@/lib/data' when the backend helpers land (same names and signatures).
-import { getHome, getSiteSettings, listCategories } from '@/lib/mock'
+import { getHome, getSiteSettings, listCategories } from '@/lib/data'
 
 import './globals.css'
 

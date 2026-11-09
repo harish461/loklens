@@ -16,7 +16,9 @@
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
-    "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status"
+    "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",
+    "db:seed": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed.ts",
+    "db:verify": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/verify-data.ts"
   },
   "dependencies": {
     "@indic-transliteration/sanscript": "1.3.3",

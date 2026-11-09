@@ -13,7 +13,7 @@ import { NewsImage } from '@/components/NewsImage'
 import { RichText } from '@/components/RichText'
 import { ShareBar } from '@/components/ShareBar'
 import type { Article, AuthorRef, Image as ImageType } from '@/lib/data/types'
-import { getArticle, getSiteSettings, listArticles } from '@/lib/mock'
+import { getArticle, getSiteSettings, listArticles } from '@/lib/data'
 
 import styles from './article.module.css'
 

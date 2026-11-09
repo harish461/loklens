@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { LISTING_PAGE_SIZE, ListingView } from '@/components/ListingView'
 import { isReservedSlug } from '@/lib/slug/reserved'
-import { getCategory, listArticles } from '@/lib/mock'
+import { getCategory, listArticles } from '@/lib/data'
 
 export async function loadCategory(slug: string) {
   // Reserved route names (architecture §3) never resolve as categories.
