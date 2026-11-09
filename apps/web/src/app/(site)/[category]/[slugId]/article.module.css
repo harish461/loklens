@@ -161,3 +161,8 @@
     align-self: start;
   }
 }
+
+.avatar {
+  object-fit: cover;
+  background: var(--color-surface);
+}

@@ -12,7 +12,7 @@ import { Breadcrumbs } from '@/components/Navigation'
 import { NewsImage } from '@/components/NewsImage'
 import { RichText } from '@/components/RichText'
 import { ShareBar } from '@/components/ShareBar'
-import type { Article, AuthorRef } from '@/lib/data/types'
+import type { Article, AuthorRef, Image as ImageType } from '@/lib/data/types'
 import { getArticle, getSiteSettings, listArticles } from '@/lib/mock'
 
 import styles from './article.module.css'
@@ -46,22 +46,43 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: article.seo.title || article.title, description: article.seo.description || article.summary }
 }
 
-function Byline({ authors }: { authors: AuthorRef[] }) {
-  const first = authors[0]
-  const avatar = first?.photo ? (
-    <Image
-      src={first.photo.sizes.thumb?.url ?? first.photo.url}
-      width={40}
-      height={40}
-      alt=""
-      unoptimized
-      className={styles.avatar}
-    />
-  ) : (
+/**
+ * Avatar initials: Latin names get two ("RS"); Devanagari names get the first akshara only ("रा"),
+ * since joined Hindi initials read as a word.
+ */
+function initials(name: string): string {
+  const words = name.match(/[\p{L}\p{M}]+/gu) ?? []
+  const seg = new Intl.Segmenter('hi', { granularity: 'grapheme' })
+  const first = (w: string) => seg.segment(w)[Symbol.iterator]().next().value?.segment ?? ''
+  const [head] = words
+  if (!head) return ''
+  return /^[A-Za-z]/.test(head) ? words.slice(0, 2).map(first).join('').toUpperCase() : first(head)
+}
+
+function Avatar({ author, logo }: { author?: AuthorRef; logo: ImageType }) {
+  // Organization byline ("LokLens News Team") → site logo; person → photo, else initials.
+  const img = author?.kind === 'organization' ? logo : author?.photo
+  if (img) {
+    return (
+      <Image
+        src={img.sizes.thumb?.url ?? img.url}
+        width={40}
+        height={40}
+        alt=""
+        unoptimized
+        className={styles.avatar}
+      />
+    )
+  }
+  return (
     <span className={styles.monogram} aria-hidden="true">
-      LL
+      {initials(author?.name ?? '') || 'LL'}
     </span>
   )
+}
+
+function Byline({ authors, logo }: { authors: AuthorRef[]; logo: ImageType }) {
+  const avatar = <Avatar author={authors[0]} logo={logo} />
   return (
     <>
       {avatar}
@@ -111,7 +132,7 @@ export default async function ArticlePage({ params }: Props) {
           <h1 className={styles.title}>{article.title}</h1>
           {article.summary && <p className={styles.dek}>{article.summary}</p>}
           <div className={styles.byline}>
-            <Byline authors={article.authors} />
+            <Byline authors={article.authors} logo={settings.logo} />
             <span className={styles.times}>
               <time dateTime={article.publishedAt}>{formatDateTime(article.publishedAt)}</time>
               {updated && (

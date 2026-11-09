@@ -22,7 +22,7 @@ import type {
   Video,
 } from '@/lib/data/types'
 
-import { articles, authors, categories, pages, siteSettings, tags, toCard, videos } from './fixtures'
+import { articles, authors, categories, ePapers, pages, siteSettings, tags, toCard, videos } from './fixtures'
 
 const sorted = [...articles].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || b.id - a.id)
 
@@ -117,12 +117,16 @@ export async function getVideo(slug: string): Promise<Video | null> {
   return videos.find((v) => v.slug === slug) ?? null
 }
 
+// Newest first. Set MOCK_EMPTY_EPAPER=1 to preview the empty state.
+const ePapersSorted = () =>
+  process.env.MOCK_EMPTY_EPAPER === '1' ? [] : [...ePapers].sort((a, b) => b.date.localeCompare(a.date))
+
 export async function listEPapers(params: { page?: number; pageSize?: number } = {}): Promise<Paginated<EPaper>> {
-  return paginate<EPaper>([], params.page, params.pageSize)
+  return paginate(ePapersSorted(), params.page, params.pageSize)
 }
 
-export async function getEPaper(_date: string): Promise<EPaper | null> {
-  return null
+export async function getEPaper(date: string): Promise<EPaper | null> {
+  return ePapersSorted().find((e) => e.date === date) ?? null
 }
 
 export async function getPage(slug: string): Promise<Page | null> {

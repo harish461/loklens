@@ -10,6 +10,7 @@ import type {
   AuthorRef,
   Category,
   CategoryRef,
+  EPaper,
   Image,
   Page,
   RichTextNode,
@@ -376,3 +377,12 @@ export const siteSettings: SiteSettings = {
     ],
   },
 }
+
+// ---- e-paper -------------------------------------------------------------------------------------
+
+// Four editions with a gap (11-06 missing) so previous/next skips correctly. One shared sample PDF.
+export const ePapers: EPaper[] = ['2026-11-09', '2026-11-08', '2026-11-07', '2026-11-05'].map((date) => ({
+  date,
+  edition: 'उत्तराखंड संस्करण',
+  pdfUrl: '/mock/epaper-sample.pdf',
+}))
