@@ -1,64 +1,134 @@
-.top {
+/* Home: magazine layout. Phones stack everything in reading order; ≥768px and ≥1024px widen the grids. */
+
+/* 1–2. Hero */
+.hero {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-4);
   padding-top: var(--space-4);
 }
 
-.featured {
+.heroMain,
+.heroSide {
   min-width: 0;
 }
 
-.lead,
-.strip,
-.videos {
-  min-width: 0;
-}
-
-.secondary {
+.heroSide {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-3);
+  align-content: start;
 }
 
-.featuredMore {
-  margin-top: var(--space-2);
+/* Desktop only (see the media query below): the Shorts strip lives in the hero column. */
+.heroStrip {
+  display: none;
+}
+
+.liveStrip {
+  display: block;
+}
+
+/* 3. Small image cards under the hero */
+.smallRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+/* 4. Body: Recent + Breaking (left), Popular (right) */
+.body {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.bodyMain {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.bodyAside {
+  min-width: 0;
+}
+
+.block {
+  min-width: 0;
+}
+
+.blockHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border-bottom: 2px solid var(--color-ink);
+  margin-bottom: var(--space-4);
+}
+
+.blockTitle {
+  position: relative;
+  padding-block: var(--space-2);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 800;
+}
+
+.blockTitle::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 48px;
+  height: 2px;
+  background: var(--color-brand);
+}
+
+.blockMore {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  color: var(--color-brand);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.blockMore:hover {
+  color: var(--color-brand-dark);
+  text-decoration: underline;
+}
+
+.list {
   display: grid;
   gap: var(--space-3);
 }
 
-.sidebar {
-  min-width: 0;
+.breakingGrid {
+  display: grid;
+  gap: var(--space-4);
 }
 
-.sideTitle {
-  font-size: 20px;
-  line-height: 28px;
-  font-weight: 800;
-  padding-bottom: var(--space-2);
-  border-bottom: 2px solid var(--color-ink);
-}
-
-.latestDesktop {
-  display: none;
+.ranked {
+  display: grid;
+  gap: var(--space-3);
   list-style: none;
   padding: 0;
 }
 
-.band {
-  height: 1px;
-  background: var(--color-border);
-  border: 0;
-  margin: var(--space-5) 0;
-}
-
-.sections {
+/* 5. Live row */
+.live {
   display: grid;
   gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+/* Grid items may shrink, so the strip scrolls inside its own box instead of widening the page. */
+.live > * {
+  min-width: 0;
 }
 
 .videoBand {
   background: var(--color-ink);
   color: #fff;
-  margin: var(--space-6) 0 0;
   padding: var(--space-5) var(--space-4);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-2);
@@ -90,7 +160,7 @@
   color: var(--color-breaking-bg);
 }
 
-/* Mobile: horizontal scroll of 80%-wide cards. */
+/* Mobile: horizontal scroll of 78%-wide cards. */
 .videoGrid {
   display: grid;
   grid-auto-flow: column;
@@ -105,107 +175,128 @@
   scroll-snap-align: start;
 }
 
+/* 6. Category sections and the WhatsApp banner */
+.sections {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
 .wa {
   margin-top: var(--space-6);
 }
 
 @media (min-width: 768px) {
-  .secondary {
-    grid-template-columns: 1fr 1fr;
+  .smallRow {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .heroSide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .sections {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-6) var(--space-5);
+  }
+
+  .blockTitle {
+    font-size: 22px;
+    line-height: 30px;
   }
 
   .videoGrid {
     grid-auto-flow: row;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     overflow: visible;
+  }
+
+  .videoBand {
+    padding: var(--space-5);
   }
 }
 
 @media (min-width: 1024px) {
-  /*
-   * Lead stays top-left at full size. Without strip: lead | latest, then secondary | (latest).
-   * With strip: lead spans rows 1–2 next to the strip (row 1) and the top of the latest list (row 2).
-   * Row 2 is 1fr so the spanning items' height lands there instead of stretching the strip's row.
-   */
-  .top {
+  .hero {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    grid-template-areas:
-      'lead side'
-      'featured side';
-    grid-template-rows: auto 1fr;
-    gap: var(--space-5) var(--space-6);
-    padding-top: var(--space-5);
+    gap: var(--space-5);
     align-items: start;
   }
 
-  .withStrip {
-    grid-template-areas:
-      'lead strip'
-      'lead side'
-      'featured side';
-    grid-template-rows: auto 1fr auto;
+  /* The hero column is as tall as the carousel: two cards share the space left by the Shorts strip. */
+  .hero {
+    --hero-h: clamp(320px, 70vh, 600px);
   }
 
-  /* Video section under the lead (left column); the sidebar keeps running down the right. */
-  .withVideos {
-    grid-template-areas:
-      'lead strip'
-      'videos side'
-      'featured side';
-    grid-template-rows: auto auto 1fr;
+  .heroSide {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    height: var(--hero-h);
   }
 
-  .videos {
-    grid-area: videos;
+  .heroSide > * {
+    flex: 1 1 auto;
   }
 
-  .lead {
-    grid-area: lead;
+  /* Smaller thumbnails in the two hero side cards so the strip fits under them. */
+  .heroSide img {
+    width: 112px;
+    height: 84px;
   }
 
-  .strip {
-    grid-area: strip;
+  .heroSide [class*='thumb'] {
+    width: 112px;
   }
 
-  .featured {
-    grid-area: featured;
+  /* Compact Shorts strip in the hero column: one-line titles, no extra bottom padding. */
+  .heroStrip [class*='cardTitle'] {
+    -webkit-line-clamp: 1;
   }
 
-  .sidebar {
-    grid-area: side;
+  .heroStrip [class*='row'] {
+    padding-bottom: 0;
   }
 
-  .latestMobile {
+  .heroStrip [class*='head'] {
+    margin-bottom: 4px;
+  }
+
+  .heroStrip {
+    display: block;
+    flex: none;
+    min-height: 0;
+  }
+
+  .heroStrip > * {
+    flex: none;
+  }
+
+  .liveStrip {
     display: none;
   }
 
-  .latestDesktop {
-    display: block;
+  /* Only the Shorts strip is left in the live row, and it is shown in the hero column: hide the empty row. */
+  .liveStripOnly {
+    display: none;
   }
 
-  .sidebar {
-    background: #fff;
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-1);
-    padding: var(--space-4);
+  .body {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  .breakingGrid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: start;
   }
 
   .sections {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .videoBand {
-    margin-inline: 0;
-    border-radius: var(--radius);
-    padding: var(--space-5);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .videoGrid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

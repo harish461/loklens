@@ -9,12 +9,21 @@ import { YouTubeThumb } from './YouTubeThumb'
  * visible). Desktop: 3 cards across the top of the right column. The caller renders it only when
  * there are posts, so a failed feed leaves no empty space.
  */
-export function YouTubeStrip({ posts, channelUrl }: { posts: SocialPost[]; channelUrl: string }) {
+export function YouTubeStrip({
+  posts,
+  channelUrl,
+  idSuffix = '',
+}: {
+  posts: SocialPost[]
+  channelUrl: string
+  /** Makes the heading id unique when the strip is rendered twice (hero column and live row). */
+  idSuffix?: string
+}) {
   if (posts.length === 0) return null
   return (
-    <section className={styles.strip} aria-labelledby="yt-strip-title">
+    <section className={styles.strip} aria-labelledby={`yt-strip-title${idSuffix}`}>
       <div className={styles.head}>
-        <h2 id="yt-strip-title" className={styles.title}>
+        <h2 id={`yt-strip-title${idSuffix}`} className={styles.title}>
           <YouTubeIcon size={22} color="#FF0000" />
           YouTube पर ताज़ा
         </h2>

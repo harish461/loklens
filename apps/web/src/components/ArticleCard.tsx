@@ -7,7 +7,7 @@ import { BreakingBadge, CategoryLabel } from './Badges'
 import { formatDateTime } from './format'
 import { NewsImage } from './NewsImage'
 
-export type ArticleCardVariant = 'hero' | 'large' | 'list' | 'numbered' | 'link'
+export type ArticleCardVariant = 'hero' | 'large' | 'list' | 'numbered' | 'ranked' | 'overlay' | 'link'
 
 interface Props {
   article: Card
@@ -47,6 +47,49 @@ export function ArticleCard({
         {showCategory && <CategoryLabel category={article.category} />}
       </div>
     ) : null
+
+  if (variant === 'overlay') {
+    return (
+      <article className={`${styles.overlay} card`}>
+        <div className={styles.overlayMedia}>
+          <NewsImage
+            image={article.image}
+            displayWidth={560}
+            sizes="(min-width: 1024px) 380px, 50vw"
+            priority={priority}
+          />
+        </div>
+        <div className={styles.overlayBody}>
+          {kicker}
+          <H className={styles.overlayTitle}>
+            <Link href={article.url} className={styles.stretch}>
+              {article.title}
+            </Link>
+          </H>
+          <Meta article={article} />
+        </div>
+      </article>
+    )
+  }
+
+  if (variant === 'ranked') {
+    return (
+      <article className={`${styles.ranked} card`}>
+        <span className={styles.rankNum} aria-hidden="true">
+          {index}
+        </span>
+        <div className={styles.rankText}>
+          <span className={styles.pill}>{article.category.name}</span>
+          <H className={styles.titleList}>
+            <Link href={article.url} className={styles.stretch}>
+              {article.title}
+            </Link>
+          </H>
+          <Meta article={article} />
+        </div>
+      </article>
+    )
+  }
 
   if (variant === 'numbered' || variant === 'link') {
     return (

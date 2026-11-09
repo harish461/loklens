@@ -175,3 +175,104 @@
     height: 102px;
   }
 }
+
+/* Overlay tile: photo with the category, headline and meta on a dark gradient (hero side, Recent News). */
+.overlay {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-card);
+  background: var(--color-ink);
+}
+
+.overlayMedia {
+  position: absolute;
+  inset: 0;
+}
+
+.overlayMedia img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.overlayBody {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 48px 14px 14px;
+  background: linear-gradient(to top, rgb(22 24 29 / 0.94), rgb(22 24 29 / 0.6) 60%, rgb(22 24 29 / 0));
+}
+
+.overlay .kicker {
+  margin-bottom: 6px;
+}
+
+.overlay .kicker a {
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: var(--color-brand);
+  color: #fff;
+}
+
+.overlayTitle {
+  color: #fff;
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 800;
+}
+
+.overlay .meta {
+  color: rgb(255 255 255 / 0.85);
+}
+
+@media (min-width: 768px) {
+  .overlayTitle {
+    font-size: 19px;
+    line-height: 26px;
+  }
+}
+
+/* Ranked (Popular News): grey number, dark category pill, title and meta. No thumbnail. */
+.ranked {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: 12px;
+}
+
+.rankNum {
+  flex: none;
+  width: 30px;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 800;
+  color: #b9bec7;
+  text-align: left;
+}
+
+.rankText {
+  flex: 1;
+  min-width: 0;
+}
+
+.pill {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 700;
+}
+
+.ranked .titleList {
+  font-size: 15px;
+  line-height: 22px;
+}

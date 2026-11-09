@@ -99,3 +99,41 @@
     height: var(--media-h);
   }
 }
+
+/* Desktop hero: the headline, summary and meta sit on a dark gradient over the image (fits 1280×720). */
+@media (min-width: 1024px) {
+  .root {
+    --media-h: clamp(320px, 70vh, 600px);
+  }
+
+  .root .slide article > div:last-child {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 64px 28px 22px;
+    border-radius: 0 0 var(--radius-card) var(--radius-card);
+    background: linear-gradient(to top, rgb(22 24 29 / 0.94) 0%, rgb(22 24 29 / 0.62) 60%, rgb(22 24 29 / 0) 100%);
+  }
+
+  .root .slide article h2 {
+    color: #fff;
+    font-size: 30px;
+    line-height: 38px;
+  }
+
+  .root .slide article p {
+    color: rgb(255 255 255 / 0.92);
+  }
+
+  .root .slide article time {
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  .root .slide article > div:last-child > div:first-child a {
+    padding: 2px 10px;
+    border-radius: 4px;
+    background: var(--color-brand);
+    color: #fff;
+  }
+}

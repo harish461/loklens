@@ -1,5 +1,7 @@
 import type { SocialPost } from '@/lib/social'
 
+import { Icon } from './Icon'
+
 import styles from './YouTubeThumb.module.css'
 
 /**
@@ -24,6 +26,9 @@ export function YouTubeThumb({ post, className }: { post: SocialPost; className?
         />
       )}
       {post.isShort && <span className={styles.label}>Shorts</span>}
+      <span className={styles.play} aria-hidden="true">
+        <Icon name="play" size={18} />
+      </span>
     </span>
   )
 }
