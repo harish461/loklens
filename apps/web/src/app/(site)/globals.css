@@ -1,0 +1,169 @@
+/* LokLens News — design tokens (docs/design-system.md v1.1) and base styles. */
+:root {
+  --color-brand: #c41d17;
+  --color-brand-dark: #9e1611;
+  --color-breaking-bg: #ffd60a;
+  --color-live: #c41d17;
+  --color-ink: #16181d;
+  --color-text-2: #3d434d;
+  --color-muted: #5b6270;
+  --color-placeholder: #8a909a;
+  --color-surface: #f5f6f4;
+  --color-border: #e3e5e1;
+  --color-highlight: #fff4d6;
+  --color-whatsapp: #1f8f4e;
+  --color-whatsapp-bg: #eaf5ee;
+  --color-bg: #ffffff;
+
+  --radius: 8px;
+  --radius-badge: 4px;
+  --radius-pill: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-8: 48px;
+
+  --gutter: 16px;
+  --container: 1200px;
+  --measure: 680px;
+  --touch: 44px;
+  --bottom-nav-h: 64px;
+
+  --font-sans: var(--font-mukta), 'Noto Sans Devanagari', system-ui, sans-serif;
+  --focus-ring: 0 0 0 3px #fff, 0 0 0 5px var(--color-ink);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 24px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  /* room for the mobile bottom nav */
+  padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+ul,
+ol {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-brand);
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-2);
+  top: -100px;
+  z-index: 100;
+  background: var(--color-ink);
+  color: #fff;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+  color: #fff;
+}
+
+/* 8 px surface band between sections (mobile). */
+.band {
+  height: 8px;
+  background: var(--color-surface);
+  border: 0;
+  margin: var(--space-5) 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+main:focus {
+  outline: none;
+}

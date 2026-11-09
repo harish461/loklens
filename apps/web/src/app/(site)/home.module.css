@@ -1,0 +1,148 @@
+.top {
+  display: grid;
+  gap: var(--space-5);
+  padding-top: var(--space-4);
+}
+
+.featured {
+  min-width: 0;
+}
+
+.secondary {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+}
+
+.featuredMore {
+  margin-top: var(--space-2);
+}
+
+.sidebar {
+  min-width: 0;
+}
+
+.sideTitle {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 800;
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--color-ink);
+}
+
+.latestDesktop {
+  display: none;
+  list-style: none;
+  padding: 0;
+}
+
+.band {
+  height: 8px;
+  background: var(--color-surface);
+  border: 0;
+  margin: var(--space-5) calc(-1 * var(--gutter));
+}
+
+.sections {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.videoBand {
+  background: var(--color-ink);
+  color: #fff;
+  margin: var(--space-6) calc(-1 * var(--gutter)) 0;
+  padding: var(--space-5) var(--gutter);
+}
+
+.videoHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.videoTitle {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 800;
+}
+
+.videoMore {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.videoMore:hover {
+  color: var(--color-breaking-bg);
+}
+
+/* Mobile: horizontal scroll of 80%-wide cards. */
+.videoGrid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 78%;
+  gap: var(--space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: var(--space-2);
+}
+
+.videoGrid > * {
+  scroll-snap-align: start;
+}
+
+.wa {
+  margin-top: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .secondary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sections {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6) var(--space-5);
+  }
+
+  .videoGrid {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, 1fr);
+    overflow: visible;
+  }
+}
+
+@media (min-width: 1024px) {
+  .top {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    padding-top: var(--space-5);
+  }
+
+  .latestMobile {
+    display: none;
+  }
+
+  .latestDesktop {
+    display: block;
+  }
+
+  .sections {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .videoBand {
+    margin-inline: 0;
+    border-radius: var(--radius);
+    padding: var(--space-5);
+  }
+
+  .videoGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

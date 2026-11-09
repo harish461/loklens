@@ -1,0 +1,163 @@
+.layout {
+  display: grid;
+  gap: var(--space-6);
+  padding-top: var(--space-2);
+}
+
+.article {
+  min-width: 0;
+}
+
+.head {
+  max-width: var(--measure);
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.title {
+  font-size: 26px;
+  line-height: 36px;
+  font-weight: 800;
+  margin-top: var(--space-1);
+}
+
+.dek {
+  font-size: 17px;
+  line-height: 27px;
+  color: var(--color-text-2);
+  margin-top: var(--space-3);
+}
+
+.byline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin-block: var(--space-4);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
+.avatar,
+.monogram {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.monogram {
+  display: grid;
+  place-items: center;
+  background: var(--color-brand);
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  font-family: system-ui, sans-serif;
+}
+
+.authors {
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.authors a {
+  color: var(--color-brand);
+}
+
+.authors a:hover {
+  text-decoration: underline;
+}
+
+.times {
+  flex-basis: 100%;
+  padding-left: calc(40px + var(--space-3));
+  margin-top: -6px;
+}
+
+/* Full-bleed on mobile. */
+.figure {
+  margin: var(--space-5) calc(-1 * var(--gutter));
+}
+
+.figure img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: var(--color-surface);
+}
+
+.figure figcaption {
+  padding: var(--space-2) var(--gutter) 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-muted);
+}
+
+.after {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+  max-width: var(--measure);
+}
+
+.sidebar {
+  display: none;
+}
+
+.sideTitle {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 800;
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--color-ink);
+}
+
+.sideList {
+  list-style: none;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 34px;
+    line-height: 46px;
+  }
+
+  .dek {
+    font-size: 18px;
+    line-height: 28px;
+  }
+
+  .figure {
+    margin-inline: 0;
+  }
+
+  .figure img {
+    border-radius: var(--radius);
+  }
+
+  .figure figcaption {
+    padding-inline: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--space-8);
+  }
+
+  .sidebar {
+    display: block;
+    position: sticky;
+    top: var(--space-4);
+    align-self: start;
+  }
+}

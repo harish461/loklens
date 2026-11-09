@@ -1,0 +1,164 @@
+/* Whole card is clickable via a stretched link; category label sits above it. */
+.hero,
+.large,
+.list,
+.numbered,
+.link {
+  position: relative;
+}
+
+.stretch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.stretch:focus-visible {
+  outline: none;
+}
+
+.stretch:focus-visible::after {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.meta {
+  display: block;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  margin-top: var(--space-1);
+}
+
+.media img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.body {
+  padding-top: var(--space-3);
+}
+
+.titleHero {
+  font-size: 24px;
+  line-height: 33px;
+  font-weight: 800;
+}
+
+.summary {
+  color: var(--color-text-2);
+  font-size: 16px;
+  line-height: 26px;
+  margin-top: var(--space-2);
+}
+
+.titleLarge {
+  font-size: 18px;
+  line-height: 27px;
+  font-weight: 700;
+}
+
+/* list: text + 4:3 thumbnail */
+.list {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding-block: var(--space-3);
+}
+
+.thumbLeft {
+  flex-direction: row-reverse;
+}
+
+.listText {
+  flex: 1;
+  min-width: 0;
+}
+
+.thumb {
+  flex: none;
+  width: 104px;
+}
+
+.thumb img {
+  width: 104px;
+  height: 78px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.titleList {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+/* numbered (desktop sidebar) */
+.numbered {
+  display: flex;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.numeral {
+  flex: none;
+  width: 32px;
+  font-size: 32px;
+  line-height: 32px;
+  font-weight: 800;
+  color: var(--color-placeholder);
+}
+
+/* plain link with top border (section blocks) */
+.link {
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.link .titleList {
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .titleHero {
+    font-size: 34px;
+    line-height: 44px;
+  }
+
+  .summary {
+    font-size: 18px;
+    line-height: 28px;
+  }
+
+  .titleLarge {
+    font-size: 20px;
+    line-height: 29px;
+  }
+
+  .thumb,
+  .thumb img {
+    width: 136px;
+  }
+
+  .thumb img {
+    height: 102px;
+  }
+}

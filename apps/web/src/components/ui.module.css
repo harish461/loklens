@@ -1,0 +1,214 @@
+/* Small shared components: Breadcrumbs, Pagination, TagChips, WhatsAppChannelBanner, RelatedList, PageHeader. */
+
+/* Breadcrumbs */
+.crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.crumbs li {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.crumbs li + li::before {
+  content: '›';
+  padding-inline: var(--space-2);
+  color: var(--color-placeholder);
+}
+
+.crumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  color: var(--color-brand);
+}
+
+.crumbs a:hover {
+  text-decoration: underline;
+}
+
+.crumbCurrent {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 50vw;
+}
+
+/* Pagination */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-block: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.pagerStatus {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.pagerLinks {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.btnPrimary,
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--touch);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius);
+  font-weight: 700;
+}
+
+.btnPrimary {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+.btnPrimary:hover {
+  background: var(--color-brand-dark);
+  color: #fff;
+}
+
+.btnSecondary {
+  border: 1px solid var(--color-border);
+  color: var(--color-ink);
+}
+
+.btnSecondary:hover {
+  border-color: var(--color-ink);
+  color: var(--color-ink);
+}
+
+/* Tag chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+}
+
+.chips a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.chips a:hover {
+  border-color: var(--color-brand);
+}
+
+/* WhatsApp channel banner */
+.wa {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  background: var(--color-whatsapp-bg);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+}
+
+.waIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-whatsapp);
+  color: #fff;
+}
+
+.waText {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.waTitle {
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 26px;
+}
+
+.waSub {
+  color: var(--color-text-2);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.waBtn {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius);
+  background: var(--color-whatsapp);
+  color: #fff;
+  font-weight: 700;
+}
+
+.waBtn:hover {
+  background: #187a41;
+  color: #fff;
+}
+
+/* Page header for listings (category, tag, author, search) */
+.pageHead {
+  background: var(--color-surface);
+  padding-block: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.pageTitle {
+  font-size: 26px;
+  line-height: 36px;
+  font-weight: 800;
+}
+
+.pageDesc {
+  color: var(--color-text-2);
+  margin-top: var(--space-1);
+}
+
+.sectionTitle {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 800;
+  margin-bottom: var(--space-2);
+}
+
+.empty {
+  color: var(--color-placeholder);
+  padding-block: var(--space-6);
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .pageTitle {
+    font-size: 34px;
+    line-height: 46px;
+  }
+}

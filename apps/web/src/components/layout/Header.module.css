@@ -1,0 +1,358 @@
+.header {
+  background: #fff;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-2);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.brand:hover {
+  color: inherit;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-badge);
+  flex: none;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.name {
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 800;
+  color: var(--color-brand);
+  white-space: nowrap;
+}
+
+.tagline {
+  display: none;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--color-text-2);
+  font-weight: 500;
+}
+
+.date {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobileActions {
+  display: flex;
+  flex: none;
+}
+
+.iconBtn {
+  display: inline-grid;
+  place-items: center;
+  width: var(--touch);
+  height: var(--touch);
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.iconBtn:hover {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.searchForm {
+  display: none;
+}
+
+/* Category bar — mobile: white, scrollable, red active underline */
+.catNav {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.catList {
+  display: flex;
+  list-style: none;
+  margin: 0 auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.catList::-webkit-scrollbar {
+  display: none;
+}
+
+.catList li {
+  flex: none;
+}
+
+.catLink {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding-inline: var(--space-3);
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  color: var(--color-ink);
+}
+
+.catList li:first-child .catLink {
+  padding-left: 0;
+}
+
+.catLink[aria-current='page'] {
+  color: var(--color-brand);
+  border-bottom-color: var(--color-brand);
+}
+
+/* Ticker + breaking strip */
+.ticker {
+  background: var(--color-highlight);
+}
+
+.tickerInner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch);
+}
+
+.tickerLabel {
+  flex: none;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--color-brand);
+}
+
+.tickerList {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  list-style: none;
+  padding: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.tickerList li {
+  display: inline;
+}
+
+.tickerList li + li::before {
+  content: '•';
+  padding-inline: var(--space-3);
+  color: var(--color-muted);
+}
+
+.tickerList a {
+  /* Inline links keep the ellipsis working; padding gives a taller tap area. */
+  padding-block: 12px;
+}
+
+.breaking {
+  background: #fff;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.breakingLink {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 22px;
+  padding-block: var(--space-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Drawer */
+.drawer {
+  margin: 0 0 0 auto;
+  height: 100dvh;
+  max-height: none;
+  width: min(320px, 86vw);
+  border: 0;
+  padding: 0;
+  background: #fff;
+  color: var(--color-ink);
+}
+
+.drawer::backdrop {
+  background: rgb(22 24 29 / 0.5);
+}
+
+.drawerInner {
+  padding: var(--space-2) var(--space-4) var(--space-6);
+}
+
+.drawerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--color-ink);
+  margin-bottom: var(--space-2);
+}
+
+.drawerTitle {
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.drawerList {
+  list-style: none;
+  padding: 0;
+}
+
+.drawerList a {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  font-weight: 700;
+  font-size: 18px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.drawerSecondary {
+  margin-top: var(--space-5);
+}
+
+.drawerSecondary a {
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--color-text-2);
+}
+
+/* Desktop chrome */
+@media (min-width: 768px) {
+  .top {
+    padding-block: var(--space-3);
+  }
+
+  .logo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .name {
+    font-size: 30px;
+    line-height: 38px;
+  }
+
+  .tagline {
+    display: block;
+  }
+
+  .date {
+    font-size: 13px;
+  }
+
+  .mobileActions {
+    display: none;
+  }
+
+  .searchForm {
+    display: flex;
+    align-items: center;
+    flex: 0 1 300px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .searchForm:focus-within {
+    border-color: var(--color-ink);
+    outline: 2px solid var(--color-ink);
+  }
+
+  .searchForm input {
+    flex: 1;
+    min-width: 0;
+    height: var(--touch);
+    border: 0;
+    padding: 0 var(--space-3);
+    background: transparent;
+    outline: none;
+  }
+
+  .searchForm button {
+    display: grid;
+    place-items: center;
+    width: var(--touch);
+    height: var(--touch);
+    border: 0;
+    background: var(--color-brand);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .searchForm button:hover {
+    background: var(--color-brand-dark);
+  }
+
+  /* Red band with white text; active item darker red. */
+  .catNav {
+    background: var(--color-brand);
+    border-bottom: 2px solid var(--color-ink);
+  }
+
+  .catLink {
+    color: #fff;
+    padding-inline: var(--space-4);
+    border-bottom: 0;
+    font-size: 17px;
+    min-height: 48px;
+  }
+
+  .catList li:first-child .catLink {
+    padding-left: var(--space-4);
+  }
+
+  .catLink:hover {
+    color: #fff;
+    background: var(--color-brand-dark);
+  }
+
+  .catLink:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: -3px;
+  }
+
+  .catLink[aria-current='page'] {
+    color: #fff;
+    background: var(--color-brand-dark);
+  }
+
+  .catList {
+    overflow-x: visible;
+    flex-wrap: wrap;
+  }
+}

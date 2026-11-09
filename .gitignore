@@ -11,3 +11,5 @@ coverage/
 Thumbs.db
 /media/
 .claude/settings.local.json
+*.tsbuildinfo
+next-env.d.ts

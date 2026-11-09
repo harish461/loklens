@@ -51,6 +51,11 @@ docs/            Audit, architecture, API contract, decisions
 - Small, reviewable changes. Each task ends with: what changed, how it was verified, open questions.
 - Work on a feature branch; the user decides when to merge.
 
+## Priority
+
+**Website first.** Do not build mobile-app features (`/api/v1` HTTP routes, push notifications, Expo) until
+Phase 6. Keep the web data helpers contract-shaped so the app can reuse them later.
+
 ## Phases
 
 1. Discovery & audit of the current site → `docs/audit.md`

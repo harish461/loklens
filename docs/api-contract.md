@@ -11,6 +11,7 @@ mobile (see `CLAUDE.md`). Change this file first, then the code. Breaking change
 - **Public consumers use the v1 shapes below:**
   - **Web** calls the typed helpers in `apps/web/src/lib/data/*` (server-side, Payload local API, no HTTP).
   - **Mobile** calls `GET /api/v1/*`, which returns exactly the same shapes from the same helpers.
+    **Deferred to Phase 6** (decision 2026-11-09: website first) — until then only the web helpers are built.
 - Helpers always query with `overrideAccess: false, draft: false` → **published content only**.
   Draft preview uses separate helpers that are only reachable in Next `draftMode`.
 - Dates: stored UTC, **serialised as ISO 8601 with IST offset** (`2026-11-09T15:30:00+05:30`) by one shared

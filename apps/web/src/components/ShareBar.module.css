@@ -1,0 +1,50 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.whatsapp {
+  background: var(--color-whatsapp);
+  color: #fff;
+}
+
+.whatsapp:hover {
+  color: #fff;
+  background: #187a41;
+}
+
+.icon {
+  display: inline-grid;
+  place-items: center;
+  width: var(--touch);
+  height: var(--touch);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.icon:hover {
+  border-color: var(--color-ink);
+  color: var(--color-ink);
+}
+
+@media (max-width: 399px) {
+  .long {
+    display: none;
+  }
+}
