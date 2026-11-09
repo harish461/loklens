@@ -1,14 +1,15 @@
 # LokLens News — Project Brief
 
 Rebuild of **loklensnews.com**, a Hindi news site covering Uttarakhand (tagline: "आपकी आवाज़, आपकी खबर"),
-starting from scratch. A mobile app will follow, using the same backend.
+starting from scratch — no content is migrated from the old site (no backups exist). A mobile app
+will follow, using the same backend; AdSense is added after launch.
 
 ## Decisions (locked)
 
 | Area | Choice |
 |---|---|
 | Web framework | Next.js (App Router, TypeScript, server-rendered / ISR for SEO) |
-| CMS + API | Payload CMS 3 — runs inside the Next.js app, provides admin panel + REST/GraphQL API |
+| CMS + API | Payload CMS 3 — runs inside the Next.js app, provides admin panel + REST API (GraphQL disabled) |
 | Database | PostgreSQL |
 | Hosting | Single VPS (Docker Compose: app + Postgres + reverse proxy), Cloudflare CDN in front |
 | Mobile app (later) | React Native (Expo), consuming the Payload API |
@@ -56,5 +57,6 @@ docs/            Audit, architecture, API contract, decisions
 2. Architecture + API contract → `docs/architecture.md`, `docs/api-contract.md`
 3. Design system & wireframes (user approves)
 4. Build: backend → frontend → SEO wiring
-5. Staging, QA, redirects, launch
+5. Staging, QA, redirects (old URLs → 301/410), launch
 6. Mobile app
+7. Google AdSense (after the new site is live)
