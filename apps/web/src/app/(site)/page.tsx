@@ -7,9 +7,11 @@ import { WhatsAppChannelBanner } from '@/components/ArticleExtras'
 import { SectionBlock } from '@/components/SectionBlock'
 import { VideoCard } from '@/components/VideoCard'
 import { YouTubeSection } from '@/components/YouTubeSection'
+import { HeroCarousel } from '@/components/HeroCarousel'
 import { YouTubeStrip } from '@/components/YouTubeStrip'
+import { YouTubeVideos } from '@/components/YouTubeVideos'
 import { getHome, getSiteSettings } from '@/lib/data'
-import { getYouTubeLatest, YOUTUBE_CHANNEL_URL } from '@/lib/social'
+import { getYouTubeLatest, getYouTubeVideos, YOUTUBE_CHANNEL_URL } from '@/lib/social'
 
 import styles from './home.module.css'
 
@@ -22,11 +24,19 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   // getYouTubeLatest is memoised per render, so the lower YouTubeSection reuses this same fetch.
-  const [home, settings, youtube] = await Promise.all([getHome(), getSiteSettings(), getYouTubeLatest(3)])
-  const [lead, ...featured] = home.featured.length ? home.featured : home.latest
+  const [home, settings, youtube, youtubeVideos] = await Promise.all([
+    getHome(),
+    getSiteSettings(),
+    getYouTubeLatest(3),
+    getYouTubeVideos(3),
+  ])
+  // Hero carousel: the 3 latest published stories. Featured below skips any story already in the hero.
+  const heroSlides = home.latest.slice(0, 3)
+  const featured = home.featured.filter((a) => !heroSlides.some((s) => s.id === a.id))
   const latest = home.latest.slice(0, 6)
   const youtubeUrl = settings.social.find((s) => s.platform === 'youtube')?.url ?? YOUTUBE_CHANNEL_URL
   const hasStrip = youtube.posts.length > 0 // feed failed → no strip, no empty space
+  const hasVideos = youtubeVideos.posts.length > 0 // no non-Shorts uploads → no video section at all
 
   return (
     <div className="container">
@@ -36,14 +46,22 @@ export default async function HomePage() {
         Hero grid. Mobile order: lead → YouTube strip → secondary → latest.
         Desktop (≥1024): lead | strip on top of the right column, then secondary | latest.
       */}
-      <div className={`${styles.top} ${hasStrip ? styles.withStrip : ''}`}>
-        <div className={styles.lead}>
-          {lead && <ArticleCard article={lead} variant="hero" priority headingLevel="h2" />}
-        </div>
+      <div className={`${styles.top} ${hasVideos ? styles.withVideos : hasStrip ? styles.withStrip : ''}`}>
+        {heroSlides.length > 0 && (
+          <div className={styles.lead}>
+            <HeroCarousel articles={heroSlides} />
+          </div>
+        )}
 
         {hasStrip && (
           <div className={styles.strip}>
             <YouTubeStrip posts={youtube.posts} channelUrl={youtubeUrl} />
+          </div>
+        )}
+
+        {hasVideos && (
+          <div className={styles.videos}>
+            <YouTubeVideos posts={youtubeVideos.posts} channelUrl={youtubeUrl} />
           </div>
         )}
 

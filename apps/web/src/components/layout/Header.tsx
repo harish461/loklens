@@ -1,9 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import type { ArticleCard, Home, NavItem, SiteSettings } from '@/lib/data/types'
+import type { Home, NavItem, SiteSettings } from '@/lib/data/types'
 
-import { BreakingBadge } from '../Badges'
 import { formatLongDate } from '../format'
 import { Icon } from '../Icon'
 import styles from './Header.module.css'
@@ -14,10 +13,9 @@ interface Props {
   settings: SiteSettings
   categories: NavItem[]
   ticker: Home['ticker']
-  breaking: ArticleCard[]
 }
 
-export function Header({ settings, categories, ticker, breaking }: Props) {
+export function Header({ settings, categories, ticker }: Props) {
   const today = formatLongDate(new Date())
   const menuLinks = settings.navigation.footer.flatMap((g) => g.items)
   return (
@@ -25,7 +23,7 @@ export function Header({ settings, categories, ticker, breaking }: Props) {
       <header className={styles.header}>
         <div className={`container ${styles.top}`}>
           <Link href="/" className={styles.brand} aria-label={`${settings.name} — होम`}>
-            {/* 48 px mobile / 72 px desktop; logo-144 covers 72 px at 2x. */}
+            {/* 44 px mobile / 64 px desktop; logo-144 covers 64 px at 2x. */}
             <Image
               src="/brand/logo-144.webp"
               width={144}
@@ -90,16 +88,6 @@ export function Header({ settings, categories, ticker, breaking }: Props) {
         </div>
       )}
 
-      {breaking.length > 0 && (
-        <div className={styles.breaking}>
-          <div className={`container ${styles.tickerInner}`}>
-            <BreakingBadge />
-            <Link href={breaking[0].url} className={styles.breakingLink}>
-              {breaking[0].title}
-            </Link>
-          </div>
-        </div>
-      )}
     </>
   )
 }

@@ -39,7 +39,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         <a href="#main" className="skip-link">
           मुख्य सामग्री पर जाएं
         </a>
-        <Header settings={settings} categories={nav} ticker={home.ticker} breaking={home.breaking} />
+        <Header settings={settings} categories={nav} ticker={home.ticker} />
         <main id="main" tabIndex={-1}>
           {children}
         </main>

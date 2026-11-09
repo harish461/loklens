@@ -1,0 +1,106 @@
+.root {
+  position: relative;
+  min-width: 0;
+  border-radius: var(--radius-card);
+}
+
+.root:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 4px;
+}
+
+/* All slides share one grid cell: the box is as tall as the tallest slide, so switching never shifts layout. */
+.viewport {
+  display: grid;
+}
+
+.slide {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 300ms ease, visibility 300ms ease;
+  min-width: 0;
+}
+
+.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Without JavaScript the controls do nothing, so hide them (the first slide still shows). */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+@media (scripting: none) {
+  .controls {
+    display: none;
+  }
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--touch);
+  height: var(--touch);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  background: #fff;
+  color: var(--color-ink);
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+}
+
+.arrow:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.dot {
+  display: grid;
+  place-items: center;
+  width: var(--touch);
+  height: var(--touch);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.dot span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: #c3c8d0;
+  transition: width 200ms ease, background-color 200ms ease;
+}
+
+.dot:hover span {
+  background: var(--color-muted);
+}
+
+.dotActive span,
+.dotActive:hover span {
+  width: 24px;
+  background: var(--color-brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .dot span {
+    transition: none;
+  }
+}

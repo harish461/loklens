@@ -9,7 +9,8 @@
 }
 
 .lead,
-.strip {
+.strip,
+.videos {
   min-width: 0;
 }
 
@@ -148,6 +149,19 @@
       'lead side'
       'featured side';
     grid-template-rows: auto 1fr auto;
+  }
+
+  /* Video section under the lead (left column); the sidebar keeps running down the right. */
+  .withVideos {
+    grid-template-areas:
+      'lead strip'
+      'videos side'
+      'featured side';
+    grid-template-rows: auto auto 1fr;
+  }
+
+  .videos {
+    grid-area: videos;
   }
 
   .lead {

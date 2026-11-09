@@ -100,15 +100,15 @@ export function parseYouTubeFeed(xml: string, limit = 3): SocialPost[] {
 
 // ---- fetch ---------------------------------------------------------------------------------------
 
-/** Latest uploads. Never throws: any failure returns `{ status: 'error', posts: [] }` and logs once. */
-export async function fetchYouTubeLatest(limit = 3): Promise<SocialFeed> {
+/** One RSS read (all entries). Never throws: any failure returns `{ status: 'error', posts: [] }` and logs once. */
+async function fetchFeedAll(): Promise<SocialFeed> {
   try {
     const res = await fetch(YOUTUBE_FEED_URL, {
       next: { revalidate: REVALIDATE_SECONDS, tags: ['social'] },
       signal: AbortSignal.timeout(TIMEOUT_MS),
     })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    return { status: 'ok', posts: parseYouTubeFeed(await res.text(), limit) }
+    return { status: 'ok', posts: parseYouTubeFeed(await res.text(), Number.POSITIVE_INFINITY) }
   } catch (err) {
     const reason = err instanceof Error ? `${err.name}: ${err.message}` : String(err)
     console.warn(`[social] youtube feed unavailable (${reason})`)
@@ -116,8 +116,28 @@ export async function fetchYouTubeLatest(limit = 3): Promise<SocialFeed> {
   }
 }
 
-/**
- * Memoised per server render: the hero strip and the lower section share one call (and Next's data
- * cache shares the HTTP response across renders for `revalidate` seconds).
- */
-export const getYouTubeLatest = cache(fetchYouTubeLatest)
+/** Shared by every helper: one fetch per server render (React cache) and one Next data-cache entry. */
+const getFeedAll = cache(fetchFeedAll)
+
+/** Newest uploads of any kind (videos and Shorts). */
+export async function fetchYouTubeLatest(limit = 3): Promise<SocialFeed> {
+  const feed = await fetchFeedAll()
+  return { status: feed.status, posts: feed.posts.slice(0, limit) }
+}
+
+/** Newest regular videos only (no /shorts/ links). Empty when the feed has no non-Shorts entries. */
+export async function fetchYouTubeVideos(limit = 3): Promise<SocialFeed> {
+  const feed = await fetchFeedAll()
+  return { status: feed.status, posts: feed.posts.filter((p) => !p.isShort).slice(0, limit) }
+}
+
+/** Memoised per server render: the hero strip, the video section and the lower section share one fetch. */
+export const getYouTubeLatest = async (limit = 3): Promise<SocialFeed> => {
+  const feed = await getFeedAll()
+  return { status: feed.status, posts: feed.posts.slice(0, limit) }
+}
+
+export const getYouTubeVideos = async (limit = 3): Promise<SocialFeed> => {
+  const feed = await getFeedAll()
+  return { status: feed.status, posts: feed.posts.filter((p) => !p.isShort).slice(0, limit) }
+}

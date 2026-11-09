@@ -55,12 +55,16 @@
   display: none;
 }
 
-/* ~2.3 cards visible: (viewport − gutter − 2 gaps) / 2.3 */
+/* ~2.3 cards visible on phones (≈132px at 360px wide, 150px from ~412px up). */
 .item {
   flex: none;
-  width: calc((100vw - var(--gutter) - 2 * var(--gap)) / 2.3);
-  max-width: 200px;
+  width: clamp(132px, calc((100vw - var(--gutter) - 2 * var(--gap)) / 2.3), 150px);
   scroll-snap-align: start;
+}
+
+/* Compact Shorts: fixed 4:5 box (the shared thumb sets 9:16; this more specific rule wins). */
+.item .thumbCompact {
+  aspect-ratio: 4 / 5;
 }
 
 .card {

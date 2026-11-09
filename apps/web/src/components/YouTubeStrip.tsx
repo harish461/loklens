@@ -27,7 +27,8 @@ export function YouTubeStrip({ posts, channelUrl }: { posts: SocialPost[]; chann
         {posts.map((post) => (
           <li key={post.id} className={styles.item}>
             <a href={post.url} target="_blank" rel="noopener" className={`${styles.card} card`}>
-              <YouTubeThumb post={post} />
+              {/* Shorts use a compact 4:5 box in the strip; regular videos keep 16:9. */}
+              <YouTubeThumb post={post} className={post.isShort ? styles.thumbCompact : undefined} />
               <span className={styles.cardTitle}>{post.title || 'YouTube वीडियो'}</span>
               <span className="visually-hidden"> (YouTube पर देखें)</span>
             </a>

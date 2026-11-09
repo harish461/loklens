@@ -4,6 +4,7 @@ import { formatRelative } from '@/components/format'
 import {
   decodeXmlEntities,
   fetchYouTubeLatest,
+  fetchYouTubeVideos,
   isShortsLink,
   parseYouTubeFeed,
   toISTString,
@@ -161,5 +162,33 @@ describe('fetchYouTubeLatest', () => {
     const init = fetchMock.mock.calls[0][1]
     expect(init.next).toEqual({ revalidate: 300, tags: ['social'] })
     expect(init.signal).toBeInstanceOf(AbortSignal)
+  })
+})
+
+describe('non-Shorts filter', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('fetchYouTubeVideos drops Shorts and keeps the newest regular videos', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(FIXTURE, { status: 200 })))
+    const result = await fetchYouTubeVideos(3)
+    expect(result.status).toBe('ok')
+    expect(result.posts.map((p) => p.id)).toEqual(['AAAAAAAAAA1', 'AAAAAAAAAA3', 'AAAAAAAAAA4'])
+    expect(result.posts.every((p) => !p.isShort && !p.url.includes('/shorts/'))).toBe(true)
+  })
+
+  it('returns an empty list when every entry is a Short (the current channel state)', async () => {
+    const shortsOnly = feed(
+      entry('SSSSSSSSSS1', '[short 1]', '2026-11-09T05:00:00+00:00', 'https://www.youtube.com/shorts/SSSSSSSSSS1'),
+      entry('SSSSSSSSSS2', '[short 2]', '2026-11-08T05:00:00+00:00', 'https://www.youtube.com/shorts/SSSSSSSSSS2'),
+    )
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(shortsOnly, { status: 200 })))
+    await expect(fetchYouTubeVideos(3)).resolves.toEqual({ status: 'ok', posts: [] })
+  })
+
+  it('feed failure gives an error status with no posts', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('down')))
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    await expect(fetchYouTubeVideos(3)).resolves.toEqual({ status: 'error', posts: [] })
+    warn.mockRestore()
   })
 })
