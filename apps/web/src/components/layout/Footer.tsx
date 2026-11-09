@@ -1,11 +1,36 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 
 import type { NavItem, SiteSettings } from '@/lib/data/types'
 
-import { Icon } from '../Icon'
+import { FacebookIcon, Icon, InstagramIcon, WhatsAppIcon, YouTubeIcon } from '../Icon'
 import styles from './Footer.module.css'
 import { NavLink } from './NavLink'
+
+const SOCIAL: Record<string, { label: string; icon: ReactNode }> = {
+  youtube: { label: 'YouTube', icon: <YouTubeIcon size={22} /> },
+  facebook: { label: 'Facebook', icon: <FacebookIcon size={22} /> },
+  instagram: { label: 'Instagram', icon: <InstagramIcon size={22} /> },
+  whatsapp: { label: 'WhatsApp चैनल', icon: <WhatsAppIcon size={22} /> },
+}
+
+/** Profile links from SiteSettings.social; unknown platforms are skipped. */
+function SocialLinks({ social }: { social: SiteSettings['social'] }) {
+  const items = social.filter((s) => SOCIAL[s.platform])
+  if (items.length === 0) return null
+  return (
+    <ul className={styles.social} aria-label="सोशल मीडिया पर लोक Lens">
+      {items.map((s) => (
+        <li key={s.platform}>
+          <a href={s.url} target="_blank" rel="noopener" aria-label={`${SOCIAL[s.platform].label} पर लोक Lens`}>
+            {SOCIAL[s.platform].icon}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 export function Footer({ settings, categories }: { settings: SiteSettings; categories: NavItem[] }) {
   const p = settings.policies
@@ -26,6 +51,7 @@ export function Footer({ settings, categories }: { settings: SiteSettings; categ
             <span className={styles.name}>लोक Lens न्यूज़</span>
           </Link>
           <p className={styles.tagline}>{settings.tagline}</p>
+          <SocialLinks social={settings.social} />
         </div>
         <nav aria-labelledby="footer-cats" id="footer-categories" className={styles.col}>
           <h2 id="footer-cats" className={styles.colTitle}>

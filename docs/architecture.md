@@ -286,6 +286,25 @@ content and the policy pages above). To make that easy later:
   between listing cards every 6 items.
 - `ads.txt` is served from SiteSettings; the consent banner (required for EU/UK visitors) ships with ads.
 
+### Social feeds on the home page (added 2026-11-09)
+
+A home-page section shows the **3 latest posts** from each of LokLens's YouTube, Facebook and Instagram
+accounts. Posts are fetched **on the server** (no third-party scripts or iframes in the reader's browser),
+cached with `revalidate: 900` (15 min) and the cache tag `social`, so new posts appear within ~15 minutes.
+
+| Platform | Source | Credentials |
+|---|---|---|
+| YouTube `@loklensnews` | public feed `https://www.youtube.com/feeds/videos.xml?channel_id=UCQ9BfhKRBEESTPyscj1JmCg` | none |
+| Facebook "LokLens Samachar" (page id `61584754019161`) | Meta Graph API `/{page-id}/posts` (message, created_time, permalink_url, full_picture) | Page access token (`META_PAGE_ACCESS_TOKEN`), `FACEBOOK_PAGE_ID` |
+| Instagram `loklens_news` | Meta Graph API `/{ig-user-id}/media` (caption, media_type, media_url, thumbnail_url, permalink, timestamp) | same token; needs an Instagram **Professional** account linked to the Facebook Page; `INSTAGRAM_USER_ID` |
+
+**Status (2026-11-09): YouTube only for now.** Facebook and Instagram feeds are deferred by the user; their
+profile links still appear in the header/footer. The rows above stay as the plan for later.
+
+Rules: each fetch has a 3-second timeout; a failed or unconfigured platform shows its "follow" button and a
+short fallback message instead of posts, and never breaks the page. Tokens live only in server env vars.
+Setup steps for the tokens: `docs/social-feeds-setup.md`.
+
 ---
 
 ## 10. Decisions and open questions

@@ -6,6 +6,7 @@ import { ArticleCard } from '@/components/ArticleCard'
 import { WhatsAppChannelBanner } from '@/components/ArticleExtras'
 import { SectionBlock } from '@/components/SectionBlock'
 import { VideoCard } from '@/components/VideoCard'
+import { YouTubeSection } from '@/components/YouTubeSection'
 import { getHome, getSiteSettings } from '@/lib/mock'
 
 import styles from './home.module.css'
@@ -75,6 +76,8 @@ export default async function HomePage() {
           />
         ))}
       </div>
+
+      <YouTubeSection channelUrl={settings.social.find((s) => s.platform === 'youtube')?.url} />
 
       {home.videos.length > 0 && (
         <section className={styles.videoBand} aria-labelledby="videos-title">

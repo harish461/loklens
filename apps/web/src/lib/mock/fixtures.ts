@@ -348,8 +348,9 @@ export const siteSettings: SiteSettings = {
   defaultImage: placeholderImage('लोक Lens न्यूज़'),
   social: [
     { platform: 'whatsapp', url: 'https://whatsapp.com/channel/PLACEHOLDER' },
-    { platform: 'facebook', url: 'https://www.facebook.com/PLACEHOLDER' },
-    { platform: 'youtube', url: 'https://www.youtube.com/@PLACEHOLDER' },
+    { platform: 'youtube', url: 'https://www.youtube.com/@loklensnews' },
+    { platform: 'facebook', url: 'https://www.facebook.com/people/LokLens-Samachar/61584754019161/' },
+    { platform: 'instagram', url: 'https://www.instagram.com/loklens_news' },
   ],
   contact: { email: '[ईमेल पता]' },
   policies: {
