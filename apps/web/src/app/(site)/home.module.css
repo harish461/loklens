@@ -8,10 +8,14 @@
   min-width: 0;
 }
 
+.lead,
+.strip {
+  min-width: 0;
+}
+
 .secondary {
   display: grid;
   gap: var(--space-5);
-  margin-top: var(--space-5);
 }
 
 .featuredMore {
@@ -118,10 +122,44 @@
 }
 
 @media (min-width: 1024px) {
+  /*
+   * Lead stays top-left at full size. Without strip: lead | latest, then secondary | (latest).
+   * With strip: lead spans rows 1–2 next to the strip (row 1) and the top of the latest list (row 2).
+   * Row 2 is 1fr so the spanning items' height lands there instead of stretching the strip's row.
+   */
   .top {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    gap: var(--space-6);
+    grid-template-areas:
+      'lead side'
+      'featured side';
+    grid-template-rows: auto 1fr;
+    gap: var(--space-5) var(--space-6);
     padding-top: var(--space-5);
+    align-items: start;
+  }
+
+  .withStrip {
+    grid-template-areas:
+      'lead strip'
+      'lead side'
+      'featured side';
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .lead {
+    grid-area: lead;
+  }
+
+  .strip {
+    grid-area: strip;
+  }
+
+  .featured {
+    grid-area: featured;
+  }
+
+  .sidebar {
+    grid-area: side;
   }
 
   .latestMobile {

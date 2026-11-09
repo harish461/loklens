@@ -2,13 +2,15 @@
  * YouTube channel feed → SocialPost[] (architecture §"Social feeds on the home page").
  * Uses the public Atom feed, so no API key. Server-side only: call it from Server Components.
  */
+import { cache } from 'react'
+
 import type { SocialFeed, SocialPost } from './types'
 
 export const YOUTUBE_CHANNEL_ID = 'UCQ9BfhKRBEESTPyscj1JmCg'
 export const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@loklensnews'
 export const YOUTUBE_FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`
 
-const REVALIDATE_SECONDS = 900 // new uploads show within ~15 min
+const REVALIDATE_SECONDS = 300 // new uploads show within ~5 min
 const TIMEOUT_MS = 3000
 export const TITLE_MAX = 120
 
@@ -42,6 +44,17 @@ export function toISTString(input: string): string | null {
   return new Date(t + 330 * 60_000).toISOString().replace(/\.\d{3}Z$/, '+05:30')
 }
 
+/** The feed marks Shorts by linking to youtube.com/shorts/{id} instead of /watch?v={id}. */
+export function isShortsLink(link: string | undefined): boolean {
+  if (!link) return false
+  try {
+    const u = new URL(link)
+    return /(^|\.)youtube\.com$/.test(u.hostname) && u.pathname.startsWith('/shorts/')
+  } catch {
+    return false
+  }
+}
+
 function tag(block: string, name: string): string | undefined {
   const m = block.match(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)</${name}>`))
   if (!m) return undefined
@@ -68,18 +81,16 @@ export function parseYouTubeFeed(xml: string, limit = 3): SocialPost[] {
     const publishedAt = toISTString(tag(entry, 'published') ?? '')
     if (!id || !/^[\w-]{11}$/.test(id) || !publishedAt) continue
     const link = attr(entry, 'link', 'href')
-    let url = `https://www.youtube.com/watch?v=${id}`
-    try {
-      if (link && ['www.youtube.com', 'youtube.com'].includes(new URL(link).hostname)) url = link
-    } catch {
-      // keep the watch URL
-    }
+    const isShort = isShortsLink(link)
     posts.push({
       platform: 'youtube',
       id,
       title: trimText(tag(entry, 'title') ?? ''),
-      url,
-      // hqdefault (480×360) is 16:9 content letterboxed in 4:3; a 16:9 object-fit crop removes the bars.
+      // Canonical links built from the id; the feed's own link is only used to detect Shorts.
+      url: isShort ? `https://www.youtube.com/shorts/${id}` : `https://www.youtube.com/watch?v=${id}`,
+      isShort,
+      // hqdefault (480×360): for a video, 16:9 letterboxed in 4:3 → crop 16:9; for a Short, the vertical
+      // frame centred on a blurred fill → crop 9:16. Small file, same URL pattern for both.
       thumbnail: { url: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`, width: 480, height: 360 },
       publishedAt,
     })
@@ -90,7 +101,7 @@ export function parseYouTubeFeed(xml: string, limit = 3): SocialPost[] {
 // ---- fetch ---------------------------------------------------------------------------------------
 
 /** Latest uploads. Never throws: any failure returns `{ status: 'error', posts: [] }` and logs once. */
-export async function getYouTubeLatest(limit = 3): Promise<SocialFeed> {
+export async function fetchYouTubeLatest(limit = 3): Promise<SocialFeed> {
   try {
     const res = await fetch(YOUTUBE_FEED_URL, {
       next: { revalidate: REVALIDATE_SECONDS, tags: ['social'] },
@@ -104,3 +115,9 @@ export async function getYouTubeLatest(limit = 3): Promise<SocialFeed> {
     return { status: 'error', posts: [] }
   }
 }
+
+/**
+ * Memoised per server render: the hero strip and the lower section share one call (and Next's data
+ * cache shares the HTTP response across renders for `revalidate` seconds).
+ */
+export const getYouTubeLatest = cache(fetchYouTubeLatest)

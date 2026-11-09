@@ -3,7 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { formatRelative } from '@/components/format'
 import {
   decodeXmlEntities,
-  getYouTubeLatest,
+  fetchYouTubeLatest,
+  isShortsLink,
   parseYouTubeFeed,
   toISTString,
   trimText,
@@ -55,6 +56,7 @@ describe('parseYouTubeFeed', () => {
       id: 'AAAAAAAAAA2',
       title: '[सबसे नया वीडियो]',
       url: 'https://www.youtube.com/shorts/AAAAAAAAAA2',
+      isShort: true,
       thumbnail: { url: 'https://i.ytimg.com/vi/AAAAAAAAAA2/hqdefault.jpg', width: 480, height: 360 },
       publishedAt: '2026-11-09T11:09:48+05:30',
     })
@@ -83,6 +85,32 @@ describe('parseYouTubeFeed', () => {
   })
 })
 
+describe('Shorts detection', () => {
+  it('detects /shorts/ links on youtube.com only', () => {
+    expect(isShortsLink('https://www.youtube.com/shorts/AAAAAAAAAA2')).toBe(true)
+    expect(isShortsLink('https://youtube.com/shorts/AAAAAAAAAA2?feature=share')).toBe(true)
+    expect(isShortsLink('https://m.youtube.com/shorts/AAAAAAAAAA2')).toBe(true)
+    expect(isShortsLink('https://www.youtube.com/watch?v=AAAAAAAAAA1')).toBe(false)
+    expect(isShortsLink('https://evil.example/shorts/AAAAAAAAAA2')).toBe(false)
+    expect(isShortsLink('https://notyoutube.com/shorts/AAAAAAAAAA2')).toBe(false)
+    expect(isShortsLink(undefined)).toBe(false)
+    expect(isShortsLink('not a url')).toBe(false)
+  })
+
+  it('marks Shorts and builds canonical links from the id', () => {
+    const posts = parseYouTubeFeed(
+      feed(
+        entry('AAAAAAAAAB1', '[short]', '2026-11-09T02:00:00+00:00', 'https://youtube.com/shorts/AAAAAAAAAB1?si=x'),
+        entry('AAAAAAAAAB2', '[video]', '2026-11-09T01:00:00+00:00'),
+      ),
+    )
+    expect(posts.map((p) => [p.isShort, p.url])).toEqual([
+      [true, 'https://www.youtube.com/shorts/AAAAAAAAAB1'],
+      [false, 'https://www.youtube.com/watch?v=AAAAAAAAAB2'],
+    ])
+  })
+})
+
 describe('helpers', () => {
   it('decodes XML entities', () => {
     expect(decodeXmlEntities('a &amp; b &lt;c&gt; &#39;d&#x27; &apos;')).toBe("a & b <c> 'd' '")
@@ -105,13 +133,13 @@ describe('helpers', () => {
   })
 })
 
-describe('getYouTubeLatest', () => {
+describe('fetchYouTubeLatest', () => {
   afterEach(() => vi.unstubAllGlobals())
 
   it('never throws: network error → error status, one [social] warning', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('boom')))
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    await expect(getYouTubeLatest(3)).resolves.toEqual({ status: 'error', posts: [] })
+    await expect(fetchYouTubeLatest(3)).resolves.toEqual({ status: 'error', posts: [] })
     expect(warn).toHaveBeenCalledTimes(1)
     expect(warn.mock.calls[0][0]).toMatch(/^\[social\]/)
     warn.mockRestore()
@@ -120,18 +148,18 @@ describe('getYouTubeLatest', () => {
   it('HTTP error → error status', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('nope', { status: 500 })))
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    await expect(getYouTubeLatest(3)).resolves.toEqual({ status: 'error', posts: [] })
+    await expect(fetchYouTubeLatest(3)).resolves.toEqual({ status: 'error', posts: [] })
     warn.mockRestore()
   })
 
   it('uses the cache settings and a timeout', async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(FIXTURE, { status: 200 }))
     vi.stubGlobal('fetch', fetchMock)
-    const feedResult = await getYouTubeLatest(2)
+    const feedResult = await fetchYouTubeLatest(2)
     expect(feedResult.status).toBe('ok')
     expect(feedResult.posts).toHaveLength(2)
     const init = fetchMock.mock.calls[0][1]
-    expect(init.next).toEqual({ revalidate: 900, tags: ['social'] })
+    expect(init.next).toEqual({ revalidate: 300, tags: ['social'] })
     expect(init.signal).toBeInstanceOf(AbortSignal)
   })
 })

@@ -3,6 +3,7 @@ import { getYouTubeLatest, YOUTUBE_CHANNEL_URL } from '@/lib/social'
 import { formatRelative } from './format'
 import { YouTubeIcon } from './Icon'
 import styles from './YouTubeSection.module.css'
+import { YouTubeThumb } from './YouTubeThumb'
 
 const YOUTUBE_RED = '#FF0000' // platform colour, used on the icon only
 
@@ -12,7 +13,7 @@ const YOUTUBE_RED = '#FF0000' // platform colour, used on the icon only
  * empty feed it shows the subscribe button and a short message instead of empty boxes.
  */
 export async function YouTubeSection({ channelUrl = YOUTUBE_CHANNEL_URL }: { channelUrl?: string }) {
-  const feed = await getYouTubeLatest(3)
+  const feed = await getYouTubeLatest(3) // same memoised call as the hero strip
   return (
     <section className={styles.section} aria-labelledby="yt-title">
       <header className={styles.head}>
@@ -33,21 +34,7 @@ export async function YouTubeSection({ channelUrl = YOUTUBE_CHANNEL_URL }: { cha
           {feed.posts.map((post) => (
             <li key={post.id}>
               <a href={post.url} target="_blank" rel="noopener" className={styles.card}>
-                <span className={styles.thumb}>
-                  {post.thumbnail && (
-                    // Plain <img>: external host, tiny file, fixed 16:9 box → no layout shift.
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={post.thumbnail.url}
-                      width={post.thumbnail.width}
-                      height={post.thumbnail.height}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                      referrerPolicy="no-referrer"
-                    />
-                  )}
-                </span>
+                <YouTubeThumb post={post} className={post.isShort ? styles.thumbShort : styles.thumbVideo} />
                 <span className={styles.text}>
                   <span className={styles.postTitle}>{post.title || 'YouTube वीडियो'}</span>
                   <time className={styles.time} dateTime={post.publishedAt}>

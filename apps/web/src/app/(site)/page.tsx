@@ -7,7 +7,9 @@ import { WhatsAppChannelBanner } from '@/components/ArticleExtras'
 import { SectionBlock } from '@/components/SectionBlock'
 import { VideoCard } from '@/components/VideoCard'
 import { YouTubeSection } from '@/components/YouTubeSection'
+import { YouTubeStrip } from '@/components/YouTubeStrip'
 import { getHome, getSiteSettings } from '@/lib/mock'
+import { getYouTubeLatest, YOUTUBE_CHANNEL_URL } from '@/lib/social'
 
 import styles from './home.module.css'
 
@@ -19,17 +21,33 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const [home, settings] = await Promise.all([getHome(), getSiteSettings()])
+  // getYouTubeLatest is memoised per render, so the lower YouTubeSection reuses this same fetch.
+  const [home, settings, youtube] = await Promise.all([getHome(), getSiteSettings(), getYouTubeLatest(3)])
   const [lead, ...featured] = home.featured.length ? home.featured : home.latest
   const latest = home.latest.slice(0, 6)
+  const youtubeUrl = settings.social.find((s) => s.platform === 'youtube')?.url ?? YOUTUBE_CHANNEL_URL
+  const hasStrip = youtube.posts.length > 0 // feed failed → no strip, no empty space
 
   return (
     <div className="container">
       <h1 className="visually-hidden">लोक Lens न्यूज़ — ताज़ा खबरें</h1>
 
-      <div className={styles.top}>
-        <section className={styles.featured} aria-label="मुख्य खबरें">
+      {/*
+        Hero grid. Mobile order: lead → YouTube strip → secondary → latest.
+        Desktop (≥1024): lead | strip on top of the right column, then secondary | latest.
+      */}
+      <div className={`${styles.top} ${hasStrip ? styles.withStrip : ''}`}>
+        <div className={styles.lead}>
           {lead && <ArticleCard article={lead} variant="hero" priority headingLevel="h2" />}
+        </div>
+
+        {hasStrip && (
+          <div className={styles.strip}>
+            <YouTubeStrip posts={youtube.posts} channelUrl={youtubeUrl} />
+          </div>
+        )}
+
+        <section className={styles.featured} aria-label="मुख्य खबरें">
           <div className={styles.secondary}>
             {featured.slice(0, 2).map((a) => (
               <ArticleCard key={a.id} article={a} variant="large" />
@@ -77,7 +95,7 @@ export default async function HomePage() {
         ))}
       </div>
 
-      <YouTubeSection channelUrl={settings.social.find((s) => s.platform === 'youtube')?.url} />
+      <YouTubeSection channelUrl={youtubeUrl} />
 
       {home.videos.length > 0 && (
         <section className={styles.videoBand} aria-labelledby="videos-title">

@@ -46,7 +46,7 @@
   text-align: center;
 }
 
-/* Mobile: stacked list cards (thumb left). ≥768px: 3 columns, thumb on top. */
+/* Mobile: stacked list cards. ≥768px: 3 columns. Thumb on the left at every width. */
 .list {
   list-style: none;
   padding: 0;
@@ -65,19 +65,15 @@
   color: var(--color-brand);
 }
 
-.thumb {
+/* Thumb left; width depends on shape so Shorts (9:16) stay compact. */
+.thumbShort {
   flex: none;
-  width: 136px;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--color-surface);
+  width: 96px;
 }
 
-.thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.thumbVideo {
+  flex: none;
+  width: 160px;
 }
 
 .text {
@@ -116,11 +112,11 @@
     gap: var(--space-5);
   }
 
-  .card {
-    flex-direction: column;
+  .thumbShort {
+    width: 112px;
   }
 
-  .thumb {
-    width: 100%;
+  .thumbVideo {
+    width: 168px;
   }
 }
