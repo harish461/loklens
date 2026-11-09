@@ -23,7 +23,8 @@ const getReducedServer = () => false
 /**
  * Hero carousel of the latest stories. All slides are rendered on the server and stacked in one grid
  * cell, so the page is complete without JS and switching slides never changes the layout height.
- * The first slide's image is the priority (LCP) image. Controls are hidden when scripting is off.
+ * Previous/next arrows sit on the image. Auto-advances every 6 s; paused on hover/focus and under
+ * reduced motion. Swipe and arrow keys work too. The first slide's image is the LCP (priority) image.
  */
 export function HeroCarousel({ articles }: { articles: Card[] }) {
   const [index, setIndex] = useState(0)
@@ -36,7 +37,6 @@ export function HeroCarousel({ articles }: { articles: Card[] }) {
 
   const go = (next: number) => setIndex(((next % count) + count) % count)
 
-  // Auto-advance every AUTO_MS; paused on hover/focus and under reduced motion.
   useIntervalWhen(!paused && count > 1, AUTO_MS, () => setIndex((i) => (i + 1) % count))
 
   return (
@@ -81,35 +81,11 @@ export function HeroCarousel({ articles }: { articles: Card[] }) {
       </div>
 
       {count > 1 && (
-        <div className={styles.controls}>
-          <button
-            type="button"
-            className={styles.arrow}
-            onClick={() => go(index - 1)}
-            aria-label="पिछली खबर"
-          >
+        <div className={styles.arrows}>
+          <button type="button" className={`${styles.arrow} ${styles.prev}`} onClick={() => go(index - 1)} aria-label="पिछली खबर">
             <Icon name="chevronLeft" size={22} />
           </button>
-          <div className={styles.dots}>
-            {articles.map((a, i) => (
-              <button
-                key={a.id}
-                type="button"
-                className={`${styles.dot} ${i === index ? styles.dotActive : ''}`}
-                onClick={() => go(i)}
-                aria-label={`खबर ${i + 1} दिखाएं`}
-                aria-current={i === index ? 'true' : undefined}
-              >
-                <span aria-hidden="true" />
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            className={styles.arrow}
-            onClick={() => go(index + 1)}
-            aria-label="अगली खबर"
-          >
+          <button type="button" className={`${styles.arrow} ${styles.next}`} onClick={() => go(index + 1)} aria-label="अगली खबर">
             <Icon name="chevronRight" size={22} />
           </button>
         </div>
@@ -117,7 +93,6 @@ export function HeroCarousel({ articles }: { articles: Card[] }) {
     </section>
   )
 }
-
 
 /** Runs fn every ms while active; the latest fn is kept in a ref so the timer is not reset on re-render. */
 function useIntervalWhen(active: boolean, ms: number, fn: () => void) {

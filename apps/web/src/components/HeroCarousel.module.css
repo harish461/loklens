@@ -27,80 +27,75 @@
   opacity: 1;
 }
 
-/* Without JavaScript the controls do nothing, so hide them (the first slide still shows). */
-.controls {
+/*
+ * Arrows sit on the image, vertically centred. The overlay box is exactly the image box: 16:9 on phones
+ * (the image is full width), and the same fixed height as the image on desktop.
+ */
+.arrows {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  aspect-ratio: 16 / 9;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-
-@media (scripting: none) {
-  .controls {
-    display: none;
-  }
+  padding-inline: var(--space-2);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .arrow {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: var(--touch);
-  height: var(--touch);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-btn);
-  background: #fff;
-  color: var(--color-ink);
-  box-shadow: var(--shadow-1);
-  cursor: pointer;
-}
-
-.arrow:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-}
-
-.dots {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.dot {
+  pointer-events: auto;
   display: grid;
   place-items: center;
   width: var(--touch);
   height: var(--touch);
   padding: 0;
   border: 0;
-  background: transparent;
+  border-radius: var(--radius-pill);
+  background: #fff;
+  color: var(--color-ink);
+  box-shadow: 0 2px 8px rgba(22, 24, 29, 0.22);
   cursor: pointer;
 }
 
-.dot span {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border-radius: var(--radius-pill);
-  background: #c3c8d0;
-  transition: width 200ms ease, background-color 200ms ease;
+.arrow:hover {
+  color: var(--color-brand);
 }
 
-.dot:hover span {
-  background: var(--color-muted);
+.arrow:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 2px;
 }
 
-.dotActive span,
-.dotActive:hover span {
-  width: 24px;
-  background: var(--color-brand);
+/* Without JavaScript the arrows do nothing, so they are hidden (the first slide still shows). */
+@media (scripting: none) {
+  .arrows {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .slide,
-  .dot span {
+  .slide {
     transition: none;
+  }
+}
+
+/* Desktop: keep the whole slide (image, headline, summary, meta) inside the first screen. The image
+   height scales with the viewport and is capped; object-fit: cover keeps it framed. */
+@media (min-width: 1024px) {
+  .root {
+    --media-h: clamp(200px, 34vh, 340px);
+  }
+
+  .root .slide img {
+    aspect-ratio: auto;
+    height: var(--media-h);
+  }
+
+  .arrows {
+    aspect-ratio: auto;
+    height: var(--media-h);
   }
 }
