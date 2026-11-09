@@ -159,6 +159,10 @@
     position: sticky;
     top: var(--space-4);
     align-self: start;
+    background: #fff;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
   }
 }
 

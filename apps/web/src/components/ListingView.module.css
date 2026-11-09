@@ -8,12 +8,12 @@
 }
 
 .lead {
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-4);
 }
 
-.list > div + div {
-  border-top: 1px solid var(--color-border);
+.list {
+  display: grid;
+  gap: var(--space-3);
 }
 
 .pageNo {
@@ -46,5 +46,10 @@
 
   .sidebar {
     display: block;
+    background: #fff;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
+    align-self: start;
   }
 }

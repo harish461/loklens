@@ -65,7 +65,7 @@ export function EPaperList({ result, range }: { result: Paginated<EPaper>; range
             <ul className={styles.grid}>
               {result.items.map((e, i) => (
                 <li key={e.date}>
-                  <Link href={`/e-paper/${e.date}`} className={styles.card}>
+                  <Link href={`/e-paper/${e.date}`} className={`${styles.card} card`}>
                     <span className={styles.cardIcon} aria-hidden="true">
                       <Icon name="paper" size={28} />
                     </span>

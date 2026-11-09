@@ -20,6 +20,8 @@
 
 .featuredMore {
   margin-top: var(--space-2);
+  display: grid;
+  gap: var(--space-3);
 }
 
 .sidebar {
@@ -41,10 +43,10 @@
 }
 
 .band {
-  height: 8px;
-  background: var(--color-surface);
+  height: 1px;
+  background: var(--color-border);
   border: 0;
-  margin: var(--space-5) calc(-1 * var(--gutter));
+  margin: var(--space-5) 0;
 }
 
 .sections {
@@ -55,8 +57,10 @@
 .videoBand {
   background: var(--color-ink);
   color: #fff;
-  margin: var(--space-6) calc(-1 * var(--gutter)) 0;
-  padding: var(--space-5) var(--gutter);
+  margin: var(--space-6) 0 0;
+  padding: var(--space-5) var(--space-4);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-2);
 }
 
 .videoHead {
@@ -93,7 +97,7 @@
   gap: var(--space-4);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding-bottom: var(--space-2);
+  padding: 4px 0 12px;
 }
 
 .videoGrid > * {
@@ -168,6 +172,13 @@
 
   .latestDesktop {
     display: block;
+  }
+
+  .sidebar {
+    background: #fff;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
   }
 
   .sections {

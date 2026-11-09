@@ -3,6 +3,10 @@
   font-size: 18px;
   line-height: 32px;
   color: var(--color-ink);
+  background: #fff;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-4) var(--space-4) var(--space-5);
 }
 
 .body > * + * {
@@ -154,5 +158,6 @@
   .body {
     font-size: 19px;
     line-height: 34px;
+    padding: var(--space-6);
   }
 }

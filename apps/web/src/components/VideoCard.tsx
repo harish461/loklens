@@ -9,7 +9,7 @@ import styles from './VideoCard.module.css'
 
 export function VideoCard({ video, tone = 'dark' }: { video: Video; tone?: 'dark' | 'light' }) {
   return (
-    <article className={`${styles.card} ${tone === 'light' ? styles.light : ''}`}>
+    <article className={`${styles.card} ${tone === 'light' ? `${styles.light} card` : ''}`}>
       <div className={styles.media}>
         <NewsImage
           image={video.thumbnail}

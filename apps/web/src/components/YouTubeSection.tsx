@@ -33,7 +33,7 @@ export async function YouTubeSection({ channelUrl = YOUTUBE_CHANNEL_URL }: { cha
         <ul className={styles.list}>
           {feed.posts.map((post) => (
             <li key={post.id}>
-              <a href={post.url} target="_blank" rel="noopener" className={styles.card}>
+              <a href={post.url} target="_blank" rel="noopener" className={`${styles.card} card`}>
                 <YouTubeThumb post={post} className={post.isShort ? styles.thumbShort : styles.thumbVideo} />
                 <span className={styles.text}>
                   <span className={styles.postTitle}>{post.title || 'YouTube वीडियो'}</span>

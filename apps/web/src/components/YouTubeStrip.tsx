@@ -26,7 +26,7 @@ export function YouTubeStrip({ posts, channelUrl }: { posts: SocialPost[]; chann
       <ul className={styles.row}>
         {posts.map((post) => (
           <li key={post.id} className={styles.item}>
-            <a href={post.url} target="_blank" rel="noopener" className={styles.card}>
+            <a href={post.url} target="_blank" rel="noopener" className={`${styles.card} card`}>
               <YouTubeThumb post={post} />
               <span className={styles.cardTitle}>{post.title || 'YouTube वीडियो'}</span>
               <span className="visually-hidden"> (YouTube पर देखें)</span>

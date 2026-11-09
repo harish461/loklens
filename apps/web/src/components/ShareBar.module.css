@@ -48,3 +48,16 @@
     display: none;
   }
 }
+
+.btn {
+  border-radius: var(--radius-btn);
+}
+
+.whatsapp {
+  box-shadow: 0 2px 6px rgba(31, 143, 78, 0.28);
+}
+
+.icon {
+  border-radius: var(--radius-btn);
+  box-shadow: var(--shadow-1);
+}

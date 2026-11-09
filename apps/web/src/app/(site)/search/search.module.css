@@ -48,3 +48,8 @@
 .results > * + * {
   border-top: 1px solid var(--color-border);
 }
+
+.form input,
+.form button {
+  border-radius: var(--radius-btn);
+}

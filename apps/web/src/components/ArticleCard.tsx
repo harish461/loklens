@@ -70,7 +70,7 @@ export function ArticleCard({
 
   if (variant === 'list') {
     return (
-      <article className={`${styles.list} ${thumb === 'left' ? styles.thumbLeft : ''}`}>
+      <article className={`${styles.list} card ${thumb === 'left' ? styles.thumbLeft : ''}`}>
         <div className={styles.listText}>
           {kicker}
           <H className={styles.titleList}>
@@ -89,7 +89,7 @@ export function ArticleCard({
 
   const hero = variant === 'hero'
   return (
-    <article className={hero ? styles.hero : styles.large}>
+    <article className={`${hero ? styles.hero : styles.large} card`}>
       <div className={styles.media}>
         <NewsImage
           image={article.image}

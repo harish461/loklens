@@ -9,7 +9,7 @@ import styles from './Footer.module.css'
 import { NavLink } from './NavLink'
 
 const SOCIAL: Record<string, { label: string; icon: ReactNode }> = {
-  youtube: { label: 'YouTube', icon: <YouTubeIcon size={22} /> },
+  youtube: { label: 'YouTube', icon: <YouTubeIcon size={22} color="#fff" triangle="#16181D" /> },
   facebook: { label: 'Facebook', icon: <FacebookIcon size={22} /> },
   instagram: { label: 'Instagram', icon: <InstagramIcon size={22} /> },
   whatsapp: { label: 'WhatsApp चैनल', icon: <WhatsAppIcon size={22} /> },

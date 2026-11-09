@@ -1,5 +1,8 @@
 .header {
   background: #fff;
+  position: relative;
+  z-index: 20;
+  box-shadow: 0 1px 0 var(--color-border), 0 3px 10px rgba(22, 24, 29, 0.06);
 }
 
 .top {
@@ -95,6 +98,8 @@
   display: flex;
   list-style: none;
   margin: 0 auto;
+  gap: 8px;
+  padding-block: 10px 12px;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -112,26 +117,28 @@
   display: flex;
   align-items: center;
   min-height: var(--touch);
-  padding-inline: var(--space-3);
+  padding-inline: 16px;
   font-weight: 700;
   font-size: 16px;
   white-space: nowrap;
-  border-bottom: 3px solid transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: #fff;
   color: var(--color-ink);
 }
 
-.catList li:first-child .catLink {
-  padding-left: 0;
-}
-
 .catLink[aria-current='page'] {
-  color: var(--color-brand);
-  border-bottom-color: var(--color-brand);
+  color: #fff;
+  background: var(--color-brand);
+  border-color: var(--color-brand);
 }
 
 /* Ticker + breaking strip */
 .ticker {
+  position: relative;
+  z-index: 2;
   background: var(--color-highlight);
+  box-shadow: 0 2px 6px rgba(22, 24, 29, 0.08);
 }
 
 .tickerInner {
@@ -177,8 +184,11 @@
 }
 
 .breaking {
+  position: relative;
+  z-index: 2;
   background: #fff;
   border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 6px rgba(22, 24, 29, 0.06);
 }
 
 .breakingLink {
@@ -327,6 +337,9 @@
   .catLink {
     color: #fff;
     padding-inline: var(--space-4);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
     border-bottom: 0;
     font-size: 17px;
     min-height: 48px;
@@ -354,5 +367,7 @@
   .catList {
     overflow-x: visible;
     flex-wrap: wrap;
+    gap: 0;
+    padding-block: 0;
   }
 }

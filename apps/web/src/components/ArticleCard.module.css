@@ -47,7 +47,7 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-radius: var(--radius);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
   background: var(--color-surface);
 }
 
@@ -71,7 +71,17 @@
 .titleLarge {
   font-size: 18px;
   line-height: 27px;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+/* Card variants: text padded inside the white card. */
+.hero .body,
+.large .body {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+
+.hero .body {
+  padding-bottom: var(--space-5);
 }
 
 /* list: text + 4:3 thumbnail */
@@ -79,7 +89,10 @@
   display: flex;
   gap: var(--space-3);
   align-items: flex-start;
-  padding-block: var(--space-3);
+  padding: var(--space-3);
+  background: #fff;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-1);
 }
 
 .thumbLeft {
@@ -100,7 +113,7 @@
   width: 104px;
   height: 78px;
   object-fit: cover;
-  border-radius: var(--radius);
+  border-radius: 10px;
   background: var(--color-surface);
 }
 
