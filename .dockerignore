@@ -1,0 +1,7 @@
+.git
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+apps/web/media
+apps/web/.next/cache
