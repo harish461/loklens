@@ -31,7 +31,7 @@
   border-radius: var(--radius);
   background: var(--color-brand);
   color: #fff;
-  font-weight: 700;
+  font-weight: 500;
   cursor: pointer;
 }
 
@@ -41,7 +41,7 @@
 
 .count {
   color: var(--color-muted);
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: var(--space-2);
 }
 

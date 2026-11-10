@@ -32,8 +32,8 @@
   color: #fff;
   font-size: 12px;
   line-height: 18px;
-  font-weight: 700;
-  font-family: system-ui, sans-serif;
+  font-weight: 500;
+  font-family: var(--font-sans);
 }
 
 /* Play badge, centred on the thumbnail (Live news row). */

@@ -16,7 +16,7 @@
   gap: var(--space-2);
   font-size: 18px;
   line-height: 26px;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .subscribe {
@@ -26,7 +26,7 @@
   padding-inline: var(--space-2);
   margin-right: calc(-1 * var(--space-2));
   color: var(--color-brand);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 15px;
   white-space: nowrap;
 }
@@ -65,7 +65,7 @@
   margin-top: var(--space-2);
   font-size: 14px;
   line-height: 21px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--color-ink);
 }
 

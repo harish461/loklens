@@ -141,3 +141,9 @@ export const getYouTubeVideos = async (limit = 3): Promise<SocialFeed> => {
   const feed = await getFeedAll()
   return { status: feed.status, posts: feed.posts.filter((p) => !p.isShort).slice(0, limit) }
 }
+
+/** Memoised per server render: newest Shorts only (links to /shorts/). Empty when the feed has none. */
+export const getYouTubeShorts = async (limit = 3): Promise<SocialFeed> => {
+  const feed = await getFeedAll()
+  return { status: feed.status, posts: feed.posts.filter((p) => p.isShort).slice(0, limit) }
+}

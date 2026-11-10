@@ -1,0 +1,122 @@
+/* Full-width Shorts row. Phones scroll sideways; desktop shows the cards in one row at a capped width. */
+
+.section {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-2);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.subscribe {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  color: var(--color-brand);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.subscribe:hover {
+  text-decoration: underline;
+}
+
+.row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 42%;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--space-2);
+}
+
+.row > li {
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--color-ink);
+  text-decoration: none;
+  min-width: 0;
+}
+
+.card:hover .cardTitle {
+  text-decoration: underline;
+  color: var(--color-brand);
+}
+
+.cardTitle {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--color-ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.time {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-muted);
+}
+
+/* Compact variant (right column): three across, narrow thumbnails, short titles, no date line. */
+.compact .row {
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: visible;
+  gap: var(--space-2);
+  padding-bottom: 0;
+}
+
+.compact .cardTitle {
+  font-size: 12px;
+  line-height: 16px;
+  -webkit-line-clamp: 2;
+}
+
+.compact .time {
+  display: none;
+}
+
+.compact .head {
+  margin-bottom: 0;
+}
+
+@media (min-width: 768px) {
+  .row {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 200px));
+    justify-content: start;
+    overflow: visible;
+  }
+}

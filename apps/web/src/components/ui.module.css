@@ -57,7 +57,7 @@
 
 .pagerStatus {
   color: var(--color-muted);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .pagerLinks {
@@ -73,13 +73,13 @@
   min-height: var(--touch);
   padding: 0 var(--space-4);
   border-radius: var(--radius);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .btnPrimary {
   background: var(--color-brand);
   color: #fff;
-  box-shadow: 0 2px 6px rgba(196, 29, 23, 0.28);
+  box-shadow: 0 2px 6px rgba(12, 84, 141, 0.28);
 }
 
 .btnPrimary:hover {
@@ -115,7 +115,7 @@
   padding: 0 var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 15px;
 }
 
@@ -152,7 +152,7 @@
 }
 
 .waTitle {
-  font-weight: 800;
+  font-weight: 500;
   font-size: 17px;
   line-height: 26px;
 }
@@ -171,7 +171,7 @@
   border-radius: var(--radius-btn);
   background: var(--color-whatsapp);
   color: #fff;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .waBtn:hover {
@@ -190,7 +190,7 @@
 .pageTitle {
   font-size: 26px;
   line-height: 36px;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .pageDesc {
@@ -201,7 +201,7 @@
 .sectionTitle {
   font-size: 20px;
   line-height: 28px;
-  font-weight: 800;
+  font-weight: 500;
   margin-bottom: var(--space-2);
 }
 

@@ -21,7 +21,7 @@
 .title {
   font-size: 26px;
   line-height: 36px;
-  font-weight: 800;
+  font-weight: 500;
   margin-top: var(--space-1);
 }
 
@@ -57,13 +57,13 @@
   place-items: center;
   background: var(--color-brand);
   color: #fff;
-  font-weight: 800;
+  font-weight: 500;
   font-size: 15px;
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
 .authors {
-  font-weight: 700;
+  font-weight: 500;
   color: var(--color-ink);
 }
 
@@ -114,7 +114,7 @@
 .sideTitle {
   font-size: 20px;
   line-height: 28px;
-  font-weight: 800;
+  font-weight: 500;
   padding-bottom: var(--space-2);
   border-bottom: 2px solid var(--color-ink);
 }

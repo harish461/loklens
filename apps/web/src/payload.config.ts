@@ -39,6 +39,12 @@ export default buildConfig({
     user: Users.slug,
     meta: { titleSuffix: ' – LokLens News Admin' },
     importMap: { baseDir: path.resolve(dirname) },
+    components: {
+      // LokLens dashboard (read-only numbers, see components/admin). Replaces Payload's default home view only.
+      views: { dashboard: { Component: '@/components/admin/DashboardView#DashboardView' } },
+      // LokLens sidebar (UI only): same Payload links, built from the visible entities, so access still applies.
+      Nav: '@/components/admin/AdminNav#AdminNav',
+    },
   },
   collections: [Articles, Categories, Tags, Locations, Media, Videos, EPapers, Pages, Redirects, Users],
   globals: [SiteSettings, Navigation, Ticker],

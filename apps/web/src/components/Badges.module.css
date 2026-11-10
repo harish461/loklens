@@ -3,7 +3,7 @@
   color: var(--color-brand);
   font-size: 13px;
   line-height: 20px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 a.category:hover {
@@ -18,7 +18,7 @@ a.category:hover {
   color: var(--color-ink);
   font-size: 13px;
   line-height: 20px;
-  font-weight: 800;
+  font-weight: 500;
   padding: 2px 8px;
   border-radius: var(--radius-badge);
 }
@@ -29,7 +29,7 @@ a.category:hover {
   gap: 6px;
   color: var(--color-live);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .dot {

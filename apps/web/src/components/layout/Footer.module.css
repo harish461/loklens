@@ -1,14 +1,14 @@
 .footer {
   background: var(--color-ink);
   color: #fff;
-  margin-top: var(--space-8);
+  margin-top: var(--space-6);
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-5) var(--space-4);
-  padding-block: var(--space-6);
+  gap: var(--space-4) var(--space-4);
+  padding-block: var(--space-4);
 }
 
 .about {
@@ -29,7 +29,7 @@
 
 .name {
   font-size: 22px;
-  font-weight: 800;
+  font-weight: 500;
   color: #fff;
 }
 
@@ -49,8 +49,8 @@
 .social a {
   display: grid;
   place-items: center;
-  width: var(--touch);
-  height: var(--touch);
+  width: 36px;
+  height: 36px;
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 50%;
   background: transparent;
@@ -64,23 +64,28 @@
 }
 
 .colTitle {
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 500;
   color: #fff;
-  margin-bottom: var(--space-1);
+  margin-bottom: 4px;
 }
 
+/* Links wrap into a few rows instead of one long stacked list, which keeps the footer short. */
 .col ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .col a {
   display: inline-flex;
   align-items: center;
-  min-height: var(--touch);
+  min-height: 32px;
   color: #e6e8ec;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .col a:hover {
@@ -90,8 +95,8 @@
 
 .copy {
   border-top: 1px solid rgba(255, 255, 255, 0.14);
-  padding-block: var(--space-4);
-  font-size: 14px;
+  padding-block: var(--space-3);
+  font-size: 13px;
   color: #b8bec9;
 }
 
@@ -123,7 +128,7 @@
   gap: 2px;
   height: var(--bottom-nav-h);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-muted);
 }
 
@@ -138,6 +143,10 @@
 @media (min-width: 768px) {
   .grid {
     grid-template-columns: 2fr repeat(3, 1fr);
+  }
+
+  .grid {
+    padding-block: var(--space-5);
   }
 
   .about {

@@ -36,7 +36,11 @@ const extractYouTubeId: FieldHook = ({ value }) => parseYouTubeId(value) ?? valu
 export const Videos: CollectionConfig = {
   slug: 'videos',
   labels: { singular: 'Video', plural: 'Videos' },
-  admin: { useAsTitle: 'title', defaultColumns: ['title', 'youtubeId', '_status', 'publishedAt'], group: 'Content' },
+  admin: {
+    useAsTitle: 'title',
+    defaultColumns: ['title', 'youtubeId', '_status', 'publishedAt', 'deleteRow'],
+    group: 'Content',
+  },
   defaultSort: '-publishedAt',
   access: {
     read: publishedOrStaff,
@@ -52,6 +56,13 @@ export const Videos: CollectionConfig = {
     afterDelete: videoRevalidation.afterDelete,
   },
   fields: [
+    // Virtual column: a trash icon per row in the list view (no database column).
+    {
+      name: 'deleteRow',
+      type: 'ui',
+      label: 'Delete',
+      admin: { components: { Cell: '@/components/admin/DeleteRowCell#DeleteRowCell' } },
+    },
     { name: 'title', type: 'text', required: true, maxLength: 200 },
     slugField({ from: 'title', description: 'URL: /video/{slug}.' }),
     {

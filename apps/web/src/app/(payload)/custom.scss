@@ -1,1 +1,173 @@
-/* Admin style overrides (Payload). */
+/*
+ * LokLens admin: light dashboard styling (design only, see docs/design/admin-reference-dashboard.png).
+ * Styles only: no component, field, access or routing changes. Payload's own theme variables are used
+ * where they exist; LokLens red (#0c548d) is the accent. Payload wraps its styles in a cascade layer,
+ * so these unlayered rules win without !important.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Admin font: Montserrat, used by Payload's own components via --font-body (public site stays on Mukta). */
+  --font-body: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --lokloens-red: #0c548d;
+  --lokloens-red-dark: #093f6b;
+  --lokloens-canvas: #f4f5f8;
+  --lokloens-card: #ffffff;
+  --lokloens-line: #e6e8ee;
+  --lokloens-muted: #5b6270;
+  --lokloens-shadow: 0 1px 2px rgba(22, 24, 29, 0.05), 0 4px 14px rgba(22, 24, 29, 0.06);
+  --lokloens-radius: 12px;
+
+  /* Payload theme variables: light canvas, neutral surfaces, LokLens accent. */
+  --theme-bg: var(--lokloens-canvas);
+  --theme-input-bg: #ffffff;
+  --theme-border-color: var(--lokloens-line);
+  --theme-success-500: #1f8f4e;
+  --theme-error-500: var(--lokloens-red);
+  --style-radius-s: 8px;
+  --style-radius-m: 10px;
+  --style-radius-l: var(--lokloens-radius);
+}
+
+/* Canvas and text */
+html,
+body {
+  background: var(--lokloens-canvas);
+  font-family: var(--font-body);
+}
+
+button,
+input,
+select,
+textarea,
+table {
+  font-family: var(--font-body);
+}
+
+/* Top bar: white, soft shadow, search and avatar */
+.app-header {
+  background: var(--lokloens-card);
+  box-shadow: 0 1px 0 var(--lokloens-line), 0 2px 10px rgba(22, 24, 29, 0.04);
+}
+
+/* Left sidebar: white panel, red active item */
+.nav {
+  background: var(--lokloens-card);
+  border-right: 1px solid var(--lokloens-line);
+}
+
+.nav-group__toggle,
+.nav-group__title {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--lokloens-muted);
+}
+
+.nav__link.active,
+.nav__link[aria-current='page'] {
+  background: rgba(12, 84, 141, 0.08);
+  color: var(--lokloens-red);
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* Cards and panels: rounded, soft shadow */
+.card,
+.collection-list,
+.edit-view,
+.dashboard__card,
+.collection-edit__main,
+.collection-edit__sidebar,
+.doc-controls,
+.table-wrap,
+.render-fields > .field-type,
+.collection-list .table-wrap {
+  background: var(--lokloens-card);
+  border-radius: var(--lokloens-radius);
+  box-shadow: var(--lokloens-shadow);
+}
+
+.card {
+  border: 0;
+}
+
+.card:hover {
+  box-shadow: 0 2px 6px rgba(22, 24, 29, 0.07), 0 10px 24px rgba(22, 24, 29, 0.08);
+}
+
+/* Tables: clean header row, muted labels, comfortable rows */
+.table table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead th,
+.table th {
+  color: var(--lokloens-muted);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #fafbfc;
+}
+
+.table tbody tr {
+  transition: background-color 120ms ease;
+}
+
+.table tbody tr:hover {
+  background: #fbf5f5;
+}
+
+.table td {
+  padding-block: 12px;
+}
+
+/* Buttons: rounded, LokLens red for primary actions */
+.btn {
+  border-radius: 10px;
+}
+
+.btn--style-primary,
+.btn--style-primary.btn--appearance-primary {
+  background: var(--lokloens-red);
+  border-color: var(--lokloens-red);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(12, 84, 141, 0.28);
+}
+
+.btn--style-primary:hover {
+  background: var(--lokloens-red-dark);
+  border-color: var(--lokloens-red-dark);
+}
+
+/* Inputs: rounded and softly outlined, red focus ring */
+input,
+textarea,
+select {
+  border-radius: 8px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid rgba(12, 84, 141, 0.35);
+  outline-offset: 1px;
+}
+
+/* Login page: same card treatment */
+.login__form,
+.template-minimal .login {
+  background: var(--lokloens-card);
+  border-radius: var(--lokloens-radius);
+  box-shadow: var(--lokloens-shadow);
+}
+
+/* Narrow screens: keep the canvas and cards without horizontal overflow */
+@media (max-width: 768px) {
+  .collection-list,
+  .table-wrap {
+    border-radius: 10px;
+  }
+}

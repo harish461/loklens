@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Mukta } from 'next/font/google'
+import { Montserrat, Noto_Sans_Devanagari } from 'next/font/google'
 import type { ReactNode } from 'react'
 
 import { Footer, BottomNav } from '@/components/layout/Footer'
@@ -9,11 +9,19 @@ import { getHome, getSiteSettings, listCategories } from '@/lib/data'
 
 import './globals.css'
 
-const mukta = Mukta({
-  subsets: ['devanagari', 'latin'],
-  weight: ['400', '500', '600', '700', '800'],
+// Montserrat is the site font. It has no Devanagari glyphs, so Hindi text falls back to Noto Sans Devanagari.
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['400', '500'],
   display: 'swap',
-  variable: '--font-mukta',
+  variable: '--font-montserrat',
+})
+
+const notoDevanagari = Noto_Sans_Devanagari({
+  subsets: ['devanagari'],
+  weight: ['400', '500'],
+  display: 'swap',
+  variable: '--font-devanagari',
 })
 
 // TODO(seo): replace with the src/lib/seo site defaults (metadataBase, title template, OG, verification).
@@ -23,7 +31,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#C41D17',
+  themeColor: '#0c548d',
   width: 'device-width',
   initialScale: 1,
 }
@@ -34,7 +42,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     ? settings.navigation.header
     : categories.map((c) => ({ label: c.name, url: `/${c.slug}` }))
   return (
-    <html lang="hi" className={mukta.variable}>
+    <html lang="hi" className={`${montserrat.variable} ${notoDevanagari.variable}`}>
       <body>
         <a href="#main" className="skip-link">
           मुख्य सामग्री पर जाएं

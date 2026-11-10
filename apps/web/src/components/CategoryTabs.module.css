@@ -1,0 +1,80 @@
+/* Home category tabs: a pill per category, and three story cards in the panel beneath. */
+
+.wrap {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding-inline: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tab:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+.tabOn,
+.tabOn:hover {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #fff;
+}
+
+.panel {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.cards {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.more {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  color: var(--color-brand);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.more:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

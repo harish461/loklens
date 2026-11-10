@@ -16,19 +16,19 @@
 .body h2 {
   font-size: 22px;
   line-height: 32px;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .body h3 {
   font-size: 20px;
   line-height: 30px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .body h4 {
   font-size: 18px;
   line-height: 28px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .body ul,
@@ -55,7 +55,7 @@
   padding: var(--space-1) 0 var(--space-1) var(--space-4);
   font-size: 20px;
   line-height: 32px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-text-2);
 }
 
@@ -102,7 +102,7 @@
   background: linear-gradient(135deg, #2a1414, var(--color-ink));
   color: #fff;
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 500;
   cursor: pointer;
 }
 
@@ -135,7 +135,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   text-decoration: none !important;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .related {
@@ -150,7 +150,7 @@
 
 .relatedLabel {
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--color-brand);
 }
 

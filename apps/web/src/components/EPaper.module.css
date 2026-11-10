@@ -2,7 +2,7 @@
   display: grid;
   gap: var(--space-1);
   margin-bottom: var(--space-5);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .jumpRow {
@@ -74,7 +74,7 @@
 }
 
 .cardDate {
-  font-weight: 700;
+  font-weight: 500;
   font-size: 17px;
   line-height: 26px;
 }
@@ -89,7 +89,7 @@
   background: var(--color-breaking-bg);
   color: var(--color-ink);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 500;
   padding: 2px 8px;
   border-radius: var(--radius-badge);
 }

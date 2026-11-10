@@ -30,7 +30,7 @@ export const Articles: CollectionConfig = {
   labels: { singular: 'Article', plural: 'Articles' },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'category', '_status', 'publishedAt', 'isBreaking'],
+    defaultColumns: ['title', 'category', '_status', 'publishedAt', 'isBreaking', 'deleteRow'],
     listSearchableFields: ['title', 'summary', 'slug'],
     group: 'Content',
     // Draft preview (architecture §4). The /api/preview route enables draftMode after checking the secret.
@@ -60,6 +60,13 @@ export const Articles: CollectionConfig = {
     afterDelete: [revalidateArticleAfterDelete],
   },
   fields: [
+    // Virtual column: a trash icon per row in the list view (no database column).
+    {
+      name: 'deleteRow',
+      type: 'ui',
+      label: 'Delete',
+      admin: { components: { Cell: '@/components/admin/DeleteRowCell#DeleteRowCell' } },
+    },
     {
       name: 'title',
       type: 'text',
