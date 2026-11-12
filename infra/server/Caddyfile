@@ -1,5 +1,15 @@
 # HTTPS for the domain in SITE_HOST (for example dev.loklens.com). Caddy gets and renews the certificate itself.
+# Development server: everything sits behind a shared username/password (basic auth) and is marked noindex,
+# so the unfinished site is not public and never shows up in search engines. Production gets its own file.
+# BASIC_AUTH_USER / BASIC_AUTH_HASH come from apps/web/.env (see DEPLOY-HOSTINGER.md, Step 4).
 {$SITE_HOST} {
 	encode zstd gzip
+
+	header X-Robots-Tag "noindex, nofollow"
+
+	basic_auth {
+		{$BASIC_AUTH_USER} {$BASIC_AUTH_HASH}
+	}
+
 	reverse_proxy app:3000
 }

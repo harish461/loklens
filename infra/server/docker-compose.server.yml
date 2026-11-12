@@ -9,9 +9,9 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in apps/web/.env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in apps/web/.env}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in apps/web/.env}
       TZ: Asia/Kolkata
     # Only the host can reach the database (the host runs migrations and the build). Not public.
     ports:
@@ -47,8 +47,11 @@ services:
     restart: unless-stopped
     depends_on:
       - app
+    # Required: the deploy stops here instead of serving the dev site without its password.
     environment:
-      SITE_HOST: ${SITE_HOST}
+      SITE_HOST: ${SITE_HOST:?Set SITE_HOST in apps/web/.env}
+      BASIC_AUTH_USER: ${BASIC_AUTH_USER:?Set BASIC_AUTH_USER in apps/web/.env}
+      BASIC_AUTH_HASH: ${BASIC_AUTH_HASH:?Set BASIC_AUTH_HASH in apps/web/.env (caddy hash-password)}
     ports:
       - "80:80"
       - "443:443"

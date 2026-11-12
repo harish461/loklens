@@ -55,16 +55,40 @@ nano apps/web/.env
 
 Fill in `apps/web/.env` on the server. Values you must create (never paste them into GitHub or chat):
 
-- `DATABASE_URL=postgres://<user>:<password>@localhost:5432/<db>` (for the host build and migrations)
+- `DATABASE_URL=postgres://<user>:<password>@127.0.0.1:5432/<db>` (for the host build and migrations; same values as the three below)
 - `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_PORT=5432` (used by the database container)
-- `SITE_HOST=dev.loklens.com`
+- `SITE_HOST=dev.loklens.com` (read by Caddy)
 - `NEXT_PUBLIC_SITE_URL=https://dev.loklens.com`
 - `PAYLOAD_SECRET`, `PREVIEW_SECRET`, `REVALIDATE_SECRET`: each one a new random value, for example `openssl rand -hex 32`
+- `BASIC_AUTH_USER` and `BASIC_AUTH_HASH`: the shared login for the whole development site (see below)
 - Cloudflare variables: leave empty unless you set up Cloudflare for this domain.
 
+The server-only variables are listed, commented out, at the end of `.env.example`: uncomment and fill them in.
 Use new secrets for the development server. Do not copy them from your local `.env`.
+The deploy stops with a clear message if `SITE_HOST`, a `POSTGRES_*` value or a `BASIC_AUTH_*` value is missing.
 
-Also add `SITE_HOST=dev.loklens.com` to that file (it is read by Caddy and must be set there).
+### Site password (basic auth)
+
+The whole development site — the public pages, `/admin`, `/reporter` and the API — sits behind one shared
+username and password, and every response carries `X-Robots-Tag: noindex, nofollow` so search engines skip it.
+Visitors type this password once in the browser's pop-up, then use the normal LokLens logins as usual.
+
+1. Choose a username (for example `loklens`) and a strong password, and share them only with the team.
+2. Turn the password into a hash (the command asks for the password, so it does not land in your shell history):
+
+   ```bash
+   docker run --rm -it caddy:2-alpine caddy hash-password
+   ```
+
+3. Put both in `apps/web/.env`. Keep the **single quotes** around the hash: it contains `$` characters, which
+   Docker Compose would otherwise try to expand.
+
+   ```bash
+   BASIC_AUTH_USER=loklens
+   BASIC_AUTH_HASH='$2a$14$...the output from step 2...'
+   ```
+
+To change the password later, repeat steps 2–3 and run `docker compose -f infra/server/docker-compose.server.yml --env-file apps/web/.env up -d caddy`.
 
 Protect the file: `chmod 600 apps/web/.env`.
 
@@ -83,7 +107,9 @@ The first user created in the admin becomes the admin (see `firstUserIsAdmin` in
 
 ## Checklist before reporting "deployed"
 
-- [ ] `https://dev.loklens.com` loads with a valid HTTPS certificate.
+- [ ] `https://dev.loklens.com` asks for the site password, and loads with a valid HTTPS certificate after it.
+- [ ] `curl -sI https://dev.loklens.com` returns `401` (no password) and an `X-Robots-Tag: noindex, nofollow` header.
+- [ ] `/reporter/login` works for a reporter account created under **Reporters** in the admin.
 - [ ] Home page, a category page, an article page and `/search?q=…` all work.
 - [ ] `https://dev.loklens.com/admin` login works; the dashboard loads.
 - [ ] Create, edit and delete a test article; upload an image; check it displays.
@@ -97,5 +123,7 @@ The first user created in the admin becomes the admin (see `firstUserIsAdmin` in
 - **Build needs the database.** The pages are pre-generated from the database, so the deploy script migrates and builds on the host before starting containers. Every deploy needs the database up.
 - **Backups.** Nightly `pg_dump` and a copy of the `media` volume are not set up yet.
 - **Cloudflare** is optional here. Without it, pages are served directly by Caddy (no CDN cache).
-- **Staging login protection** (basic auth or noindex) is not configured yet.
+- **Site password** is for the development server only. Production must not use the dev Caddyfile; it needs
+  its own (no basic auth, no noindex).
+- **Mobile app testing** against this server will need the site password too (basic auth covers `/api`).
 - **Environment label.** Robots should be set to `noindex` on the development domain before real traffic reaches it.
