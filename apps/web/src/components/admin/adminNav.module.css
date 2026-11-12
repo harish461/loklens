@@ -1,178 +1,193 @@
-/* LokLens admin sidebar: light panel, red active pill, blue count badges. Matches the reference layout. */
+/* LokLens Admin Sidebar — Eduplex SaaS Dark Navy & Lime Green Design Language */
+
 .nav {
-  --nav-red: #0c548d;
-  --nav-blue: #1f5fa8;
-  --nav-ink: #16181d;
-  --nav-muted: #5b6270;
-  --nav-tint: rgba(12, 84, 141, 0.08);
+  --sidebar-bg: #1c1b29;
+  --sidebar-surface: #252436;
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-lime: #d5f46a;
+  --sidebar-lime-dark: #c2e54e;
+  --sidebar-coral: #f5a67e;
+  --sidebar-ink-dark: #181725;
+  --sidebar-text: #ffffff;
+  --sidebar-muted: #a2a0b8;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  height: 100%;
-  padding: 16px 12px;
-  background: #fff;
-  color: var(--nav-ink);
-  font-family: var(--font-body), 'Montserrat', system-ui, -apple-system, sans-serif;
-  overflow-y: auto;
+  width: 100%;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 18px 14px 16px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  font-family: var(--font-body), 'Montserrat', 'Noto Sans Devanagari', system-ui, sans-serif;
+  overflow: hidden;
+  border-right: 1px solid rgba(28, 27, 41, 0.08);
+  transition: width 200ms ease, padding 200ms ease;
+  z-index: 40;
 }
 
-.topRow {
-  display: flex;
-  justify-content: flex-start;
-  padding: 4px 8px 0;
-}
-
-.head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 4px 8px 12px;
-}
-
-.logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  flex: none;
-}
-
-.brand {
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--nav-red);
-  white-space: nowrap;
-}
-
-.toggle {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid #e6e8ee;
-  border-radius: 8px;
-  background: #fff;
-  color: var(--nav-muted);
-  cursor: pointer;
-}
-
-.toggle:hover {
-  color: var(--nav-red);
-  border-color: var(--nav-red);
-}
-
-.toggle svg {
-  width: 18px;
-  height: 18px;
-}
-
-.list,
-.sub,
-.foot {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.list {
-  display: grid;
-  gap: 4px;
-}
-
-.sub {
-  display: grid;
-  gap: 2px;
-  padding-left: 12px;
-  margin-top: 2px;
-}
-
-.foot {
-  display: grid;
-  gap: 2px;
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid #e6e8ee;
-}
-
-.group {
-  border-radius: 10px;
-}
-
-.groupTitle {
+.brandHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 40px;
-  padding: 0 10px;
-  border-radius: 10px;
-  color: var(--nav-muted);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  cursor: pointer;
-  list-style: none;
+  gap: 10px;
+  padding: 4px 8px 18px;
+  flex-shrink: 0;
 }
 
-.groupTitle::-webkit-details-marker {
-  display: none;
-}
-
-.chevron {
-  width: 16px;
-  height: 16px;
-  flex: none;
-  transition: transform 160ms ease;
-}
-
-.group[open] .chevron {
-  transform: rotate(180deg);
-}
-
-/* Items: icon, label, optional count. Active = red-tinted pill with red text and icon. */
-.item {
+.brandLink {
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 0 12px;
-  border-radius: 10px;
-  color: var(--nav-ink);
-  font-size: 15px;
+  gap: 11px;
+  text-decoration: none;
+  color: #ffffff;
+  min-width: 0;
+}
+
+.logoRing {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.logoImg {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.brandTextWrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brandTitle {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  line-height: 1.15;
+}
+
+.brandSubtitle {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--sidebar-muted);
+  letter-spacing: 0.02em;
+}
+
+.collapseBtn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  border: 1px solid var(--sidebar-border);
+  background: var(--sidebar-surface);
+  color: var(--sidebar-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 150ms ease;
+}
+
+.collapseBtn:hover {
+  background: var(--sidebar-lime);
+  color: var(--sidebar-ink-dark);
+  border-color: var(--sidebar-lime);
+}
+
+.mobileCloseBtn {
+  display: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid var(--sidebar-border);
+  background: var(--sidebar-surface);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.scrollArea {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+
+.scrollArea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+}
+
+.menuList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.menuItemWrap {
+  margin: 0;
+}
+
+.menuLink {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 40px;
+  padding: 0 13px;
+  border-radius: 999px;
+  color: var(--sidebar-muted);
+  font-size: 13.5px;
   font-weight: 500;
   text-decoration: none;
+  transition: background-color 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
-.item:hover {
-  background: #f4f5f8;
-  color: var(--nav-ink);
+.menuLink:hover {
+  background: var(--sidebar-hover);
+  color: #ffffff;
 }
 
-.item[aria-current='page'] {
-  background: var(--nav-tint);
-  color: var(--nav-red);
-  font-weight: 500;
+/* Signature Eduplex Lime Green Active Pill */
+.menuLinkActive {
+  background: var(--sidebar-lime) !important;
+  color: var(--sidebar-ink-dark) !important;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(213, 244, 106, 0.22);
 }
 
-.letter {
-  display: none;
-  width: 28px;
-  height: 28px;
-  flex: none;
-  border-radius: 8px;
-  background: #f4f5f8;
-  color: var(--nav-muted);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 28px;
-  text-align: center;
+.iconWrap {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
-.item[aria-current='page'] .letter {
-  background: var(--nav-red);
-  color: #fff;
+.navIcon {
+  stroke-width: 2;
 }
 
-.label {
+.menuLabel {
   flex: 1;
   min-width: 0;
   white-space: nowrap;
@@ -181,59 +196,382 @@
 }
 
 .badge {
-  min-width: 22px;
-  padding: 1px 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 21px;
+  height: 20px;
+  padding: 0 6px;
   border-radius: 999px;
-  background: var(--nav-blue);
-  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.badgeCoral {
+  background: var(--sidebar-coral);
+  color: var(--sidebar-ink-dark);
+}
+
+.badgeLime {
+  background: rgba(213, 244, 106, 0.18);
+  color: var(--sidebar-lime);
+}
+
+.menuLinkActive .badgeLime,
+.menuLinkActive .badgeCoral,
+.menuLinkActive .badgeMuted {
+  background: var(--sidebar-ink-dark);
+  color: var(--sidebar-lime);
+}
+
+.badgeMuted {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e1ee;
+}
+
+/* Extra CMS entities collapsible group */
+.extraGroup {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+.extraToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--sidebar-muted);
   font-size: 12px;
-  font-weight: 500;
-  text-align: center;
-  line-height: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 140ms ease, background 140ms ease;
 }
 
-.logout {
+.extraToggle:hover {
+  color: #ffffff;
+  background: var(--sidebar-hover);
+}
+
+.extraTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.extraChevron {
+  transition: transform 160ms ease;
+}
+
+.extraChevronOpen {
+  transform: rotate(180deg);
+}
+
+.extraList {
   list-style: none;
+  margin: 4px 0 0;
+  padding: 0 0 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-/* Collapsed (icons only). The class is set on <html> by AdminNavToggle. */
-:global(html.admin-nav-collapsed) .nav {
-  --nav-collapsed-w: 72px;
+.extraLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: var(--sidebar-muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-decoration: none;
 }
 
-:global(html.admin-nav-collapsed) .label,
-:global(html.admin-nav-collapsed) .brand,
-:global(html.admin-nav-collapsed) .badge,
-:global(html.admin-nav-collapsed) .groupTitle span {
+.extraLink:hover {
+  color: #ffffff;
+  background: var(--sidebar-hover);
+}
+
+.extraLinkActive {
+  color: var(--sidebar-lime);
+  font-weight: 600;
+}
+
+.extraCount {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #d6d5e5;
+}
+
+/* Footer: Eduplex Lime Promo Card + Profile/Logout */
+.footerArea {
+  margin-top: 10px;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.promoCard {
+  position: relative;
+  background: var(--sidebar-lime);
+  color: var(--sidebar-ink-dark);
+  border-radius: 18px;
+  padding: 18px 14px 12px;
+  margin-top: 10px;
+  overflow: visible;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+.promoArrowCircle {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--sidebar-ink-dark);
+  border: 3px solid var(--sidebar-bg);
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  transition: transform 150ms ease, background 150ms ease;
+}
+
+.promoArrowCircle:hover {
+  transform: translateX(-50%) scale(1.08);
+  background: var(--sidebar-ink-dark);
+  color: var(--sidebar-lime);
+}
+
+.promoVisual {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  opacity: 0.55;
+}
+
+.promoLines {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.promoLines span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  border-radius: 99px;
+  background: #5b6d1b;
+}
+
+.promoLines span:nth-child(2) {
+  width: 18px;
+}
+
+.promoBars {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.promoBars span {
+  display: block;
+  width: 22px;
+  height: 5px;
+  border-radius: 3px;
+  background: #87a329;
+}
+
+.promoText {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--sidebar-ink-dark);
+}
+
+.promoText strong {
+  font-weight: 700;
+  font-size: 12.5px;
+}
+
+.profileBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: var(--sidebar-surface);
+  border: 1px solid var(--sidebar-border);
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: #ffffff;
+  min-width: 0;
+  flex: 1;
+}
+
+.profileAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #d5f46a 0%, #9be15d 100%);
+  color: var(--sidebar-ink-dark);
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.profileMeta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.profileName {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profileRole {
+  font-size: 10.5px;
+  color: var(--sidebar-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logoutBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  color: var(--sidebar-muted);
+  text-decoration: none;
+  transition: background 140ms ease, color 140ms ease;
+  flex-shrink: 0;
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.16);
+  color: #fca5a5;
+}
+
+/* Collapsed Desktop Mode */
+.navCollapsed {
+  padding-inline: 10px;
+}
+
+.navCollapsed .brandTextWrap,
+.navCollapsed .menuLabel,
+.navCollapsed .badge,
+.navCollapsed .promoCard,
+.navCollapsed .profileMeta {
   display: none;
 }
 
-:global(html.admin-nav-collapsed) .letter {
-  display: grid;
+.navCollapsed .brandHeader {
+  flex-direction: column;
+  justify-content: center;
+  padding-inline: 0;
+  gap: 8px;
+}
+
+.navCollapsed .menuLink {
+  justify-content: center;
+  padding-inline: 0;
+  width: 42px;
+  height: 42px;
+  margin-inline: auto;
+}
+
+.navCollapsed .profileBar {
+  flex-direction: column;
+  padding: 8px 4px;
+}
+
+/* Mobile Drawer Trigger & Overlay */
+.mobileTrigger {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 60;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(28, 27, 41, 0.12);
+  background: #1c1b29;
+  color: #d5f46a;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
   place-items: center;
 }
 
-:global(html.admin-nav-collapsed) .head {
-  justify-content: center;
-  padding-inline: 0;
+.backdrop {
+  display: none;
 }
 
-:global(html.admin-nav-collapsed) .toggle {
-  margin: 0;
-}
+@media (max-width: 1024px) {
+  .mobileTrigger {
+    display: grid;
+  }
 
-:global(html.admin-nav-collapsed) .item,
-:global(html.admin-nav-collapsed) .groupTitle {
-  justify-content: center;
-  padding-inline: 0;
-}
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 14, 26, 0.55);
+    backdrop-filter: blur(2px);
+    z-index: 70;
+  }
 
-:global(html.admin-nav-collapsed) .sub {
-  padding-left: 0;
-}
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 270px !important;
+    z-index: 80;
+    transform: translateX(-105%);
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .chevron {
-    transition: none;
+  .navMobileOpen {
+    transform: translateX(0);
+  }
+
+  .collapseBtn {
+    display: none;
+  }
+
+  .mobileCloseBtn {
+    display: grid;
   }
 }

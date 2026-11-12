@@ -1,0 +1,323 @@
+/* About Us Page Styles - Clean, Editorial, Modern */
+
+.pageWrap {
+  padding-block: var(--space-4) var(--space-8);
+  min-width: 0;
+}
+
+.heroCard {
+  background: #ffffff;
+  border-radius: var(--radius-card);
+  padding: var(--space-6) var(--space-5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  margin-bottom: var(--space-6);
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .heroCard {
+    padding: var(--space-8) var(--space-6);
+  }
+}
+
+.heroCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-brand) 0%, var(--color-accent) 100%);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: rgba(12, 84, 141, 0.08);
+  color: var(--color-brand);
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-3);
+  letter-spacing: 0.04em;
+}
+
+.mainTitle {
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 800;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-2);
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 768px) {
+  .mainTitle {
+    font-size: 36px;
+    line-height: 46px;
+  }
+}
+
+.tagline {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 600;
+  color: var(--color-brand);
+  margin: 0 0 var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .tagline {
+    font-size: 20px;
+    line-height: 30px;
+  }
+}
+
+.leadText {
+  display: grid;
+  gap: var(--space-4);
+  font-size: 16px;
+  line-height: 28px;
+  color: var(--color-text-2);
+}
+
+.leadText p {
+  margin: 0;
+}
+
+.quoteBox {
+  margin-top: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  background: #f8fafc;
+  border-left: 4px solid var(--color-accent);
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+/* Sections */
+.section {
+  margin-bottom: var(--space-6);
+}
+
+.sectionCard {
+  background: #ffffff;
+  border-radius: var(--radius-card);
+  padding: var(--space-6) var(--space-5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 768px) {
+  .sectionCard {
+    padding: var(--space-6);
+  }
+}
+
+.sectionHeader {
+  margin-bottom: var(--space-5);
+}
+
+.sectionTitle {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-2);
+}
+
+.sectionSubtitle {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--color-brand);
+  margin: 0 0 var(--space-3);
+}
+
+.sectionIntro {
+  font-size: 16px;
+  line-height: 28px;
+  color: var(--color-text-2);
+  margin: 0;
+}
+
+/* Mission Grid of Pillars */
+.pillarsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-block: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .pillarsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .pillarsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.pillarCard {
+  background: #ffffff;
+  border: 1px solid #eef2f5;
+  border-radius: var(--radius-card);
+  padding: var(--space-4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.pillarCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border-color: rgba(12, 84, 141, 0.2);
+}
+
+.pillarNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pillarTitle {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.pillarDesc {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-text-2);
+  margin: 0;
+}
+
+.summaryCallout {
+  padding: var(--space-4) var(--space-5);
+  background: rgba(12, 84, 141, 0.05);
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(12, 84, 141, 0.12);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-brand-dark);
+  text-align: center;
+}
+
+/* Vision Text Flow */
+.visionGrid {
+  display: grid;
+  gap: var(--space-4);
+  font-size: 16px;
+  line-height: 28px;
+  color: var(--color-text-2);
+}
+
+.visionGrid p {
+  margin: 0;
+}
+
+.visionHighlight {
+  margin-top: var(--space-5);
+  padding: var(--space-5);
+  background: linear-gradient(135deg, #0c548d 0%, #093f6b 100%);
+  border-radius: var(--radius-card);
+  color: #ffffff;
+  font-size: 17px;
+  line-height: 28px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(12, 84, 141, 0.2);
+}
+
+/* Bottom Actions Banner */
+.actionBanner {
+  margin-top: var(--space-6);
+  background: #ffffff;
+  border-radius: var(--radius-card);
+  padding: var(--space-6) var(--space-5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+}
+
+.actionTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.actionDesc {
+  font-size: 15px;
+  color: var(--color-text-2);
+  margin: 0;
+  max-width: 600px;
+}
+
+.actionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: var(--color-brand);
+  color: #ffffff;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(12, 84, 141, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btnPrimary:hover {
+  background: var(--color-brand-dark);
+  box-shadow: 0 4px 12px rgba(12, 84, 141, 0.35);
+  transform: translateY(-2px);
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #f0f4f8;
+  color: var(--color-brand);
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btnSecondary:hover {
+  background: #e2eaf2;
+  transform: translateY(-2px);
+}
+

@@ -22,18 +22,28 @@
 .subscribe {
   display: inline-flex;
   align-items: center;
-  min-height: var(--touch);
-  padding-inline: var(--space-2);
-  margin-right: calc(-1 * var(--space-2));
-  color: var(--color-brand);
-  font-weight: 500;
-  font-size: 15px;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 5px 14px;
+  background: var(--color-brand);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1;
+  text-decoration: none;
   white-space: nowrap;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 8px rgba(12, 84, 141, 0.28);
+  transition: all 0.2s ease;
 }
 
 .subscribe:hover {
-  color: var(--color-brand-dark);
-  text-decoration: underline;
+  background: var(--color-brand-dark);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(12, 84, 141, 0.38);
+  transform: translateY(-1px);
+  text-decoration: none;
 }
 
 /* Mobile: only this row scrolls; it bleeds to the screen edges inside the page gutter. */

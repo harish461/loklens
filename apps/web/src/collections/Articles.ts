@@ -40,6 +40,18 @@ export const Articles: CollectionConfig = {
             process.env.PREVIEW_SECRET ?? '',
           )}`
         : null,
+    components: {
+      views: {
+        list: {
+          Component: '@/components/admin/ArticlesListView#ArticlesListView',
+        },
+        edit: {
+          default: {
+            Component: '@/components/admin/ArticleEditView#ArticleEditView',
+          },
+        },
+      },
+    },
   },
   defaultSort: '-publishedAt',
   access: {

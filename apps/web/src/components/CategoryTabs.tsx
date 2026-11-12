@@ -26,9 +26,17 @@ export function CategoryTabs({ tabs, title }: { tabs: CategoryTab[]; title: stri
 
   return (
     <section className={styles.wrap} aria-labelledby={`${baseId}-title`}>
-      <h2 id={`${baseId}-title`} className={styles.title}>
-        {title}
-      </h2>
+      <div className={styles.headerRow}>
+        <div className={styles.titleWrap}>
+          <span className={styles.badge} aria-hidden="true">कवरेज</span>
+          <h2 id={`${baseId}-title`} className={styles.title}>
+            {title}
+          </h2>
+        </div>
+        <Link href={`/${active.category.slug}`} className={styles.topMore}>
+          {active.category.name} की सभी खबरें →
+        </Link>
+      </div>
 
       <div role="tablist" aria-label={title} className={styles.tabs}>
         {tabs.map((t, i) => {
@@ -45,21 +53,36 @@ export function CategoryTabs({ tabs, title }: { tabs: CategoryTab[]; title: stri
               className={`${styles.tab} ${isOn ? styles.tabOn : ''}`}
               onClick={() => setSelected(i)}
             >
-              {t.category.name}
+              <span className={styles.tabDot} aria-hidden="true" />
+              <span>{t.category.name}</span>
             </button>
           )
         })}
       </div>
 
       <div role="tabpanel" id={`${baseId}-panel`} aria-labelledby={`${baseId}-tab-${selected}`} className={styles.panel}>
-        <div className={styles.cards}>
-          {cards.map((a) => (
-            <ArticleCard key={a.id} article={a} variant="large" headingLevel="h3" />
-          ))}
+        <div className={styles.cardsGrid}>
+          {cards[0] && (
+            <div className={styles.leadCard}>
+              <ArticleCard article={cards[0]} variant="large" headingLevel="h3" />
+            </div>
+          )}
+          {cards.slice(1).length > 0 && (
+            <div className={styles.subCards}>
+              {cards.slice(1).map((a) => (
+                <div key={a.id} className={styles.subCardItem}>
+                  <ArticleCard article={a} variant="list" headingLevel="h3" />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <Link href={`/${active.category.slug}`} className={styles.more}>
-          {active.category.name} की और खबरें
-        </Link>
+        <div className={styles.footerRow}>
+          <Link href={`/${active.category.slug}`} className={styles.moreBtn}>
+            <span>{active.category.name} की सभी मुख्य खबरें देखें</span>
+            <span aria-hidden="true" className={styles.arrowIcon}>→</span>
+          </Link>
+        </div>
       </div>
     </section>
   )

@@ -40,9 +40,51 @@ export default buildConfig({
     meta: { titleSuffix: ' – LokLens News Admin' },
     importMap: { baseDir: path.resolve(dirname) },
     components: {
-      // LokLens dashboard (read-only numbers, see components/admin). Replaces Payload's default home view only.
-      views: { dashboard: { Component: '@/components/admin/DashboardView#DashboardView' } },
-      // LokLens sidebar (UI only): same Payload links, built from the visible entities, so access still applies.
+      // LokLens dashboard (Eduplex-inspired Hindi News CMS home view).
+      views: {
+        dashboard: { Component: '@/components/admin/DashboardView#DashboardView' },
+        subcategories: {
+          Component: '@/components/admin/AdminSectionView#SubcategoriesView',
+          path: '/subcategories',
+          exact: true,
+        },
+        authors: {
+          Component: '@/components/admin/AdminSectionView#AuthorsView',
+          path: '/authors',
+          exact: true,
+        },
+        breakingNews: {
+          Component: '@/components/admin/AdminSectionView#BreakingNewsView',
+          path: '/breaking-news',
+          exact: true,
+        },
+        scheduledNews: {
+          Component: '@/components/admin/AdminSectionView#ScheduledNewsView',
+          path: '/scheduled-news',
+          exact: true,
+        },
+        comments: {
+          Component: '@/components/admin/AdminSectionView#CommentsView',
+          path: '/comments',
+          exact: true,
+        },
+        advertisements: {
+          Component: '@/components/admin/AdminSectionView#AdvertisementsView',
+          path: '/advertisements',
+          exact: true,
+        },
+        seo: {
+          Component: '@/components/admin/AdminSectionView#SeoView',
+          path: '/seo',
+          exact: true,
+        },
+        analytics: {
+          Component: '@/components/admin/AdminSectionView#AnalyticsView',
+          path: '/analytics',
+          exact: true,
+        },
+      },
+      // LokLens sidebar: dark navy SaaS sidebar with lime-green active states and all 15 CMS modules.
       Nav: '@/components/admin/AdminNav#AdminNav',
     },
   },

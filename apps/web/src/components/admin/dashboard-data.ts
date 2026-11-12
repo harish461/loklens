@@ -1,9 +1,15 @@
 /**
- * Read-only numbers for the admin dashboard. Server-only; no collections, fields or hooks are changed.
+ * Read-only numbers and merged CMS records for the admin dashboard and article views.
+ * Server-only; no collections, fields or hooks are changed.
  * Every query goes through the Payload local API with the signed-in user, so a user only sees counts for
  * what their role can read (overrideAccess: false). Days are IST calendar days, matching the site.
  */
 import type { Payload, TypedUser, Where } from 'payload'
+
+import {
+  type AdminArticleItem,
+  type ArticleWorkflowStatus,
+} from './mock-cms-data'
 
 export const PERIOD_OPTIONS = [7, 30, 90] as const
 export type Period = (typeof PERIOD_OPTIONS)[number]
@@ -106,15 +112,57 @@ export type LatestArticle = {
   editHref: string
 }
 
+export type DynamicScheduledItem = {
+  id: string
+  title: string
+  category: string
+  scheduledTime: string
+  scheduledDate: string
+  author: string
+  status: 'scheduled' | 'in_progress' | 'upcoming'
+  editHref: string
+}
+
+export type DynamicTaskItem = {
+  id: string
+  title: string
+  subtitle: string
+  count: number
+  priority: 'high' | 'medium' | 'low'
+  href: string
+  iconName: 'file-check' | 'message-square' | 'search-alert' | 'image'
+}
+
 export type DashboardData = {
   period: Period
   stats: StatCard[]
-  chart: { days: string[]; values: number[]; breakingDays: string[] }
-  donut: { name: string; count: number }[]
+  chart: {
+    days: string[]
+    values: number[]
+    breakingDays: string[]
+    summary: {
+      totalPublished: number
+      peakDay: number
+      activeDays: number
+      breakingStories: number
+    }
+  }
+  donut: { name: string; count: number; percentage: number }[]
   donutTotal: number
   latest: LatestArticle[]
   activity: { id: number; title: string; updatedAt: string; editHref: string }[]
   hasData: boolean
+  enrichedArticles: AdminArticleItem[]
+  scheduledItems: DynamicScheduledItem[]
+  pendingTasks: DynamicTaskItem[]
+  dbSummary: {
+    totalArticles: number
+    publishedArticles: number
+    draftArticles: number
+    breakingArticles: number
+    categories: { id: number; name: string; slug: string }[]
+    authors: { id: number; name: string; role: string; email?: string }[]
+  }
 }
 
 function clampPeriod(p: number | undefined): Period {
@@ -122,9 +170,90 @@ function clampPeriod(p: number | undefined): Period {
 }
 
 /** Category label from a relationship that may be an id or a populated doc. */
-function categoryName(value: unknown): string {
+export function categoryName(value: unknown): string {
   if (value && typeof value === 'object' && 'name' in value) return String((value as { name: unknown }).name)
-  return '—'
+  return 'प्रदेश'
+}
+
+export function categorySlugOf(value: unknown): string {
+  if (value && typeof value === 'object' && 'slug' in value) return String((value as { slug: unknown }).slug)
+  return 'pradesh'
+}
+
+export function authorNameOf(authors: unknown): string {
+  if (Array.isArray(authors) && authors.length > 0) {
+    const first = authors[0]
+    if (first && typeof first === 'object') {
+      const u = first as { displayName?: unknown; name?: unknown }
+      return String(u.displayName || u.name || 'LokLens News Team')
+    }
+  }
+  return 'LokLens News Team'
+}
+
+export function mediaUrlOf(media: unknown): string {
+  if (media && typeof media === 'object') {
+    const m = media as { url?: unknown; sizes?: { thumb?: { url?: unknown }; card?: { url?: unknown } } }
+    const thumb = m.sizes?.thumb?.url ?? m.sizes?.card?.url ?? m.url
+    if (typeof thumb === 'string' && thumb.trim()) return thumb
+  }
+  return '/brand/logo-96.webp'
+}
+
+/** Real view counter for DB articles (falls back to 0 until external analytics are connected). */
+function estimateViews(d: Record<string, unknown>): { views: number; formatted: string } {
+  const views = typeof d.views === 'number' ? d.views : 0
+  return {
+    views,
+    formatted: views > 0 ? (views >= 1000 ? `${(views / 1000).toFixed(1)}K` : String(views)) : '—',
+  }
+}
+
+export function mapPayloadDocToAdminArticle(d: Record<string, unknown>, nowMs = Date.now()): AdminArticleItem {
+  const id = Number(d.id ?? 0)
+  const rawStatus = d._status === 'published' ? 'published' : 'draft'
+  const pubStr = typeof d.publishedAt === 'string' ? d.publishedAt : null
+  const pubMs = pubStr ? Date.parse(pubStr) : NaN
+
+  let workflowStatus: ArticleWorkflowStatus = rawStatus
+  if (rawStatus === 'draft' && !Number.isNaN(pubMs) && pubMs > nowMs) {
+    workflowStatus = 'scheduled'
+  }
+
+  const isBreaking = Boolean(d.isBreaking)
+  const isFeatured = Boolean(d.isFeatured)
+  const isTrending = Boolean(d.isTrending)
+  const catName = categoryName(d.category)
+  const catSlug = categorySlugOf(d.category)
+  const slug = typeof d.slug === 'string' && d.slug ? d.slug : `article-${id}`
+  const { views, formatted } = estimateViews(d)
+
+  const loc = d.location && typeof d.location === 'object' && 'name' in d.location ? String((d.location as { name: unknown }).name) : undefined
+
+  return {
+    id: `db-${id}`,
+    dbId: id,
+    isSample: false,
+    title: String(d.title ?? '(बिना शीर्षक लेख)'),
+    slug,
+    summary: String(d.summary ?? ''),
+    category: catName,
+    categoryId: typeof d.category === 'object' && d.category && 'id' in d.category ? Number((d.category as { id: unknown }).id) : typeof d.category === 'number' ? d.category : undefined,
+    subcategory: loc,
+    author: authorNameOf(d.authors),
+    publishedAt: pubStr ?? String(d.updatedAt ?? new Date(nowMs).toISOString()),
+    updatedAt: String(d.updatedAt ?? new Date(nowMs).toISOString()),
+    views,
+    viewsFormatted: formatted,
+    status: workflowStatus,
+    isBreaking,
+    isFeatured,
+    isTrending,
+    thumbnailUrl: mediaUrlOf(d.featuredImage),
+    editHref: `/admin/collections/articles/${id}`,
+    previewHref: `/${catSlug}/${slug}-${id}`,
+    seoScore: 90,
+  }
 }
 
 export async function getDashboardData(ctx: Ctx, periodRaw?: number): Promise<DashboardData> {
@@ -191,7 +320,7 @@ export async function getDashboardData(ctx: Ctx, periodRaw?: number): Promise<Da
     ...new Set(breakingRes.docs.map((d) => (typeof d.publishedAt === 'string' ? istDayKey(Date.parse(d.publishedAt)) : ''))),
   ].filter(Boolean)
 
-  // Donut: published articles by category.
+  // Categories and Users
   const categories = await ctx.payload.find({
     collection: 'categories',
     limit: 100,
@@ -199,6 +328,14 @@ export async function getDashboardData(ctx: Ctx, periodRaw?: number): Promise<Da
     pagination: false,
     ...acc(ctx),
   })
+  const usersRes = await ctx.payload.find({
+    collection: 'users',
+    limit: 100,
+    depth: 0,
+    pagination: false,
+    ...acc(ctx),
+  }).catch(() => ({ docs: [] }))
+
   const articlesByCategory = await ctx.payload.find({
     collection: 'articles',
     limit: MAX_ROWS,
@@ -211,22 +348,29 @@ export async function getDashboardData(ctx: Ctx, periodRaw?: number): Promise<Da
     const id = typeof a.category === 'number' ? a.category : (a.category as { id?: number } | null)?.id
     if (typeof id === 'number') perCategory.set(id, (perCategory.get(id) ?? 0) + 1)
   }
+  const donutTotal = categories.docs.reduce((sum, c) => sum + (perCategory.get(c.id) ?? 0), 0)
   const donut = categories.docs
-    .map((c) => ({ name: String(c.name), count: perCategory.get(c.id) ?? 0 }))
+    .map((c) => {
+      const count = perCategory.get(c.id) ?? 0
+      return {
+        name: String(c.name),
+        count,
+        percentage: donutTotal > 0 ? Math.round((count / donutTotal) * 100) : 0,
+      }
+    })
     .filter((d) => d.count > 0)
     .sort((a, b) => b.count - a.count)
-  const donutTotal = donut.reduce((sum, d) => sum + d.count, 0)
 
   // Latest and recently changed articles (drafts included, so editors see work in progress).
   const recent = await ctx.payload.find({
     collection: 'articles',
     sort: '-updatedAt',
-    limit: 6,
+    limit: 50,
     depth: 1,
     draft: true,
     ...acc(ctx),
   })
-  const latest: LatestArticle[] = recent.docs.map((d) => {
+  const latest: LatestArticle[] = recent.docs.slice(0, 6).map((d) => {
     const status: LatestArticle['status'] =
       d._status === 'draft' ? 'draft' : d.isBreaking ? 'breaking' : 'published'
     return {
@@ -245,18 +389,108 @@ export async function getDashboardData(ctx: Ctx, periodRaw?: number): Promise<Da
     editHref: `/admin/collections/articles/${d.id}`,
   }))
 
+  const dbArticles = recent.docs.map((d) => mapPayloadDocToAdminArticle(d as unknown as Record<string, unknown>, now))
+  // Purely dynamic DB articles — NO dummy/sample articles
+  const enrichedArticles: AdminArticleItem[] = dbArticles
+
+  const scheduledItems: DynamicScheduledItem[] = dbArticles
+    .filter((a) => a.status === 'scheduled')
+    .map((a) => {
+      const pub = new Date(a.publishedAt)
+      return {
+        id: String(a.id),
+        title: a.title,
+        category: a.category,
+        scheduledTime: !Number.isNaN(pub.getTime())
+          ? pub.toLocaleDateString('hi-IN', { day: 'numeric', month: 'short' }) +
+            ', ' +
+            pub.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+          : 'Scheduled',
+        scheduledDate: !Number.isNaN(pub.getTime()) ? pub.toISOString().slice(0, 10) : '',
+        author: a.author,
+        status: 'scheduled' as const,
+        editHref: a.editHref,
+      }
+    })
+
+  const pendingTasks: DynamicTaskItem[] = []
+  if (draftStats.total > 0) {
+    pendingTasks.push({
+      id: 'task-drafts',
+      title: 'प्रकाशन हेतु ड्राफ्ट',
+      subtitle: 'संपादकीय समीक्षा एवं अनुमोदन',
+      count: draftStats.total,
+      priority: 'high',
+      href: '/admin/collections/articles?where[_status][equals]=draft',
+      iconName: 'file-check',
+    })
+  }
+  if (breakingRes.docs.length > 0) {
+    pendingTasks.push({
+      id: 'task-breaking',
+      title: 'सक्रिय ब्रेकिंग न्यूज़',
+      subtitle: 'लाइव टिकर एवं मुख्य अलर्ट',
+      count: breakingRes.docs.length,
+      priority: 'high',
+      href: '/admin/breaking-news',
+      iconName: 'search-alert',
+    })
+  }
+  const missingImagesCount = recent.docs.filter((d) => !d.featuredImage).length
+  if (missingImagesCount > 0) {
+    pendingTasks.push({
+      id: 'task-images',
+      title: 'बिना मुख्य चित्र के लेख',
+      subtitle: 'फीचर्ड इमेज अपलोड अपेक्षित',
+      count: missingImagesCount,
+      priority: 'medium',
+      href: '/admin/collections/articles',
+      iconName: 'image',
+    })
+  }
+
+  const chartValues = keys.map((k) => series.get(k) ?? 0)
+  const totalPublished = chartValues.reduce((a, b) => a + b, 0)
+  const peakDay = chartValues.length ? Math.max(...chartValues) : 0
+  const activeDays = chartValues.filter((v) => v > 0).length
+
   return {
     period,
     stats,
     chart: {
       days: keys,
-      values: keys.map((k) => series.get(k) ?? 0),
+      values: chartValues,
       breakingDays: breakingDays.filter((d) => keys.includes(d)),
+      summary: {
+        totalPublished,
+        peakDay,
+        activeDays,
+        breakingStories: breakingDays.length,
+      },
     },
     donut,
     donutTotal,
     latest,
     activity,
     hasData: publishedStats.total + draftStats.total + videoStats.total + userStats.total > 0,
+    enrichedArticles,
+    scheduledItems,
+    pendingTasks,
+    dbSummary: {
+      totalArticles: publishedStats.total + draftStats.total,
+      publishedArticles: publishedStats.total,
+      draftArticles: draftStats.total,
+      breakingArticles: breakingRes.docs.length,
+      categories: categories.docs.map((c) => ({ id: c.id, name: String(c.name), slug: String(c.slug) })),
+      authors: usersRes.docs.map((u) => {
+        const usr = u as unknown as { id: number; displayName?: string; name?: string; role?: string; email?: string }
+        return {
+          id: usr.id,
+          name: String(usr.displayName || usr.name || usr.email || `User #${usr.id}`),
+          role: String(usr.role || 'reporter'),
+          email: usr.email,
+        }
+      }),
+    },
   }
 }

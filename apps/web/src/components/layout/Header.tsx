@@ -17,7 +17,14 @@ interface Props {
 
 export function Header({ settings, categories, ticker }: Props) {
   const today = formatLongDate(new Date())
-  const menuLinks = settings.navigation.footer.flatMap((g) => g.items)
+  const siteInfoLinks: NavItem[] = [
+    { label: 'हमारे बारे में', url: '/about' },
+    { label: 'संपर्क करें', url: '/contact' },
+  ]
+  const menuLinks = [
+    ...siteInfoLinks,
+    ...settings.navigation.footer.flatMap((g) => g.items).filter((i) => i.url !== '/about' && i.url !== '/contact'),
+  ]
   return (
     <>
       <header className={styles.header}>
@@ -69,6 +76,16 @@ export function Header({ settings, categories, ticker }: Props) {
                 </NavLink>
               </li>
             ))}
+            <li>
+              <NavLink href="/about" className={styles.catLink}>
+                हमारे बारे में
+              </NavLink>
+            </li>
+            <li>
+              <NavLink href="/contact" className={styles.catLink}>
+                संपर्क करें
+              </NavLink>
+            </li>
           </ul>
         </nav>
       </header>
