@@ -113,6 +113,33 @@ export function reporterWorkflowViolations(input: {
   return violations
 }
 
+/** True when a Lexical value has any visible text or an upload. */
+export function hasBodyContent(body: unknown): boolean {
+  const walk = (node: unknown): boolean => {
+    if (!node || typeof node !== 'object') return false
+    const n = node as { type?: string; text?: unknown; children?: unknown[] }
+    if (n.type === 'upload' || n.type === 'block') return true
+    if (typeof n.text === 'string' && n.text.trim() !== '') return true
+    return Array.isArray(n.children) && n.children.some(walk)
+  }
+  return walk((body as { root?: unknown } | null | undefined)?.root)
+}
+
+/**
+ * An article must be complete before it goes to an editor: title, summary, category, body and a
+ * featured image (publishing needs the image anyway). Checked on the merged (stored + incoming) doc.
+ */
+export function submissionViolations(doc: Record<string, unknown>): string[] {
+  const violations: string[] = []
+  const text = (v: unknown) => (typeof v === 'string' ? v.trim() : '')
+  if (!text(doc.title)) violations.push('Add a headline.')
+  if (!text(doc.summary)) violations.push('Add a short summary.')
+  if (relationId(doc.category) === null) violations.push('Choose a category.')
+  if (!hasBodyContent(doc.body)) violations.push('Write the article body.')
+  if (relationId(doc.featuredImage) === null) violations.push('Add a featured image.')
+  return violations
+}
+
 export interface WorkflowResult {
   /** Fields to merge into the incoming data. */
   patch: Record<string, unknown>
@@ -163,7 +190,10 @@ export function workflowPatch(input: {
     patch._status = 'draft'
   }
 
-  if (next === 'pending_review' && previous !== 'pending_review') patch.submittedAt = now
+  if (next === 'pending_review' && previous !== 'pending_review') {
+    patch.submittedAt = now
+    violations.push(...submissionViolations({ ...(originalDoc ?? {}), ...data }))
+  }
 
   if ((next === 'rejected' || next === 'published') && previous !== next && user && isEditorOrAdmin(user)) {
     patch.reviewedAt = now

@@ -223,7 +223,11 @@ function mapNodes(nodes: unknown[], ctx: MapContext): RichTextNode[] {
     if (node.type === 'upload') {
       const media = populated<PMedia>(node.value)
       if (!media) continue
-      out.push({ ...node, value: toImage(media, ctx.defaultImage) } as unknown as RichTextNode)
+      // The per-insertion caption (upload node `fields.caption`) wins over the media item's own caption.
+      const image = toImage(media, ctx.defaultImage)
+      const nodeCaption = (node.fields as { caption?: unknown } | undefined)?.caption
+      const caption = typeof nodeCaption === 'string' && nodeCaption.trim() ? nodeCaption.trim() : image.caption
+      out.push({ ...node, value: { ...image, caption } } as unknown as RichTextNode)
       continue
     }
     if (node.type === 'block') {

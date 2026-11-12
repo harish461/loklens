@@ -142,7 +142,7 @@ Clean, lowercase, Latin, no trailing slash, no file extensions. Category slugs a
 
 **Reserved slugs** — category slugs may not be: `tag, author, video, e-paper, search, about, contact,
 advertise, privacy-policy, terms, editorial-policy, corrections-policy, disclaimer, admin, api, legacy,
-media, rss.xml, sitemap.xml, news-sitemap.xml, page, _next`. Enforced by validation on Categories.
+media, rss.xml, sitemap.xml, news-sitemap.xml, page, _next, reporter, preview`. Enforced by validation on Categories.
 
 **Why `slug-id`:** the ID is the lookup key. If an editor changes a slug or category, the old link still
 resolves by ID and permanently redirects to the current URL.

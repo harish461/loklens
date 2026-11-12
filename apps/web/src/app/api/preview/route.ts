@@ -49,9 +49,11 @@ export async function GET(req: NextRequest) {
       : 'pradesh'
   const slug = typeof article.slug === 'string' && article.slug ? article.slug : `article-${id}`
 
+  // Published articles open at their public URL. Anything else goes to the draft preview page, which renders
+  // the latest draft with the real article layout (the public route only ever shows published content).
+  if (article._status === 'published') redirect(`/${catSlug}/${slug}-${id}`)
   const draft = await draftMode()
   draft.enable()
-
-  redirect(`/${catSlug}/${slug}-${id}`)
+  redirect(`/preview/${id}`)
 }
 

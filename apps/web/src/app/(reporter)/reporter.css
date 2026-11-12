@@ -1,0 +1,53 @@
+/* LokLens Reporter Desk — the admin CMS design tokens (components/admin/*.module.css), set at the root. */
+
+:root {
+  --font-body: var(--font-montserrat), var(--font-devanagari);
+  --cms-navy: #1c1b29;
+  --cms-navy-soft: #262538;
+  --cms-lime: #d5f46a;
+  --cms-lime-hover: #c5e853;
+  --cms-canvas: #f6f7fb;
+  --cms-card: #ffffff;
+  --cms-border: #eceef5;
+  --cms-ink: #181725;
+  --cms-muted: #6e7185;
+  --cms-coral: #f5a67e;
+  --cms-shadow: 0 2px 6px rgba(24, 23, 37, 0.03), 0 10px 28px rgba(24, 23, 37, 0.04);
+  --cms-radius: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--cms-canvas);
+  color: var(--cms-ink);
+  font-family: var(--font-body), 'Montserrat', 'Noto Sans Devanagari', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid #6d5df5;
+  outline-offset: 2px;
+}

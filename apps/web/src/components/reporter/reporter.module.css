@@ -1,0 +1,300 @@
+/* Reporter Desk layout and the few pieces the admin modules don't have. Tokens come from reporter.css. */
+
+.shell {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.shell:has(nav[class*='navCollapsed']) {
+  grid-template-columns: 84px minmax(0, 1fr);
+}
+
+.main {
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .shell,
+  .shell:has(nav[class*='navCollapsed']) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Stats grid: 4 → 2 → 1 columns. */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 1180px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--cms-border);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.linkMuted {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--cms-muted);
+  text-decoration: none;
+}
+
+.linkMuted:hover {
+  color: var(--cms-ink);
+}
+
+/* Alerts: rejection reason, errors, notices. */
+.alert {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.alert strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.alertDanger {
+  background: #fff1ed;
+  border: 1px solid #f7c9b8;
+  color: #8a2c0d;
+}
+
+.alertInfo {
+  background: #f1f0ff;
+  border: 1px solid #d9d5fb;
+  color: #3b2f99;
+}
+
+.alertSuccess {
+  background: #f1fbe0;
+  border: 1px solid #d5ec9f;
+  color: #365314;
+}
+
+.alertNote {
+  white-space: pre-wrap;
+}
+
+/* Detail page */
+.detailGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .detailGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.detailImage {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #eef0f6;
+  display: block;
+}
+
+.metaList {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.metaList div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.metaList dt {
+  color: var(--cms-muted);
+}
+
+.metaList dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+.summaryText {
+  color: var(--cms-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Confirm dialog */
+.dialog {
+  border: 0;
+  border-radius: var(--cms-radius);
+  padding: 22px;
+  max-width: min(420px, calc(100vw - 32px));
+  box-shadow: 0 20px 60px rgba(24, 23, 37, 0.25);
+  color: var(--cms-ink);
+}
+
+.dialog::backdrop {
+  background: rgba(15, 14, 26, 0.55);
+}
+
+.dialog h2 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.dialog p {
+  margin: 0 0 18px;
+  color: var(--cms-muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.dangerBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 0;
+  background: #dc2626;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dangerBtn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Login */
+.loginPage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background: radial-gradient(circle at 20% 0%, #2a2940 0, var(--cms-navy) 55%);
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 400px;
+  background: var(--cms-card);
+  border-radius: 22px;
+  padding: 30px 26px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+
+.loginBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.loginBrand strong {
+  display: block;
+  font-size: 17px;
+}
+
+.loginBrand span {
+  font-size: 12px;
+  color: var(--cms-muted);
+}
+
+.loginTitle {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+.loginSub {
+  margin: 0 0 20px;
+  color: var(--cms-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.passwordGrid {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.readOnlyValue {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f5f6fa;
+  border: 1px solid var(--cms-border);
+  font-size: 13.5px;
+  color: var(--cms-ink);
+}
+
+.avatarLarge {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--cms-navy);
+  color: var(--cms-lime);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 26px;
+}
+
+.inlineRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

@@ -6,7 +6,7 @@ import { validateCategorySlug, validateSlugFormat } from '../../src/lib/slug/val
 const ARCHITECTURE_RESERVED = [
   'tag', 'author', 'video', 'e-paper', 'search', 'about', 'contact', 'advertise', 'privacy-policy',
   'terms', 'editorial-policy', 'corrections-policy', 'disclaimer', 'admin', 'api', 'legacy', 'media',
-  'rss.xml', 'sitemap.xml', 'news-sitemap.xml', 'page', '_next',
+  'rss.xml', 'sitemap.xml', 'news-sitemap.xml', 'page', '_next', 'reporter', 'preview',
 ]
 
 describe('reserved slugs (architecture §3)', () => {

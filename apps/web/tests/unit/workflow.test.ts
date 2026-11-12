@@ -96,10 +96,29 @@ describe('workflowPatch', () => {
     expect(patch).toMatchObject({ workflowStatus: 'draft', everPublished: false })
   })
 
-  it('submitting stamps submittedAt', () => {
-    const { patch } = workflowPatch({ user: reporter, data: { workflowStatus: 'pending_review' }, originalDoc: own(), now: NOW })
-    expect(patch).toMatchObject({ workflowStatus: 'pending_review', submittedAt: NOW.toISOString() })
-    expect(patch).not.toHaveProperty('reviewedAt')
+  it('submitting stamps submittedAt and requires a complete article', () => {
+    const body = { root: { children: [{ type: 'paragraph', children: [{ type: 'text', text: 'खबर' }] }] } }
+    const complete = own({ title: 'शीर्षक', summary: 'सार', category: 5, featuredImage: 9, body })
+    const ok = workflowPatch({ user: reporter, data: { workflowStatus: 'pending_review' }, originalDoc: complete, now: NOW })
+    expect(ok.violations).toEqual([])
+    expect(ok.patch).toMatchObject({ workflowStatus: 'pending_review', submittedAt: NOW.toISOString() })
+    expect(ok.patch).not.toHaveProperty('reviewedAt')
+
+    const empty = workflowPatch({ user: reporter, data: { workflowStatus: 'pending_review' }, originalDoc: own(), now: NOW })
+    expect(empty.violations).toEqual([
+      'Add a headline.',
+      'Add a short summary.',
+      'Choose a category.',
+      'Write the article body.',
+      'Add a featured image.',
+    ])
+    // Incoming data counts too (the form sends everything with the submit).
+    const viaData = workflowPatch({
+      user: reporter,
+      data: { workflowStatus: 'pending_review', title: 'शीर्षक', summary: 'सार', category: 5, featuredImage: 9, body },
+      originalDoc: own(),
+    })
+    expect(viaData.violations).toEqual([])
   })
 
   it('approving publishes, stamps the reviewer and marks everPublished', () => {

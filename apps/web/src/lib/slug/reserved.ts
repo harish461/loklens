@@ -25,6 +25,8 @@ export const RESERVED_SLUGS: readonly string[] = [
   'news-sitemap.xml',
   'page',
   '_next',
+  'reporter',
+  'preview',
 ] as const
 
 const RESERVED = new Set(RESERVED_SLUGS)
