@@ -60,6 +60,20 @@ export async function AdminNav({ payload, i18n, visibleEntities, user }: Props) 
     breakingCount = 2
   }
 
+  // Reporter submissions waiting for an editor (Review Queue badge).
+  const pendingReview = await payload
+    .find({
+      collection: 'articles',
+      where: { workflowStatus: { equals: 'pending_review' } },
+      limit: 1,
+      depth: 0,
+      draft: true,
+      overrideAccess: false,
+      user: user ?? undefined,
+    })
+    .then((r) => r.totalDocs)
+    .catch(() => 0)
+
   // Secondary collections/globals that aren't already top-level in the 15 main nav items
   const primarySlugs = new Set(['articles', 'categories', 'media', 'users', 'site-settings'])
   const extraEntities: ExtraEntityItem[] = [
@@ -93,7 +107,9 @@ export async function AdminNav({ payload, i18n, visibleEntities, user }: Props) 
         scheduled: 4,
         comments: 14,
         seoIssues: 3,
+        pendingReview,
       }}
+      isAdmin={u.role === 'admin'}
       userName={userName}
       userRole={userRole}
       userEmail={userEmail}

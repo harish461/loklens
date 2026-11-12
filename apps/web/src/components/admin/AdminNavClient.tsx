@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ClipboardCheck,
   FilePlus2,
   Flame,
   FolderTree,
@@ -23,6 +24,7 @@ import {
   ShieldCheck,
   Sparkles,
   UserCheck,
+  Users,
   X,
 } from 'lucide-react'
 import Image from 'next/image'
@@ -38,6 +40,8 @@ export interface SidebarCounts {
   scheduled: number
   comments: number
   seoIssues: number
+  /** Reporter submissions awaiting review. */
+  pendingReview: number
 }
 
 export interface ExtraEntityItem {
@@ -54,12 +58,16 @@ export interface AdminNavClientProps {
   userEmail: string
   userInitials: string
   extraEntities: ExtraEntityItem[]
+  /** Admin-only items (Reporters) are hidden from editors. */
+  isAdmin?: boolean
 }
 
 type NavKey =
   | 'dashboard'
   | 'articles'
   | 'create-article'
+  | 'review'
+  | 'reporters'
   | 'categories'
   | 'subcategories'
   | 'media'
@@ -91,6 +99,10 @@ function renderNavIcon(key: NavKey, className?: string) {
       return <Newspaper size={size} className={className} />
     case 'create-article':
       return <FilePlus2 size={size} className={className} />
+    case 'review':
+      return <ClipboardCheck size={size} className={className} />
+    case 'reporters':
+      return <Users size={size} className={className} />
     case 'categories':
       return <FolderTree size={size} className={className} />
     case 'subcategories':
@@ -124,6 +136,7 @@ export function AdminNavClient({
   userRole,
   userInitials,
   extraEntities,
+  isAdmin = false,
 }: AdminNavClientProps) {
   const pathname = usePathname() ?? '/admin'
   const [collapsed, setCollapsed] = useState(false)
@@ -162,6 +175,24 @@ export function AdminNavClient({
       href: '/admin/collections/articles/create',
       isActive: (p) => p.startsWith('/admin/collections/articles/create'),
     },
+    {
+      key: 'review',
+      label: 'Review Queue',
+      href: '/admin/review',
+      badge: counts.pendingReview,
+      badgeTone: 'lime',
+      isActive: (p) => p.startsWith('/admin/review'),
+    },
+    ...(isAdmin
+      ? [
+          {
+            key: 'reporters' as const,
+            label: 'Reporters',
+            href: '/admin/reporters',
+            isActive: (p: string) => p.startsWith('/admin/reporters'),
+          },
+        ]
+      : []),
     {
       key: 'categories',
       label: 'Categories',

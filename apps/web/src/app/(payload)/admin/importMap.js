@@ -27,6 +27,8 @@ import { CommentsView as CommentsView_bb8048bcc3ef213a622ea30c4f458226 } from '@
 import { AdvertisementsView as AdvertisementsView_bb8048bcc3ef213a622ea30c4f458226 } from '@/components/admin/AdminSectionView'
 import { SeoView as SeoView_bb8048bcc3ef213a622ea30c4f458226 } from '@/components/admin/AdminSectionView'
 import { AnalyticsView as AnalyticsView_bb8048bcc3ef213a622ea30c4f458226 } from '@/components/admin/AdminSectionView'
+import { ReviewQueueView as ReviewQueueView_bb0549fb6b8c9025aa441efc4125d647 } from '@/components/admin/ReviewViews'
+import { ReportersView as ReportersView_bb0549fb6b8c9025aa441efc4125d647 } from '@/components/admin/ReviewViews'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -60,5 +62,7 @@ export const importMap = {
   "@/components/admin/AdminSectionView#AdvertisementsView": AdvertisementsView_bb8048bcc3ef213a622ea30c4f458226,
   "@/components/admin/AdminSectionView#SeoView": SeoView_bb8048bcc3ef213a622ea30c4f458226,
   "@/components/admin/AdminSectionView#AnalyticsView": AnalyticsView_bb8048bcc3ef213a622ea30c4f458226,
+  "@/components/admin/ReviewViews#ReviewQueueView": ReviewQueueView_bb0549fb6b8c9025aa441efc4125d647,
+  "@/components/admin/ReviewViews#ReportersView": ReportersView_bb0549fb6b8c9025aa441efc4125d647,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

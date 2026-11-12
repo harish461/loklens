@@ -83,6 +83,17 @@ export default buildConfig({
           path: '/analytics',
           exact: true,
         },
+        // Reporter workflow (architecture §8): role-checked server-side inside each view.
+        review: {
+          Component: '@/components/admin/ReviewViews#ReviewQueueView',
+          path: '/review',
+          exact: true,
+        },
+        reporters: {
+          Component: '@/components/admin/ReviewViews#ReportersView',
+          path: '/reporters',
+          exact: true,
+        },
       },
       // LokLens sidebar: dark navy SaaS sidebar with lime-green active states and all 15 CMS modules.
       Nav: '@/components/admin/AdminNav#AdminNav',

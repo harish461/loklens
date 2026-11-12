@@ -216,7 +216,10 @@ export function mapPayloadDocToAdminArticle(d: Record<string, unknown>, nowMs = 
   const pubMs = pubStr ? Date.parse(pubStr) : NaN
 
   let workflowStatus: ArticleWorkflowStatus = rawStatus
-  if (rawStatus === 'draft' && !Number.isNaN(pubMs) && pubMs > nowMs) {
+  // Review states come from the stored workflow (architecture §8); "scheduled" stays derived.
+  if (d.workflowStatus === 'pending_review' || d.workflowStatus === 'rejected') {
+    workflowStatus = d.workflowStatus
+  } else if (rawStatus === 'draft' && !Number.isNaN(pubMs) && pubMs > nowMs) {
     workflowStatus = 'scheduled'
   }
 
@@ -251,7 +254,8 @@ export function mapPayloadDocToAdminArticle(d: Record<string, unknown>, nowMs = 
     isTrending,
     thumbnailUrl: mediaUrlOf(d.featuredImage),
     editHref: `/admin/collections/articles/${id}`,
-    previewHref: `/${catSlug}/${slug}-${id}`,
+    // Unpublished articles only render on the draft preview page.
+    previewHref: rawStatus === 'published' ? `/${catSlug}/${slug}-${id}` : `/preview/${id}`,
     seoScore: 90,
   }
 }

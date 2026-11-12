@@ -1,0 +1,189 @@
+'use server'
+
+/**
+ * Server actions for the admin Review Queue and Reporters views. Each action re-checks the session and
+ * role on the server (editor/admin for reviews, admin for accounts) and writes as that user with
+ * overrideAccess: false, so the collection rules and the workflow hook still apply.
+ */
+import { revalidatePath } from 'next/cache'
+
+import { isAdmin, isEditorOrAdmin, type MaybeUser } from '@/access'
+import { getSessionUser } from '@/lib/reporter/session'
+import type { User } from '@/payload-types'
+
+export type AdminActionResult = { ok: true } | { ok: false; error: string }
+
+async function staff(requireAdmin: boolean) {
+  const { payload, user } = await getSessionUser()
+  const u = user as unknown as MaybeUser
+  if (!user || user.isActive === false || !(requireAdmin ? isAdmin(u) : isEditorOrAdmin(u))) return null
+  return { payload, user, as: { user, overrideAccess: false as const } }
+}
+
+function message(err: unknown): string {
+  const e = err as { message?: string; data?: { errors?: { message?: string; path?: string }[] } }
+  const details = e?.data?.errors?.map((x) => (x.path ? `${x.path}: ${x.message}` : x.message)).filter(Boolean)
+  return details?.length ? details.join(' ') : e?.message || 'Something went wrong.'
+}
+
+const NOT_ALLOWED: AdminActionResult = { ok: false, error: 'You do not have permission to do this.' }
+
+function refresh() {
+  revalidatePath('/admin', 'layout')
+  revalidatePath('/reporter', 'layout')
+}
+
+// ---- Review queue -------------------------------------------------------------------------------
+
+export async function approveArticle(id: number, opts: { markFeatured?: boolean } = {}): Promise<AdminActionResult> {
+  const s = await staff(false)
+  if (!s) return NOT_ALLOWED
+  try {
+    // Publishing merges the latest draft version; the hook stamps reviewedAt/By and everPublished.
+    await s.payload.update({
+      collection: 'articles',
+      id: Number(id),
+      data: { _status: 'published', ...(opts.markFeatured ? { isFeatured: true } : {}) },
+      ...s.as,
+    })
+    refresh()
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: message(err) }
+  }
+}
+
+export async function rejectArticle(id: number, note: string): Promise<AdminActionResult> {
+  const s = await staff(false)
+  if (!s) return NOT_ALLOWED
+  const reviewNote = typeof note === 'string' ? note.trim().slice(0, 1000) : ''
+  if (!reviewNote) return { ok: false, error: 'Write a reason so the reporter knows what to change.' }
+  try {
+    await s.payload.update({
+      collection: 'articles',
+      id: Number(id),
+      data: { workflowStatus: 'rejected', reviewNote },
+      draft: true,
+      ...s.as,
+    })
+    refresh()
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: message(err) }
+  }
+}
+
+// ---- Reporter accounts (admins only) ------------------------------------------------------------
+
+export interface ReporterAccountInput {
+  name: string
+  displayName?: string
+  email: string
+  mobile?: string
+  designation?: string
+  assignedCategories?: number[]
+  canPublish?: boolean
+  isActive?: boolean
+}
+
+const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
+const MIN_PASSWORD = 10
+
+function cleanAccount(input: ReporterAccountInput) {
+  const email = str(input.email, 200).toLowerCase()
+  const mobile = str(input.mobile, 20)
+  if (!str(input.name, 120)) return { error: 'Name is required.' }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: 'Enter a valid email address.' }
+  if (mobile && !/^\+?[0-9 ()-]{7,20}$/.test(mobile)) return { error: 'Enter a valid mobile number.' }
+  return {
+    data: {
+      name: str(input.name, 120),
+      displayName: str(input.displayName, 120),
+      email,
+      mobile,
+      designation: str(input.designation, 80),
+      assignedCategories: Array.isArray(input.assignedCategories)
+        ? [...new Set(input.assignedCategories.map(Number).filter((n) => Number.isSafeInteger(n) && n > 0))]
+        : [],
+      canPublish: Boolean(input.canPublish),
+    },
+  }
+}
+
+/** This page manages reporter accounts only — never editors or admins. */
+async function loadReporter(s: NonNullable<Awaited<ReturnType<typeof staff>>>, id: number): Promise<User | null> {
+  const doc = await s.payload.findByID({ collection: 'users', id: Number(id), depth: 0, disableErrors: true, ...s.as })
+  return doc && doc.role === 'reporter' ? (doc as User) : null
+}
+
+export async function createReporter(input: ReporterAccountInput, password: string): Promise<AdminActionResult> {
+  const s = await staff(true)
+  if (!s) return NOT_ALLOWED
+  const clean = cleanAccount(input)
+  if ('error' in clean) return { ok: false, error: clean.error as string }
+  if (typeof password !== 'string' || password.length < MIN_PASSWORD) {
+    return { ok: false, error: `The starting password must be at least ${MIN_PASSWORD} characters.` }
+  }
+  try {
+    await s.payload.create({
+      collection: 'users',
+      // slug is generated by the slug field hook, so the generated type's "required" doesn't apply here.
+      data: { ...clean.data, role: 'reporter', isActive: true, password } as never,
+      ...s.as,
+    })
+    refresh()
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: message(err) }
+  }
+}
+
+export async function updateReporter(id: number, input: ReporterAccountInput): Promise<AdminActionResult> {
+  const s = await staff(true)
+  if (!s) return NOT_ALLOWED
+  if (!(await loadReporter(s, id))) return { ok: false, error: 'Reporter not found.' }
+  const clean = cleanAccount(input)
+  if ('error' in clean) return { ok: false, error: clean.error as string }
+  try {
+    await s.payload.update({ collection: 'users', id: Number(id), data: clean.data, ...s.as })
+    refresh()
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: message(err) }
+  }
+}
+
+/** Deactivating also ends the reporter's sessions (Users beforeChange hook). */
+export async function setReporterActive(id: number, active: boolean): Promise<AdminActionResult> {
+  const s = await staff(true)
+  if (!s) return NOT_ALLOWED
+  if (!(await loadReporter(s, id))) return { ok: false, error: 'Reporter not found.' }
+  try {
+    await s.payload.update({ collection: 'users', id: Number(id), data: { isActive: Boolean(active) }, ...s.as })
+    refresh()
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: message(err) }
+  }
+}
+
+/** Sets a new password and signs the reporter out everywhere, so only the new password works. */
+export async function resetReporterPassword(id: number, password: string): Promise<AdminActionResult> {
+  const s = await staff(true)
+  if (!s) return NOT_ALLOWED
+  if (!(await loadReporter(s, id))) return { ok: false, error: 'Reporter not found.' }
+  if (typeof password !== 'string' || password.length < MIN_PASSWORD) {
+    return { ok: false, error: `The new password must be at least ${MIN_PASSWORD} characters.` }
+  }
+  try {
+    await s.payload.update({
+      collection: 'users',
+      id: Number(id),
+      data: { password, sessions: [], loginAttempts: 0, lockUntil: null },
+      ...s.as,
+    })
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: message(err) }
+  }
+}
