@@ -14,7 +14,8 @@ import { getDashboardData } from './dashboard-data'
 async function renderSection(props: AdminViewServerProps, section: SectionRouteKey) {
   const { initPageResult, params, searchParams } = props
   if (!initPageResult?.permissions?.canAccessAdmin) {
-    redirect('/admin/login')
+    // Come back here after login (also covers cross-site opens, where Payload ignores the cookie once).
+    redirect(`/admin/login?redirect=${encodeURIComponent(`/admin/${section}`)}`)
   }
 
   const payload = initPageResult.req.payload

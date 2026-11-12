@@ -38,21 +38,28 @@ function shell(props: AdminViewServerProps, children: ReactNode) {
   )
 }
 
-function viewer(props: AdminViewServerProps) {
+/**
+ * Signed-in admin user, or a redirect to login that returns here afterwards (like Payload's own views).
+ * The `redirect` param matters: when the page is opened from another site or app, Payload's CSRF rules ignore
+ * the session cookie for that request; the login page then sees the session and sends the user back here.
+ */
+function viewer(props: AdminViewServerProps, path: string) {
   const user = props.initPageResult?.req.user as User | null | undefined
-  if (!user || !props.initPageResult?.permissions?.canAccessAdmin) redirect('/admin/login')
+  if (!user || !props.initPageResult?.permissions?.canAccessAdmin) {
+    redirect(`/admin/login?redirect=${encodeURIComponent(path)}`)
+  }
   return user
 }
 
 export async function ReviewQueueView(props: AdminViewServerProps) {
-  const user = viewer(props)
+  const user = viewer(props, '/admin/review')
   if (!isEditorOrAdmin(user as unknown as MaybeUser)) redirect('/admin')
   const data = await reviewQueue(props.initPageResult.req.payload, { user, overrideAccess: false })
   return shell(props, <ReviewQueueClient pending={data.pending} rejected={data.rejected} />)
 }
 
 export async function ReportersView(props: AdminViewServerProps) {
-  const user = viewer(props)
+  const user = viewer(props, '/admin/reporters')
   if (!isAdmin(user as unknown as MaybeUser)) redirect('/admin')
   const data = await reportersOverview(props.initPageResult.req.payload, { user, overrideAccess: false })
   return shell(props, <ReportersClient reporters={data.rows} categories={data.categories} />)
