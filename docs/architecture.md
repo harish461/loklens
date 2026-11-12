@@ -256,6 +256,32 @@ to Google News Publisher Center, and watch the 410/404 report for a few weeks.
   (contract §5).
 - Secrets only in `.env` on the server; Postgres is not reachable outside the Docker network.
 
+### Reporter workspace and review workflow (added 2026-11-12)
+
+Reporters work in a separate area, **`/reporter`** (Next route group `app/(reporter)`), not in Payload `/admin`.
+There is still one user table and one auth system (Payload `users`, pbkdf2 hashes, server-validated sessions).
+
+- **Admin access:** `users.access.admin` is editor/admin only, so Payload refuses every `/admin` route to reporters
+  server-side. `/reporter` pages and server actions each re-check the session (`requireReporter()`), require role
+  `reporter` and an active account, and write through the local API with `overrideAccess: false`, so collection
+  access rules and hooks apply to every change. Editors/admins visiting `/reporter` are sent to `/admin`.
+- **Accounts:** only admins create reporters (no self sign-up) and set or reset their passwords. Admin-only user
+  fields: `role`, `isActive`, `canPublish`, `assignedCategories`. Reporters may edit their own `name`,
+  `displayName`, `photo`, `mobile`, `designation`, `bio`, `social` and password (current password re-checked).
+  Deactivating a user blocks login (`beforeLogin`) and clears their sessions, so they are signed out at once.
+- **Workflow:** `workflowStatus` = `draft | pending_review | rejected | published`, kept in sync with Payload's
+  `_status` (publishing always sets `published`; unpublishing returns to `draft`).
+
+  | Who | Allowed changes |
+  |---|---|
+  | reporter | `draft ↔ pending_review`, `rejected → draft / pending_review`; edit own unpublished articles; never set `rejected`, `published` or review fields; publish only when the admin has set `canPublish` |
+  | editor/admin | any transition; rejecting requires `reviewNote`; approving = publishing (featured-image rule applies) |
+
+- **Ownership:** reporters read, update and delete only articles they created (`createdBy`). They may delete
+  only articles that were never published (`everPublished = false`). If a reporter has `assignedCategories`,
+  their articles must use one of them.
+- **Featured:** reporters can set `featureRequested`; the editorial `isFeatured` flag stays editor/admin only.
+
 ---
 
 ## 9. Environments and delivery
