@@ -1,6 +1,21 @@
-import type { CollectionBeforeValidateHook, CollectionConfig } from 'payload'
+import {
+  APIError,
+  type CollectionBeforeChangeHook,
+  type CollectionBeforeLoginHook,
+  type CollectionBeforeValidateHook,
+  type CollectionConfig,
+} from 'payload'
 
-import { adminField, adminsOnly, anyone, userPrivateField, userUpdate, ROLES } from '../access'
+import {
+  adminField,
+  adminsOnly,
+  anyone,
+  isEditorOrAdmin,
+  userPrivateField,
+  userUpdate,
+  ROLES,
+  type MaybeUser,
+} from '../access'
 import { slugField } from '../fields/slug'
 import { normalizeCollectionData } from '../hooks/normalize'
 import { userRevalidation } from '../hooks/revalidate'
@@ -10,6 +25,22 @@ const firstUserIsAdmin: CollectionBeforeValidateHook = async ({ data, operation,
   if (operation !== 'create' || !data) return data
   const { totalDocs } = await req.payload.count({ collection: 'users', overrideAccess: true, req })
   if (totalDocs === 0) return { ...data, role: 'admin' }
+  return data
+}
+
+/** Deactivated accounts cannot sign in (checked after the password, so it reveals nothing to guessers). */
+const blockInactiveLogin: CollectionBeforeLoginHook = ({ user }) => {
+  if ((user as { isActive?: boolean | null }).isActive === false) {
+    throw new APIError('This account has been deactivated. Contact the LokLens admin.', 403, undefined, true)
+  }
+  return user
+}
+
+/** Deactivating an account ends its open sessions at once (Payload validates every token against `sessions`). */
+const endSessionsOnDeactivate: CollectionBeforeChangeHook = ({ data, originalDoc, operation }) => {
+  if (operation === 'update' && data?.isActive === false && originalDoc?.isActive !== false) {
+    return { ...data, sessions: [] }
+  }
   return data
 }
 
@@ -36,9 +67,12 @@ export const Users: CollectionConfig = {
     create: adminsOnly,
     update: userUpdate,
     delete: adminsOnly,
-    admin: ({ req }) => Boolean(req.user),
+    // Payload /admin is for editors and admins only; reporters use /reporter (architecture §8).
+    admin: ({ req }) => isEditorOrAdmin(req.user as MaybeUser),
   },
   hooks: {
+    beforeLogin: [blockInactiveLogin],
+    beforeChange: [endSessionsOnDeactivate],
     beforeValidate: [normalizeCollectionData, firstUserIsAdmin],
     afterChange: userRevalidation.afterChange,
     afterDelete: userRevalidation.afterDelete,
@@ -50,7 +84,8 @@ export const Users: CollectionConfig = {
       type: 'email',
       required: true,
       unique: true,
-      access: { read: userPrivateField },
+      // The login identity: admins assign it; users cannot change their own.
+      access: { read: userPrivateField, update: adminField },
     },
     { name: 'name', type: 'text', required: true, admin: { description: 'Full name (used in admin).' } },
     {
@@ -68,6 +103,45 @@ export const Users: CollectionConfig = {
       options: ROLES.map((r) => ({ label: r[0].toUpperCase() + r.slice(1), value: r })),
       access: { read: userPrivateField, create: adminField, update: adminField },
       admin: { position: 'sidebar' },
+    },
+    // Account controls (architecture §8): set by admins only; the user may read their own.
+    {
+      name: 'isActive',
+      type: 'checkbox',
+      defaultValue: true,
+      index: true,
+      access: { read: userPrivateField, create: adminField, update: adminField },
+      admin: { position: 'sidebar', description: 'Unticking signs the user out and blocks login.' },
+    },
+    {
+      name: 'canPublish',
+      type: 'checkbox',
+      defaultValue: false,
+      access: { read: userPrivateField, create: adminField, update: adminField },
+      admin: {
+        position: 'sidebar',
+        description: 'Reporters only: may publish directly instead of submitting for review.',
+        condition: (data) => data?.role === 'reporter',
+      },
+    },
+    {
+      name: 'assignedCategories',
+      type: 'relationship',
+      relationTo: 'categories',
+      hasMany: true,
+      access: { read: userPrivateField, create: adminField, update: adminField },
+      admin: {
+        position: 'sidebar',
+        description: 'Reporters only: limits which categories they can file into. Empty = any.',
+        condition: (data) => data?.role === 'reporter',
+      },
+    },
+    {
+      type: 'row',
+      fields: [
+        { name: 'mobile', type: 'text', maxLength: 20, access: { read: userPrivateField } },
+        { name: 'designation', type: 'text', maxLength: 80, admin: { description: 'e.g. संवाददाता, देहरादून' } },
+      ],
     },
     // Payload's own auth field (merged by name): live session ids are internal, admins only.
     {

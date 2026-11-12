@@ -221,10 +221,35 @@ export interface Article {
      */
     ogImage?: (number | null) | Media;
     /**
+     * Main search phrase this article targets (editorial hint only).
+     */
+    focusKeyword?: string | null;
+    /**
      * Hide this page from search engines.
      */
     noindex?: boolean | null;
   };
+  articleType?: ('news' | 'opinion' | 'interview' | 'analysis' | 'photo_story') | null;
+  /**
+   * Stored only for now; the site renders as Hindi.
+   */
+  language?: ('hi' | 'en') | null;
+  /**
+   * Kept in sync with publishing. Rejecting needs a review note.
+   */
+  workflowStatus?: ('draft' | 'pending_review' | 'rejected' | 'published') | null;
+  /**
+   * Shown to the reporter when the article is rejected.
+   */
+  reviewNote?: string | null;
+  /**
+   * The reporter suggests this article as featured.
+   */
+  featureRequested?: boolean | null;
+  submittedAt?: string | null;
+  reviewedAt?: string | null;
+  reviewedBy?: (number | null) | User;
+  everPublished?: boolean | null;
   createdBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
@@ -335,6 +360,23 @@ export interface User {
    */
   slug: string;
   role: 'admin' | 'editor' | 'reporter';
+  /**
+   * Unticking signs the user out and blocks login.
+   */
+  isActive?: boolean | null;
+  /**
+   * Reporters only: may publish directly instead of submitting for review.
+   */
+  canPublish?: boolean | null;
+  /**
+   * Reporters only: limits which categories they can file into. Empty = any.
+   */
+  assignedCategories?: (number | Category)[] | null;
+  mobile?: string | null;
+  /**
+   * e.g. संवाददाता, देहरादून
+   */
+  designation?: string | null;
   bio?: string | null;
   photo?: (number | null) | Media;
   social?:
@@ -788,8 +830,18 @@ export interface ArticlesSelect<T extends boolean = true> {
         metaTitle?: T;
         metaDescription?: T;
         ogImage?: T;
+        focusKeyword?: T;
         noindex?: T;
       };
+  articleType?: T;
+  language?: T;
+  workflowStatus?: T;
+  reviewNote?: T;
+  featureRequested?: T;
+  submittedAt?: T;
+  reviewedAt?: T;
+  reviewedBy?: T;
+  everPublished?: T;
   createdBy?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1008,6 +1060,11 @@ export interface UsersSelect<T extends boolean = true> {
   displayName?: T;
   slug?: T;
   role?: T;
+  isActive?: T;
+  canPublish?: T;
+  assignedCategories?: T;
+  mobile?: T;
+  designation?: T;
   bio?: T;
   photo?: T;
   social?:

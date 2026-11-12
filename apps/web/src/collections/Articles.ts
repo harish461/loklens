@@ -5,8 +5,11 @@ import {
   articleDelete,
   articleUpdate,
   editorialFlagField,
+  internalField,
   publishedOrStaff,
   staffOnly,
+  WORKFLOW_LABELS,
+  WORKFLOW_STATUSES,
 } from '../access'
 import { createdByField, seoGroup } from '../fields/common'
 import { richTextField } from '../fields/richText'
@@ -15,6 +18,7 @@ import {
   applyPublishDefaults,
   guardReporterChanges,
   requireFeaturedImageOnPublish,
+  syncWorkflow,
 } from '../hooks/articles'
 import { normalizeCollectionData } from '../hooks/normalize'
 import { revalidateArticleAfterChange, revalidateArticleAfterDelete } from '../hooks/revalidate'
@@ -67,7 +71,8 @@ export const Articles: CollectionConfig = {
   },
   hooks: {
     beforeValidate: [normalizeCollectionData, publishDefaults],
-    beforeChange: [guardReporterChanges, requireFeaturedImageOnPublish],
+    // Order matters: the guard sees the client's raw request, then the workflow fields are derived.
+    beforeChange: [guardReporterChanges, syncWorkflow, requireFeaturedImageOnPublish],
     afterChange: [revalidateArticleAfterChange],
     afterDelete: [revalidateArticleAfterDelete],
   },
@@ -166,7 +171,83 @@ export const Articles: CollectionConfig = {
         },
       ],
     },
-    seoGroup({ withImage: true, withNoindex: true }),
+    seoGroup({ withImage: true, withNoindex: true, withFocusKeyword: true }),
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'articleType',
+          type: 'select',
+          defaultValue: 'news',
+          options: [
+            { label: 'News', value: 'news' },
+            { label: 'Opinion', value: 'opinion' },
+            { label: 'Interview', value: 'interview' },
+            { label: 'Analysis', value: 'analysis' },
+            { label: 'Photo story', value: 'photo_story' },
+          ],
+        },
+        {
+          name: 'language',
+          type: 'select',
+          defaultValue: 'hi',
+          options: [
+            { label: 'Hindi', value: 'hi' },
+            { label: 'English', value: 'en' },
+          ],
+          admin: { description: 'Stored only for now; the site renders as Hindi.' },
+        },
+      ],
+    },
+    // Review workflow (architecture §8). Internal: never returned to anonymous clients.
+    {
+      type: 'collapsible',
+      label: 'Review',
+      admin: { position: 'sidebar' },
+      fields: [
+        {
+          name: 'workflowStatus',
+          type: 'select',
+          defaultValue: 'draft',
+          index: true,
+          options: WORKFLOW_STATUSES.map((value) => ({ label: WORKFLOW_LABELS[value], value })),
+          access: { read: internalField },
+          admin: { description: 'Kept in sync with publishing. Rejecting needs a review note.' },
+        },
+        {
+          name: 'reviewNote',
+          type: 'textarea',
+          maxLength: 1000,
+          access: { read: internalField, create: editorialFlagField, update: editorialFlagField },
+          admin: { description: 'Shown to the reporter when the article is rejected.' },
+        },
+        {
+          name: 'featureRequested',
+          type: 'checkbox',
+          defaultValue: false,
+          access: { read: internalField },
+          admin: { description: 'The reporter suggests this article as featured.' },
+        },
+        // Stamped by the workflow hook; no field access so the hook's values are never stripped.
+        { name: 'submittedAt', type: 'date', access: { read: internalField }, admin: { readOnly: true } },
+        { name: 'reviewedAt', type: 'date', access: { read: internalField }, admin: { readOnly: true } },
+        {
+          name: 'reviewedBy',
+          type: 'relationship',
+          relationTo: 'users',
+          access: { read: internalField },
+          admin: { readOnly: true },
+        },
+        {
+          name: 'everPublished',
+          type: 'checkbox',
+          defaultValue: false,
+          index: true,
+          access: { read: internalField },
+          admin: { hidden: true },
+        },
+      ],
+    },
     createdByField(),
   ],
 }

@@ -18,6 +18,7 @@ import {
 
 export * from './roles'
 export * from './rules'
+export * from './workflow'
 
 const u = (user: unknown): MaybeUser => user as MaybeUser
 

@@ -42,9 +42,23 @@ export function createArticle(user: MaybeUser): boolean {
   return isStaff(user)
 }
 
-/** Deleting articles is an editorial decision. */
-export function deleteArticle(user: MaybeUser): boolean {
-  return isEditorOrAdmin(user)
+/**
+ * Article delete rule.
+ * - editor/admin: any article
+ * - reporter: only their own articles that were never published (a live URL is an editorial decision)
+ */
+export function deleteArticle(user: MaybeUser): boolean | Where {
+  if (isEditorOrAdmin(user)) return true
+  if (isReporter(user) && user) {
+    return {
+      and: [
+        { createdBy: { equals: user.id } },
+        { _status: { not_equals: 'published' } },
+        { or: [{ everPublished: { equals: false } }, { everPublished: { exists: false } }] },
+      ],
+    }
+  }
+  return false
 }
 
 /** Field-level: editorial flags (isBreaking/isTrending/isFeatured/breakingUntil). */
@@ -83,6 +97,8 @@ export interface PublishGuardInput {
   data: Record<string, unknown>
   /** Stored document before the change (update only). */
   originalDoc?: Record<string, unknown> | null
+  /** Admin-granted permission for this reporter to publish directly (read from the database). */
+  canPublish?: boolean
 }
 
 export const EDITORIAL_FLAGS = ['isBreaking', 'isTrending', 'isFeatured', 'breakingUntil'] as const
@@ -91,11 +107,13 @@ export const EDITORIAL_FLAGS = ['isBreaking', 'isTrending', 'isFeatured', 'break
  * Decides what a change may do, independent of Payload. Returns a list of violations;
  * empty = allowed. Requests without a user (seed scripts, jobs, overrideAccess) are trusted.
  */
-export function publishGuardViolations({ user, data, originalDoc }: PublishGuardInput): string[] {
+export function publishGuardViolations({ user, data, originalDoc, canPublish = false }: PublishGuardInput): string[] {
   if (!user || isEditorOrAdmin(user)) return []
   const violations: string[] = []
   if (!isStaff(user)) violations.push('Only newsroom users may change articles.')
-  if (data._status === 'published') violations.push('Reporters cannot publish. Save a draft for an editor to review.')
+  if (data._status === 'published' && !(isReporter(user) && canPublish)) {
+    violations.push('Reporters cannot publish. Submit the article for review.')
+  }
   for (const flag of EDITORIAL_FLAGS) {
     if (!(flag in data)) continue
     const incoming = data[flag] ?? null

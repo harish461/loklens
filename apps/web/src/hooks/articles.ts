@@ -1,24 +1,72 @@
-import { APIError, type CollectionBeforeChangeHook } from 'payload'
+import { APIError, type CollectionBeforeChangeHook, type PayloadRequest } from 'payload'
 
-import { publishGuardViolations, type MaybeUser } from '../access'
+import {
+  isReporter,
+  publishGuardViolations,
+  reporterWorkflowViolations,
+  workflowPatch,
+  type MaybeUser,
+  type ReporterPermissions,
+} from '../access'
 import { relId } from './revalidate'
 
 export const BREAKING_DEFAULT_HOURS = 6
 export const MIN_FEATURED_IMAGE_WIDTH = 1200
 
 /**
- * Defence in depth for §8: field-level access already strips flags for reporters; this guard also
- * blocks publishing (_status is a system field without field access) and any flag change that
- * slipped through. Trusted calls (no user: seed, jobs) pass.
+ * A reporter's admin-controlled permissions, read fresh from the database on every write so a change
+ * by the admin (deactivate, revoke canPublish, reassign categories) applies at once, not at next login.
  */
-export const guardReporterChanges: CollectionBeforeChangeHook = ({ data, originalDoc, req }) => {
-  const violations = publishGuardViolations({
+async function reporterPermissions(req: PayloadRequest): Promise<ReporterPermissions | null> {
+  const user = req.user as MaybeUser
+  if (!user || !isReporter(user)) return null
+  const doc = await req.payload.findByID({
+    collection: 'users',
+    id: user.id,
+    depth: 0,
+    overrideAccess: true,
+    disableErrors: true,
+    req,
+  })
+  if (!doc) return { isActive: false }
+  return {
+    isActive: doc.isActive !== false,
+    canPublish: Boolean(doc.canPublish),
+    assignedCategories: (doc.assignedCategories as unknown[] | null | undefined) ?? [],
+  }
+}
+
+/**
+ * Defence in depth for §8: field-level access already strips flags for reporters; this guard also
+ * blocks publishing without permission (_status is a system field without field access), flag changes
+ * that slipped through, editor-only workflow moves, review fields, other reporters' articles and
+ * categories outside the reporter's assignment. Trusted calls (no user: seed, jobs) pass.
+ */
+export const guardReporterChanges: CollectionBeforeChangeHook = async ({ data, originalDoc, req }) => {
+  const user = req.user as MaybeUser
+  const permissions = await reporterPermissions(req)
+  const input = {
+    user,
+    data: data as Record<string, unknown>,
+    originalDoc: originalDoc as Record<string, unknown> | undefined,
+  }
+  const violations = [
+    ...publishGuardViolations({ ...input, canPublish: Boolean(permissions?.canPublish) }),
+    ...reporterWorkflowViolations({ ...input, permissions }),
+  ]
+  if (violations.length > 0) throw new APIError([...new Set(violations)].join(' '), 403, undefined, true)
+  return data
+}
+
+/** Keeps workflowStatus / review stamps in sync with `_status` (src/access/workflow.ts). Runs after the guard. */
+export const syncWorkflow: CollectionBeforeChangeHook = ({ data, originalDoc, req }) => {
+  const { patch, violations } = workflowPatch({
     user: req.user as MaybeUser,
     data: data as Record<string, unknown>,
     originalDoc: originalDoc as Record<string, unknown> | undefined,
   })
-  if (violations.length > 0) throw new APIError(violations.join(' '), 403, undefined, true)
-  return data
+  if (violations.length > 0) throw new APIError(violations.join(' '), 400, undefined, true)
+  return { ...data, ...patch }
 }
 
 /** Pure: computes publish-time defaults. Exported for tests. */

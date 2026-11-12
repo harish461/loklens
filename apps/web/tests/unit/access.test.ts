@@ -66,8 +66,16 @@ describe('article write access', () => {
     })
     expect(updateArticle(editor)).toBe(true)
   })
-  it('delete: editors/admins', () => {
-    expect(deleteArticle(reporter)).toBe(false)
+  it('delete: editors/admins any; reporters only their own never-published articles', () => {
+    expect(deleteArticle(anon)).toBe(false)
+    expect(deleteArticle(noRole)).toBe(false)
+    expect(deleteArticle(reporter)).toEqual({
+      and: [
+        { createdBy: { equals: 3 } },
+        { _status: { not_equals: 'published' } },
+        { or: [{ everPublished: { equals: false } }, { everPublished: { exists: false } }] },
+      ],
+    })
     expect(deleteArticle(editor)).toBe(true)
   })
   it('editorial flags: editors/admins', () => {
@@ -81,6 +89,12 @@ describe('article write access', () => {
 describe('publish guard', () => {
   it('blocks reporters from publishing', () => {
     expect(publishGuardViolations({ user: reporter, data: { _status: 'published' } })).toHaveLength(1)
+  })
+  it('lets a reporter publish only with the admin-granted canPublish permission', () => {
+    const data = { _status: 'published' }
+    expect(publishGuardViolations({ user: reporter, data, canPublish: false })).toHaveLength(1)
+    expect(publishGuardViolations({ user: reporter, data, canPublish: true })).toEqual([])
+    expect(publishGuardViolations({ user: noRole, data, canPublish: true })).not.toEqual([])
   })
   it('allows reporters to save drafts', () => {
     expect(publishGuardViolations({ user: reporter, data: { _status: 'draft', title: 'x' } })).toEqual([])
