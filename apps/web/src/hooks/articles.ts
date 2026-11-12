@@ -14,6 +14,14 @@ export const BREAKING_DEFAULT_HOURS = 6
 export const MIN_FEATURED_IMAGE_WIDTH = 1200
 
 /**
+ * The stored document, on updates only. On create Payload passes a placeholder `originalDoc` (or the
+ * source document when duplicating), which must not be treated as an existing article.
+ */
+function storedDoc(operation: string, originalDoc: unknown): Record<string, unknown> | undefined {
+  return operation === 'update' ? (originalDoc as Record<string, unknown> | undefined) : undefined
+}
+
+/**
  * A reporter's admin-controlled permissions, read fresh from the database on every write so a change
  * by the admin (deactivate, revoke canPublish, reassign categories) applies at once, not at next login.
  */
@@ -42,13 +50,13 @@ async function reporterPermissions(req: PayloadRequest): Promise<ReporterPermiss
  * that slipped through, editor-only workflow moves, review fields, other reporters' articles and
  * categories outside the reporter's assignment. Trusted calls (no user: seed, jobs) pass.
  */
-export const guardReporterChanges: CollectionBeforeChangeHook = async ({ data, originalDoc, req }) => {
+export const guardReporterChanges: CollectionBeforeChangeHook = async ({ data, originalDoc, operation, req }) => {
   const user = req.user as MaybeUser
   const permissions = await reporterPermissions(req)
   const input = {
     user,
     data: data as Record<string, unknown>,
-    originalDoc: originalDoc as Record<string, unknown> | undefined,
+    originalDoc: storedDoc(operation, originalDoc),
   }
   const violations = [
     ...publishGuardViolations({ ...input, canPublish: Boolean(permissions?.canPublish) }),
@@ -59,11 +67,11 @@ export const guardReporterChanges: CollectionBeforeChangeHook = async ({ data, o
 }
 
 /** Keeps workflowStatus / review stamps in sync with `_status` (src/access/workflow.ts). Runs after the guard. */
-export const syncWorkflow: CollectionBeforeChangeHook = ({ data, originalDoc, req }) => {
+export const syncWorkflow: CollectionBeforeChangeHook = ({ data, originalDoc, operation, req }) => {
   const { patch, violations } = workflowPatch({
     user: req.user as MaybeUser,
     data: data as Record<string, unknown>,
-    originalDoc: originalDoc as Record<string, unknown> | undefined,
+    originalDoc: storedDoc(operation, originalDoc),
   })
   if (violations.length > 0) throw new APIError(violations.join(' '), 400, undefined, true)
   return { ...data, ...patch }

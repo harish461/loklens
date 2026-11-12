@@ -164,7 +164,9 @@
   padding: 22px;
   max-width: min(420px, calc(100vw - 32px));
   box-shadow: 0 20px 60px rgba(24, 23, 37, 0.25);
-  color: var(--cms-ink);
+  /* Explicit colours: inside Payload's admin the inherited theme can be dark. */
+  background: #fff;
+  color: #181725;
 }
 
 .dialog::backdrop {

@@ -80,6 +80,12 @@ describe('reporterWorkflowViolations', () => {
     expect(reporterWorkflowViolations({ user: reporter, data: { category: 9 }, permissions: { assignedCategories: [] } })).toEqual([])
   })
 
+  it('allows a new article carrying the default (empty) review values Payload fills in', () => {
+    const data = { title: 'नई खबर', everPublished: false, reviewNote: null, featureRequested: false, workflowStatus: 'draft' }
+    expect(reporterWorkflowViolations({ user: reporter, data, originalDoc: undefined })).toEqual([])
+    expect(reporterWorkflowViolations({ user: reporter, data: { reviewedBy: 2 }, originalDoc: undefined })).toHaveLength(1)
+  })
+
   it('blocks deactivated reporters', () => {
     expect(reporterWorkflowViolations({ user: reporter, data: {}, permissions: { isActive: false } })).toHaveLength(1)
   })

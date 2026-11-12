@@ -49,7 +49,11 @@ export function relationId(value: unknown): number | string | null {
   return null
 }
 
+const isEmpty = (v: unknown) => v === null || v === undefined || v === false || v === ''
+
+/** Whether a field value really changes; "empty" values (defaults Payload fills in on create) are equal. */
 function changed(incoming: unknown, current: unknown): boolean {
+  if (isEmpty(incoming) && isEmpty(current)) return false
   const a = relationId(incoming) ?? incoming ?? null
   const b = relationId(current) ?? current ?? null
   if (a instanceof Date || b instanceof Date || typeof a === 'string' || typeof b === 'string') {

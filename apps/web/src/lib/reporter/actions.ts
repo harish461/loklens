@@ -243,15 +243,16 @@ export async function changePassword(current: string, next: string): Promise<Act
   }
 
   try {
-    await s.payload.update({ collection: 'users', id: s.user.id, data: { password: next }, ...asReporter(s) })
-    // Keep only this browser's session: other devices (and the session the check above created) sign out.
+    // On a password change Payload keeps only the session of `req.user._sid` and ends all others (other
+    // devices, and the session the check above created). The user from checkReporter() is a fresh DB read
+    // without `_sid`, so pass this browser's session id explicitly — otherwise this browser is signed out too.
     const sid = await currentSessionId()
-    const fresh = await s.payload.findByID({ collection: 'users', id: s.user.id, depth: 0, overrideAccess: true })
     await s.payload.update({
       collection: 'users',
       id: s.user.id,
-      data: { sessions: (fresh.sessions ?? []).filter((x) => x.id === sid) },
-      overrideAccess: true,
+      data: { password: next },
+      user: { ...s.user, collection: 'users', _sid: sid ?? undefined },
+      overrideAccess: false,
     })
     return { ok: true }
   } catch (err) {

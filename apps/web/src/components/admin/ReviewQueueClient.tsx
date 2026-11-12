@@ -26,6 +26,7 @@ function Thumb({ item }: { item: ReviewItem }) {
 
 function ReviewRow({ item, onDone }: { item: ReviewItem; onDone: (text: string, ok: boolean) => void }) {
   const dialog = useRef<HTMLDialogElement>(null)
+  const noteRef = useRef<HTMLTextAreaElement>(null)
   const [note, setNote] = useState('')
   const [feature, setFeature] = useState(item.featureRequested)
   const [error, setError] = useState<string | null>(null)
@@ -87,7 +88,16 @@ function ReviewRow({ item, onDone }: { item: ReviewItem; onDone: (text: string, 
               <input type="checkbox" checked={feature} onChange={(e) => setFeature(e.target.checked)} /> Feature
             </label>
           )}
-          <button type="button" className={styles.actionBtn} onClick={() => dialog.current?.showModal()} disabled={pending}>
+          <button
+            type="button"
+            className={styles.actionBtn}
+            onClick={() => {
+              dialog.current?.showModal()
+              // React's autoFocus doesn't apply inside a <dialog> opened with showModal().
+              noteRef.current?.focus()
+            }}
+            disabled={pending}
+          >
             <XCircle size={14} /> Reject
           </button>
           <button type="button" className={styles.primaryLimeBtn} onClick={approve} disabled={pending}>
@@ -98,6 +108,7 @@ function ReviewRow({ item, onDone }: { item: ReviewItem; onDone: (text: string, 
           <h2 id={`rej-${item.id}`}>Send back to the reporter</h2>
           <p>{item.reporterName} will see this reason and can edit and resubmit “{item.title}”.</p>
           <textarea
+            ref={noteRef}
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={4}
@@ -105,7 +116,7 @@ function ReviewRow({ item, onDone }: { item: ReviewItem; onDone: (text: string, 
             className={styles.textareaInput}
             placeholder="क्या बदलना है — जैसे: स्रोत जोड़ें, शीर्षक छोटा करें…"
             style={{ width: '100%', marginBottom: 12 }}
-            autoFocus
+            aria-label="Reason for the reporter"
           />
           {error && (
             <div className={`${extra.alert} ${extra.alertDanger}`} role="alert">

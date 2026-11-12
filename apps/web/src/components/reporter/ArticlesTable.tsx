@@ -111,7 +111,7 @@ export function ArticlesTable({ rows }: { rows: ReporterArticleRow[] }) {
                 </Link>
                 <div className={adminStyles.mobileMetaRow}>
                   {row.categoryName && <span className={adminStyles.categoryChip}>{row.categoryName}</span>}
-                  <span>{formatDateTime(row.updatedAt)}</span>
+                  <span className={adminStyles.fieldHint}>{formatDateTime(row.updatedAt)}</span>
                 </div>
               </div>
             </div>
