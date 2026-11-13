@@ -5,6 +5,7 @@ import { listEPapers } from '@/lib/data'
 
 import { getEPaperRange } from './epaper-data'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 300
 
 // TODO(seo): src/lib/seo; empty section must be noindex (architecture §3).

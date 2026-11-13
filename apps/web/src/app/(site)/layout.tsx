@@ -9,6 +9,8 @@ import { getHome, getSiteSettings, listCategories } from '@/lib/data'
 
 import './globals.css'
 
+export const dynamic = 'force-dynamic'
+
 // Montserrat is the site font. It has no Devanagari glyphs, so Hindi text falls back to Noto Sans Devanagari.
 const montserrat = Montserrat({
   subsets: ['latin'],

@@ -1,7 +1,15 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
+
 import { withPayload } from '@payloadcms/next/withPayload'
 import type { NextConfig } from 'next'
 
+const dirname = path.dirname(fileURLToPath(import.meta.url))
+
 const nextConfig: NextConfig = {
+  // Keep file tracing rooted at apps/web so Hostinger runtime packaging (hbuilds/current/nodejs)
+  // resolves all node_modules (including react and react-dom) inside apps/web/node_modules.
+  outputFileTracingRoot: path.resolve(dirname),
   // Allow LAN IP and localhost origins during development so /_next/static/* and /_next/webpack-hmr
   // are not blocked with 403 Forbidden when accessing http://192.168.1.15:3000/admin.
   allowedDevOrigins: ['192.168.1.15', '192.168.1.*', '127.0.0.1', 'localhost'],

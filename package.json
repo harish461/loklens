@@ -2,20 +2,17 @@
   "name": "loklens",
   "version": "0.0.0",
   "private": true,
-  "description": "LokLens News - monorepo root (npm workspaces)",
-  "workspaces": [
-    "apps/*"
-  ],
+  "description": "LokLens News - monorepo root",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "dev": "npm run dev --workspace=apps/web",
-    "build": "npm run build --workspace=apps/web",
-    "start": "npm run start --workspace=apps/web",
-    "lint": "npm run lint --workspace=apps/web --if-present",
-    "typecheck": "npm run typecheck --workspace=apps/web --if-present",
-    "test": "npm run test --workspace=apps/web --if-present",
+    "dev": "npm run dev --prefix apps/web",
+    "build": "npm run build --prefix apps/web",
+    "start": "npm run start --prefix apps/web",
+    "lint": "npm run lint --prefix apps/web --if-present",
+    "typecheck": "npm run typecheck --prefix apps/web --if-present",
+    "test": "npm run test --prefix apps/web --if-present",
     "db:up": "docker compose -f infra/docker-compose.dev.yml up -d --wait db",
     "db:down": "docker compose -f infra/docker-compose.dev.yml down",
     "db:logs": "docker compose -f infra/docker-compose.dev.yml logs -f db"

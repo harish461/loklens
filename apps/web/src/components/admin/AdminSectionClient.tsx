@@ -2,7 +2,6 @@
 
 import {
   BarChart3,
-  CalendarClock,
   CheckCircle2,
   ExternalLink,
   Flame,
@@ -41,7 +40,6 @@ import {
   SAMPLE_AD_SLOTS,
   SAMPLE_COMMENTS,
   SAMPLE_SUBCATEGORIES,
-  SCHEDULED_PUBLISH_ITEMS,
   TRAFFIC_SERIES,
 } from './mock-cms-data'
 
@@ -49,7 +47,6 @@ export type SectionRouteKey =
   | 'subcategories'
   | 'authors'
   | 'breaking-news'
-  | 'scheduled-news'
   | 'comments'
   | 'advertisements'
   | 'seo'
@@ -222,14 +219,7 @@ export function AdminSectionClient({
 
   // 2. AUTHORS / JOURNALISTS VIEW
   if (section === 'authors') {
-    const displayAuthors =
-      authors.length > 0
-        ? authors
-        : [
-            { id: 1, name: 'रोहित बहुगुणा', role: 'editor', email: 'rohit@loklensnews.com' },
-            { id: 2, name: 'प्रिया नौटियाल', role: 'reporter', email: 'priya@loklensnews.com' },
-            { id: 3, name: 'आदित्य रावत', role: 'reporter', email: 'aditya@loklensnews.com' },
-          ]
+    const displayAuthors = authors
     return (
       <div className={styles.pageShell}>
         <header className={styles.pageHeader}>
@@ -259,19 +249,17 @@ export function AdminSectionClient({
                   <th>Journalist / Author</th>
                   <th>Role</th>
                   <th>Email</th>
-                  <th>Published Stories</th>
                   <th className={styles.rightAlign}>Manage</th>
                 </tr>
               </thead>
               <tbody>
-                {displayAuthors.map((u, idx) => (
+                {displayAuthors.map((u) => (
                   <tr key={u.id}>
                     <td style={{ fontWeight: 600 }}>{u.name}</td>
                     <td>
                       <span className={styles.categoryChip}>{u.role.toUpperCase()}</span>
                     </td>
-                    <td className={styles.dateCol}>{u.email || 'newsroom@loklensnews.com'}</td>
-                    <td style={{ fontWeight: 600 }}>{24 - idx * 5} articles</td>
+                    <td className={styles.dateCol}>{u.email || '—'}</td>
                     <td className={styles.rightAlign}>
                       <Link
                         href={`/admin/collections/users/${u.id}`}
@@ -391,72 +379,7 @@ export function AdminSectionClient({
     )
   }
 
-  // 4. SCHEDULED NEWS VIEW
-  if (section === 'scheduled-news') {
-    return (
-      <div className={styles.pageShell}>
-        <header className={styles.pageHeader}>
-          <div className={styles.titleGroup}>
-            <div className={styles.titleIcon} style={{ background: '#EBE8FD', color: '#5B21B6' }}>
-              <CalendarClock size={22} />
-            </div>
-            <div>
-              <h1 className={styles.pageTitle}>Scheduled News</h1>
-              <p className={styles.pageSubtitle}>
-                Upcoming Hindi stories queued for automated timed publication
-              </p>
-            </div>
-          </div>
-          <div className={styles.headerActions}>
-            <Link href="/admin/collections/articles/create" className={styles.primaryLimeBtn}>
-              <Plus size={16} /> Schedule New Article
-            </Link>
-          </div>
-        </header>
-
-        <div className={styles.cardSurface}>
-          <div className={styles.tableWrap} style={{ display: 'block' }}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Headline</th>
-                  <th>Category</th>
-                  <th>Author</th>
-                  <th>Scheduled Release (IST)</th>
-                  <th>Queue Status</th>
-                  <th className={styles.rightAlign}>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {SCHEDULED_PUBLISH_ITEMS.map((item) => (
-                  <tr key={item.id}>
-                    <td style={{ fontWeight: 600 }}>{item.title}</td>
-                    <td>
-                      <span className={styles.categoryChip}>{item.category}</span>
-                    </td>
-                    <td>{item.author}</td>
-                    <td style={{ fontWeight: 600 }}>{item.scheduledTime}</td>
-                    <td>
-                      <span className={`${styles.statusBadge} ${styles.badgeScheduled}`}>
-                        {item.status.replace('_', ' ').toUpperCase()}
-                      </span>
-                    </td>
-                    <td className={styles.rightAlign}>
-                      <Link href={item.editHref} className={styles.actionBtn}>
-                        <Pencil size={13} /> Edit Schedule
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // 5. COMMENTS & MODERATION VIEW
+  // 4. COMMENTS & MODERATION VIEW
   if (section === 'comments') {
     const filteredComments = comments.filter((c) =>
       commentFilter === 'all' ? true : c.status === commentFilter,
@@ -760,7 +683,7 @@ export function AdminSectionClient({
 
       <div className={styles.twoColFields} style={{ marginBottom: 18 }}>
         <div className={styles.cardSurface}>
-          <h2 className={styles.editorCardTitle}>Monthly Readership Growth (2.4M Readers)</h2>
+          <h2 className={styles.editorCardTitle}>Monthly Readership Growth</h2>
           <ResponsiveContainer width="100%" height={240}>
             <AreaChart data={TRAFFIC_SERIES.monthly.points}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EEF0F6" />

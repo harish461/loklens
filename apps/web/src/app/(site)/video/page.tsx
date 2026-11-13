@@ -7,6 +7,7 @@ import { listVideos } from '@/lib/data'
 
 import styles from './video.module.css'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 300
 
 // TODO(seo): src/lib/seo; empty section must be noindex (architecture §3).

@@ -168,17 +168,6 @@ export function DashboardClient({
         href: '/admin/breaking-news',
       })
     }
-    if (scheduledItems.length > 0) {
-      list.push({
-        id: 'notif-scheduled',
-        title: 'Upcoming Scheduled Stories',
-        detail: `${scheduledItems.length} articles queued for timed publication.`,
-        timeAgo: 'Scheduled',
-        type: 'schedule',
-        unread: false,
-        href: '/admin/scheduled-news',
-      })
-    }
     if (initialArticles.length > 0) {
       const topArt = initialArticles[0]
       list.push({
@@ -565,17 +554,6 @@ export function DashboardClient({
             <span className={styles.qaText}>
               <strong>Breaking News</strong>
               <small>Push live ticker alert</small>
-            </span>
-            <ArrowUpRight size={15} className={styles.qaArrow} />
-          </Link>
-
-          <Link href="/admin/scheduled-news" className={styles.quickActionPill}>
-            <span className={styles.qaIcon} style={{ background: '#EBE8FD', color: '#5B21B6' }}>
-              <CalendarClock size={16} />
-            </span>
-            <span className={styles.qaText}>
-              <strong>Scheduled News</strong>
-              <small>Queue timed release</small>
             </span>
             <ArrowUpRight size={15} className={styles.qaArrow} />
           </Link>

@@ -73,7 +73,7 @@ export function ArticlesListClient({
   }
 
   const allCategories = useMemo(() => {
-    const names = new Set<string>(['प्रदेश', 'राजनीति', 'देश', 'समाज', 'खेल', 'मनोरंजन', 'टेक्नोलॉजी', 'बिजनेस'])
+    const names = new Set<string>()
     for (const c of categories) names.add(c.name)
     for (const a of articles) if (a.category) names.add(a.category)
     return Array.from(names)
@@ -81,7 +81,8 @@ export function ArticlesListClient({
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
-    const referenceNowMs = Date.parse('2026-11-12T23:59:59+05:30')
+    const referenceNowMs = Date.now()
+    const todayKey = new Date().toISOString().slice(0, 10)
     return articles.filter((a) => {
       if (categoryFilter !== 'all' && a.category !== categoryFilter) return false
       if (statusFilter !== 'all' && a.status !== statusFilter) return false
@@ -93,7 +94,7 @@ export function ArticlesListClient({
         const pubTime = Date.parse(a.publishedAt)
         if (!Number.isNaN(pubTime)) {
           if (dateFilter === 'today') {
-            if (a.publishedAt.slice(0, 10) !== '2026-11-12') return false
+            if (a.publishedAt.slice(0, 10) !== todayKey) return false
           } else if (dateFilter === '7d') {
             if (referenceNowMs - pubTime > 7 * 86_400_000) return false
           } else if (dateFilter === '30d') {
@@ -307,10 +308,6 @@ export function ArticlesListClient({
         </div>
 
         <div className={styles.headerActions}>
-          <Link href="/admin/scheduled-news" className={styles.secondaryBtn}>
-            <Calendar size={15} />
-            <span>Scheduled Queue</span>
-          </Link>
           <Link href="/admin/collections/articles/create" className={styles.primaryLimeBtn}>
             <Plus size={16} />
             <span>Create Article</span>

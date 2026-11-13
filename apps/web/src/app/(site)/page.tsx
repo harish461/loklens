@@ -11,6 +11,7 @@ import { getYouTubeShorts, getYouTubeVideos, YOUTUBE_CHANNEL_URL } from '@/lib/s
 
 import styles from './home.module.css'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 300 // safety net; publishing revalidates the `home` tag on demand (architecture §4)
 
 // TODO(seo): use the src/lib/seo home metadata + Organization/WebSite JSON-LD.

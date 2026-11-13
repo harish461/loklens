@@ -2,6 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { en } from '@payloadcms/translations/languages/en'
 import { buildConfig, type Config } from 'payload'
 import sharp from 'sharp'
@@ -30,10 +31,56 @@ const dirname = path.dirname(filename)
 
 const MAX_UPLOAD_BYTES = 50 * 1024 * 1024 // e-paper PDFs; images are capped at 10 MB in Media
 
+function resolveDatabasePoolConfig(): {
+  connectionString: string
+  ssl?: boolean | { rejectUnauthorized: boolean }
+} {
+  const url = process.env.DATABASE_URL?.trim() || ''
+  if (process.env.NODE_ENV === 'production' && !url) {
+    throw new Error(
+      '[LokLens] Missing required environment variable DATABASE_URL in production. ' +
+        'Configure DATABASE_URL in your hosting environment variables.',
+    )
+  }
+  if (!url) {
+    return { connectionString: '' }
+  }
+  try {
+    const parsed = new URL(url)
+    const host = parsed.hostname.toLowerCase()
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === 'db'
+    if (process.env.NODE_ENV === 'production' && isLocal) {
+      console.warn(
+        '[LokLens] Warning: DATABASE_URL points to localhost in production. ' +
+          'Ensure DATABASE_URL points to your external PostgreSQL database on managed hosting.',
+      )
+    }
+    const isSupabase = host.endsWith('.supabase.co') || host.endsWith('.supabase.com')
+    const sslMode = parsed.searchParams.get('sslmode')
+    if (sslMode === 'disable') {
+      return { connectionString: url, ssl: false }
+    }
+    if (isSupabase || (!isLocal && (sslMode === 'require' || sslMode === 'prefer' || sslMode === 'no-verify'))) {
+      if ((sslMode === 'require' || sslMode === 'prefer') && !parsed.searchParams.has('uselibpqcompat')) {
+        parsed.searchParams.set('uselibpqcompat', 'true')
+      }
+      return {
+        connectionString: parsed.toString(),
+        ssl: { rejectUnauthorized: false },
+      }
+    }
+  } catch {
+    // Let pg handle non-URL connection strings if used
+  }
+  return { connectionString: url }
+}
+
 const editorsCanQueue = ({ req }: { req: { user?: unknown } }) => isEditorOrAdmin(req.user as MaybeUser)
 
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SITE_URL || undefined,
+  // In development, omit serverURL so Payload uses relative URLs (/api/..., /admin/...) that work
+  // seamlessly on both http://localhost:3000 and LAN IPs (http://192.168.1.15:3000) without cross-origin CSRF issues.
+  serverURL: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_SITE_URL || undefined : undefined,
   secret: process.env.PAYLOAD_SECRET || '',
   admin: {
     user: Users.slug,
@@ -56,11 +103,6 @@ export default buildConfig({
         breakingNews: {
           Component: '@/components/admin/AdminSectionView#BreakingNewsView',
           path: '/breaking-news',
-          exact: true,
-        },
-        scheduledNews: {
-          Component: '@/components/admin/AdminSectionView#ScheduledNewsView',
-          path: '/scheduled-news',
           exact: true,
         },
         comments: {
@@ -101,9 +143,38 @@ export default buildConfig({
   },
   collections: [Articles, Categories, Tags, Locations, Media, Videos, EPapers, Pages, Redirects, Users],
   globals: [SiteSettings, Navigation, Ticker],
+  plugins: [
+    s3Storage({
+      enabled: Boolean(
+        process.env.S3_BUCKET &&
+        process.env.S3_REGION &&
+        process.env.S3_ENDPOINT &&
+        process.env.S3_ACCESS_KEY_ID &&
+        process.env.S3_SECRET_ACCESS_KEY
+      ),
+      collections: {
+        media: {
+          prefix: 'images',
+          disableLocalStorage: true,
+          // Keep Payload's server-side file proxy enabled.
+          // Do not set disablePayloadAccessControl: true.
+        },
+      },
+      bucket: process.env.S3_BUCKET || '',
+      config: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        region: process.env.S3_REGION || '',
+        endpoint: process.env.S3_ENDPOINT,
+        forcePathStyle: true,
+      },
+    }),
+  ],
   editor: newsEditor,
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URL || '' },
+    pool: resolveDatabasePoolConfig(),
     idType: 'serial',
     // Schema changes only through migrations (src/migrations), never dev push.
     push: false,

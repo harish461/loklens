@@ -75,10 +75,6 @@ export async function BreakingNewsView(props: AdminViewServerProps) {
   return renderSection(props, 'breaking-news')
 }
 
-export async function ScheduledNewsView(props: AdminViewServerProps) {
-  return renderSection(props, 'scheduled-news')
-}
-
 export async function CommentsView(props: AdminViewServerProps) {
   return renderSection(props, 'comments')
 }

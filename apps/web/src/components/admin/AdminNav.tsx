@@ -45,7 +45,7 @@ export async function AdminNav({ payload, i18n, visibleEntities, user }: Props) 
   )
   const countBySlug = new Map<string, number>(counts.map(([slug, n]) => [String(slug), n]))
 
-  let breakingCount = 2
+  let breakingCount = 0
   try {
     const breakingRes = await payload.find({
       collection: 'articles',
@@ -55,9 +55,9 @@ export async function AdminNav({ payload, i18n, visibleEntities, user }: Props) 
       overrideAccess: false,
       user: user ?? undefined,
     })
-    breakingCount = Math.max(breakingRes.totalDocs, 2)
+    breakingCount = breakingRes.totalDocs
   } catch {
-    breakingCount = 2
+    breakingCount = 0
   }
 
   // Reporter submissions waiting for an editor (Review Queue badge).
@@ -104,9 +104,8 @@ export async function AdminNav({ payload, i18n, visibleEntities, user }: Props) 
       counts={{
         articles: countBySlug.get('articles') ?? 0,
         breaking: breakingCount,
-        scheduled: 4,
-        comments: 14,
-        seoIssues: 3,
+        comments: 0,
+        seoIssues: 0,
         pendingReview,
       }}
       isAdmin={u.role === 'admin'}

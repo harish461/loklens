@@ -116,45 +116,26 @@ export async function ArticleEditView(props: Props) {
     payload.find({ collection: 'locations', limit: 100, depth: 0, pagination: false, ...accessOpt }).catch(() => ({ docs: [] })),
   ])
 
-  const defaultCategories: EditorCategoryOption[] = [
-    { id: 1, name: 'प्रदेश', slug: 'pradesh' },
-    { id: 2, name: 'राजनीति', slug: 'rajniti' },
-    { id: 3, name: 'देश', slug: 'desh' },
-    { id: 4, name: 'समाज', slug: 'samaj' },
-    { id: 5, name: 'खेल', slug: 'khel' },
-    { id: 6, name: 'दुनिया', slug: 'duniya' },
-  ]
+  const categories: EditorCategoryOption[] = catRes.docs.map((c) => ({
+    id: c.id,
+    name: String(c.name),
+    slug: String(c.slug),
+  }))
 
-  const categories: EditorCategoryOption[] =
-    catRes.docs.length > 0
-      ? catRes.docs.map((c) => ({ id: c.id, name: String(c.name), slug: String(c.slug) }))
-      : defaultCategories
+  const authors: EditorAuthorOption[] = userRes.docs.map((u) => {
+    const usr = u as unknown as { id: number; displayName?: string; name?: string; email?: string; role?: string }
+    return {
+      id: usr.id,
+      name: String(usr.displayName || usr.name || usr.email || `User #${usr.id}`),
+      role: String(usr.role || 'reporter'),
+    }
+  })
 
-  const authors: EditorAuthorOption[] =
-    userRes.docs.length > 0
-      ? userRes.docs.map((u) => {
-          const usr = u as unknown as { id: number; displayName?: string; name?: string; email?: string; role?: string }
-          return {
-            id: usr.id,
-            name: String(usr.displayName || usr.name || usr.email || `User #${usr.id}`),
-            role: String(usr.role || 'reporter'),
-          }
-        })
-      : [
-          { id: 1, name: 'रोहित बहुगुणा', role: 'editor' },
-          { id: 2, name: 'प्रिया नौटियाल', role: 'reporter' },
-          { id: 3, name: 'आदित्य रावत', role: 'reporter' },
-        ]
-
-  const tags: EditorTagOption[] =
-    tagRes.docs.length > 0
-      ? tagRes.docs.map((t) => ({ id: t.id, name: String(t.name), slug: String(t.slug) }))
-      : [
-          { id: 1001, name: 'उत्तराखंड', slug: 'uttarakhand' },
-          { id: 1002, name: 'देहरादून', slug: 'dehradun' },
-          { id: 1003, name: 'चारधाम', slug: 'chardham' },
-          { id: 1004, name: 'ब्रेकिंग न्यूज़', slug: 'breaking-news' },
-        ]
+  const tags: EditorTagOption[] = tagRes.docs.map((t) => ({
+    id: t.id,
+    name: String(t.name),
+    slug: String(t.slug),
+  }))
 
   const mediaItems: EditorMediaOption[] = mediaRes.docs.map((m) => ({
     id: m.id,

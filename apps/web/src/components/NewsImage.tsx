@@ -9,6 +9,17 @@ import type { Image, ImageSize } from '@/lib/data/types'
  */
 const ORDER: ImageSize[] = ['thumb', 'card', 'article', 'wide']
 
+/**
+ * Normalizes Payload media proxy URLs (e.g. `http://localhost:3000/api/media/file/...`) to root-relative
+ * `/api/media/file/...` paths for browser rendering so images load regardless of whether the site is
+ * opened via `localhost`, `192.168.1.15`, or a custom domain, while external URLs stay untouched.
+ */
+export function toRenderableMediaUrl(url: string): string {
+  if (!url) return url
+  const match = url.match(/^https?:\/\/[^/]+(\/api\/media\/file\/.*)$/i)
+  return match ? match[1] : url
+}
+
 export function pickImage(image: Image, minWidth: number, preferred?: ImageSize) {
   if (preferred && image.sizes[preferred]) return image.sizes[preferred]!
   const target = minWidth * 2
@@ -33,7 +44,7 @@ export function NewsImage({ image, displayWidth, sizes, preferred, priority, cla
   const src = pickImage(image, displayWidth, preferred)
   return (
     <NextImage
-      src={src.url}
+      src={toRenderableMediaUrl(src.url)}
       width={src.width}
       height={src.height}
       alt={image.alt}

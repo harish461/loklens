@@ -11,7 +11,7 @@ import { AdSlot } from '@/components/AdSlot'
 import { BreakingBadge, CategoryLabel } from '@/components/Badges'
 import { absoluteUrl, formatDateTime } from '@/components/format'
 import { Breadcrumbs } from '@/components/Navigation'
-import { NewsImage } from '@/components/NewsImage'
+import { NewsImage, toRenderableMediaUrl } from '@/components/NewsImage'
 import { RichText } from '@/components/RichText'
 import { ShareBar } from '@/components/ShareBar'
 import type { Article, ArticleCard as ArticleCardType, AuthorRef, Image as ImageType, SiteSettings } from '@/lib/data/types'
@@ -37,7 +37,7 @@ function Avatar({ author, logo }: { author?: AuthorRef; logo: ImageType }) {
   if (img) {
     return (
       <Image
-        src={img.sizes.thumb?.url ?? img.url}
+        src={toRenderableMediaUrl(img.sizes.thumb?.url ?? img.url)}
         width={40}
         height={40}
         alt=""

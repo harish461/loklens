@@ -12,7 +12,7 @@ git fetch origin develop
 git checkout develop
 git pull --ff-only origin develop
 
-npm ci
+(cd apps/web && npm ci)
 "${COMPOSE[@]}" up -d --wait db # Postgres up and healthy
 (cd apps/web && npm run migrate) # schema changes only through migrations, never `push`
 (cd apps/web && npm run build)   # static pages read the database, so this runs after migrate

@@ -2,7 +2,7 @@
 
 Status: **draft, not yet run on a server.** Nothing here is verified until the steps are done and the checklist at the end passes.
 
-Target: `dev.loklens.com` from the `develop` branch. Production (`loklens.com`, `main`) is a separate step later.
+Target: `dev.loklensnews.com` from the `develop` branch. Production (`loklensnews.com`, `main`) is a separate step later.
 
 ## What runs on the server
 
@@ -17,20 +17,24 @@ The database and media stay on the VPS. Secrets live only in `apps/web/.env` on 
 
 ## Step 1: Hostinger VPS (you do this in hPanel)
 
+> **Important (Hostinger Business Web Hosting vs. VPS):**
+> Hostinger's shared **Business Web Hosting** plan only supports PHP/MySQL/static sites and cannot run Docker, PostgreSQL 16, or a persistent Node.js 22 + Payload CMS server.
+> - If your Hostinger account currently has **Business Web Hosting**, go to **hPanel → Billing → Subscriptions** and upgrade/switch the plan to a **KVM VPS** (**KVM 1** 4 GB RAM or **KVM 2** 8 GB RAM), while keeping `loklensnews.com` DNS in hPanel.
+
 1. **VPS plan.** In hPanel go to **VPS** and confirm you have a KVM VPS. Shared hosting cannot run this stack.
 2. **Operating system.** Choose **Ubuntu 24.04** (or a template that includes **Docker**). Set a strong root password and add your SSH key if you can.
 3. **Note the VPS IPv4 address.** You will use it in Step 2.
 4. **Firewall.** In the VPS firewall settings allow TCP **22** (SSH), **80** and **443**. Do not open 5432.
 
-## Step 2: DNS for `dev.loklens.com` (you do this where the domain's DNS is managed)
+## Step 2: DNS for `dev.loklensnews.com` (you do this where the domain's DNS is managed)
 
-Create one record:
+Create one record in **hPanel → Domains → `loklensnews.com` → DNS / Nameservers**:
 
 | Type | Name | Points to | TTL |
 |---|---|---|---|
 | A | `dev` | the VPS IPv4 address | default |
 
-Wait for it to resolve (`nslookup dev.loklens.com` should show the VPS IP). Caddy needs this before it can issue the HTTPS certificate.
+Wait for it to resolve (`nslookup dev.loklensnews.com` should show the VPS IP). Caddy needs this before it can issue the HTTPS certificate.
 
 ## Step 3: Install Docker and Node on the VPS (SSH as root)
 
@@ -57,8 +61,8 @@ Fill in `apps/web/.env` on the server. Values you must create (never paste them 
 
 - `DATABASE_URL=postgres://<user>:<password>@127.0.0.1:5432/<db>` (for the host build and migrations; same values as the three below)
 - `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_PORT=5432` (used by the database container)
-- `SITE_HOST=dev.loklens.com` (read by Caddy)
-- `NEXT_PUBLIC_SITE_URL=https://dev.loklens.com`
+- `SITE_HOST=dev.loklensnews.com` (read by Caddy)
+- `NEXT_PUBLIC_SITE_URL=https://dev.loklensnews.com`
 - `PAYLOAD_SECRET`, `PREVIEW_SECRET`, `REVALIDATE_SECRET`: each one a new random value, for example `openssl rand -hex 32`
 - `BASIC_AUTH_USER` and `BASIC_AUTH_HASH`: the shared login for the whole development site (see below)
 - Cloudflare variables: leave empty unless you set up Cloudflare for this domain.
@@ -103,17 +107,17 @@ The script: pulls `develop`, installs packages, starts the database, runs migrat
 
 ## Step 6: First admin account
 
-The first user created in the admin becomes the admin (see `firstUserIsAdmin` in `Users.ts`). Open `https://dev.loklens.com/admin` and create it. Do this before anyone else can reach the site.
+The first user created in the admin becomes the admin (see `firstUserIsAdmin` in `Users.ts`). Open `https://dev.loklensnews.com/admin` and create it. Do this before anyone else can reach the site.
 
 ## Checklist before reporting "deployed"
 
-- [ ] `https://dev.loklens.com` asks for the site password, and loads with a valid HTTPS certificate after it.
-- [ ] `curl -sI https://dev.loklens.com` returns `401` (no password) and an `X-Robots-Tag: noindex, nofollow` header.
+- [ ] `https://dev.loklensnews.com` asks for the site password, and loads with a valid HTTPS certificate after it.
+- [ ] `curl -sI https://dev.loklensnews.com` returns `401` (no password) and an `X-Robots-Tag: noindex, nofollow` header.
 - [ ] `/reporter/login` works for a reporter account created under **Reporters** in the admin.
 - [ ] Home page, a category page, an article page and `/search?q=…` all work.
-- [ ] `https://dev.loklens.com/admin` login works; the dashboard loads.
+- [ ] `https://dev.loklensnews.com/admin` login works; the dashboard loads.
 - [ ] Create, edit and delete a test article; upload an image; check it displays.
-- [ ] `https://dev.loklens.com/api/articles` returns JSON.
+- [ ] `https://dev.loklensnews.com/api/articles` returns JSON.
 - [ ] `docker compose ps` shows `db` healthy and `app`, `caddy` running.
 - [ ] The site is not reachable on port 5432 from outside.
 - [ ] No production data was touched (the dev database is separate).

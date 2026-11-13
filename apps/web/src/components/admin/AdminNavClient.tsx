@@ -3,7 +3,6 @@
 import {
   ArrowUpRight,
   BarChart3,
-  CalendarClock,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -37,7 +36,6 @@ import styles from './adminNav.module.css'
 export interface SidebarCounts {
   articles: number
   breaking: number
-  scheduled: number
   comments: number
   seoIssues: number
   /** Reporter submissions awaiting review. */
@@ -73,7 +71,6 @@ type NavKey =
   | 'media'
   | 'authors'
   | 'breaking'
-  | 'scheduled'
   | 'comments'
   | 'ads'
   | 'seo'
@@ -113,8 +110,6 @@ function renderNavIcon(key: NavKey, className?: string) {
       return <UserCheck size={size} className={className} />
     case 'breaking':
       return <Flame size={size} className={className} />
-    case 'scheduled':
-      return <CalendarClock size={size} className={className} />
     case 'comments':
       return <MessageSquare size={size} className={className} />
     case 'ads':
@@ -224,14 +219,6 @@ export function AdminNavClient({
       badge: counts.breaking,
       badgeTone: 'coral',
       isActive: (p) => p.startsWith('/admin/breaking-news'),
-    },
-    {
-      key: 'scheduled',
-      label: 'Scheduled News',
-      href: '/admin/scheduled-news',
-      badge: counts.scheduled,
-      badgeTone: 'lime',
-      isActive: (p) => p.startsWith('/admin/scheduled-news'),
     },
     {
       key: 'comments',

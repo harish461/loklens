@@ -10,4 +10,4 @@ COPY . .
 RUN mkdir -p apps/web/media
 
 EXPOSE 3000
-CMD ["npm", "run", "start", "--workspace=apps/web"]
+CMD ["npm", "run", "start", "--prefix", "apps/web"]
