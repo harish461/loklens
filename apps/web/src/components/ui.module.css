@@ -28,8 +28,9 @@
 .crumbs a {
   display: inline-flex;
   align-items: center;
-  min-height: var(--touch);
-  color: var(--color-brand);
+  min-height: 24px;
+  color: var(--color-logo-red, #c41d17);
+  font-weight: 600;
 }
 
 .crumbs a:hover {

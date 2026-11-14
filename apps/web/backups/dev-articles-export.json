@@ -1,0 +1,2408 @@
+{
+  "exportedAt": "2026-11-14T16:41:39.521Z",
+  "sourceUrl": "https://dev.loklensnews.com",
+  "counts": {
+    "articles": 8,
+    "categories": 7,
+    "tags": 3,
+    "locations": 0
+  },
+  "categories": [
+    {
+      "id": 1,
+      "name": "प्रदेश",
+      "slug": "pradesh",
+      "description": null,
+      "order": 1,
+      "showInNav": true,
+      "color": null,
+      "legacyPath": null,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null
+      },
+      "updatedAt": "2026-11-09T13:49:51.074Z",
+      "createdAt": "2026-11-09T13:49:51.068Z"
+    },
+    {
+      "id": 2,
+      "name": "देश",
+      "slug": "desh",
+      "description": null,
+      "order": 2,
+      "showInNav": true,
+      "color": null,
+      "legacyPath": null,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null
+      },
+      "updatedAt": "2026-11-09T13:49:51.160Z",
+      "createdAt": "2026-11-09T13:49:51.160Z"
+    },
+    {
+      "id": 3,
+      "name": "राजनीति",
+      "slug": "rajniti",
+      "description": null,
+      "order": 3,
+      "showInNav": true,
+      "color": null,
+      "legacyPath": null,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null
+      },
+      "updatedAt": "2026-11-09T13:49:51.213Z",
+      "createdAt": "2026-11-09T13:49:51.213Z"
+    },
+    {
+      "id": 4,
+      "name": "समाज",
+      "slug": "samaj",
+      "description": null,
+      "order": 4,
+      "showInNav": true,
+      "color": null,
+      "legacyPath": null,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null
+      },
+      "updatedAt": "2026-11-09T13:49:51.256Z",
+      "createdAt": "2026-11-09T13:49:51.256Z"
+    },
+    {
+      "id": 5,
+      "name": "खेल",
+      "slug": "khel",
+      "description": null,
+      "order": 5,
+      "showInNav": true,
+      "color": null,
+      "legacyPath": null,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null
+      },
+      "updatedAt": "2026-11-09T13:49:51.298Z",
+      "createdAt": "2026-11-09T13:49:51.298Z"
+    },
+    {
+      "id": 6,
+      "name": "दुनिया",
+      "slug": "duniya",
+      "description": null,
+      "order": 6,
+      "showInNav": true,
+      "color": null,
+      "legacyPath": null,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null
+      },
+      "updatedAt": "2026-11-09T13:49:51.342Z",
+      "createdAt": "2026-11-09T13:49:51.342Z"
+    },
+    {
+      "id": 7,
+      "name": "विचार",
+      "slug": "vichar",
+      "description": null,
+      "order": 7,
+      "showInNav": true,
+      "color": null,
+      "legacyPath": null,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null
+      },
+      "updatedAt": "2026-11-09T13:49:51.388Z",
+      "createdAt": "2026-11-09T13:49:51.388Z"
+    }
+  ],
+  "tags": [
+    {
+      "id": 3,
+      "name": "कांग्रेस",
+      "slug": "congress",
+      "updatedAt": "2026-11-09T13:49:51.536Z",
+      "createdAt": "2026-11-09T13:49:51.536Z"
+    },
+    {
+      "id": 2,
+      "name": "हल्द्वानी",
+      "slug": "haldwani",
+      "updatedAt": "2026-11-09T13:49:51.494Z",
+      "createdAt": "2026-11-09T13:49:51.494Z"
+    },
+    {
+      "id": 1,
+      "name": "पुष्कर सिंह धामी",
+      "slug": "pushkar-singh-dhami",
+      "updatedAt": "2026-11-09T13:49:51.444Z",
+      "createdAt": "2026-11-09T13:49:51.444Z"
+    }
+  ],
+  "locations": [],
+  "articles": [
+    {
+      "id": 35,
+      "title": "संसद का आगामी सत्र: देश के विकास और आर्थिक सुधारों से जुड़े महत्वपूर्ण विधेयकों पर होगी चर्चा",
+      "slug": "sansad-aagami-satr-aarthik-sudhar",
+      "summary": "संसद सत्र में कई अहम विधेयक पेश किए जाएंगे।",
+      "featuredImage": {
+        "id": 2,
+        "alt": "प्रतीकात्मक तस्वीर (विकास के लिए प्लेसहोल्डर)",
+        "caption": null,
+        "credit": "विकास के लिए प्लेसहोल्डर",
+        "updatedAt": "2026-11-10T11:37:14.310Z",
+        "createdAt": "2026-11-09T13:49:55.488Z",
+        "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907.webp",
+        "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907-320x213.webp",
+        "filename": "img_6ae1d591ccb5c5.76360907.webp",
+        "mimeType": "image/webp",
+        "filesize": 747970,
+        "width": 2560,
+        "height": 1703,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumb": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907-320x213.webp",
+            "width": 320,
+            "height": 213,
+            "mimeType": "image/webp",
+            "filesize": 24354,
+            "filename": "img_6ae1d591ccb5c5.76360907-320x213.webp"
+          },
+          "card": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907-640x426.webp",
+            "width": 640,
+            "height": 426,
+            "mimeType": "image/webp",
+            "filesize": 77294,
+            "filename": "img_6ae1d591ccb5c5.76360907-640x426.webp"
+          },
+          "article": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907-1200x798.webp",
+            "width": 1200,
+            "height": 798,
+            "mimeType": "image/webp",
+            "filesize": 207940,
+            "filename": "img_6ae1d591ccb5c5.76360907-1200x798.webp"
+          },
+          "og": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907-1200x630.webp",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/webp",
+            "filesize": 169126,
+            "filename": "img_6ae1d591ccb5c5.76360907-1200x630.webp"
+          },
+          "wide": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907-1200x675.webp",
+            "width": 1200,
+            "height": 675,
+            "mimeType": "image/webp",
+            "filesize": 178500,
+            "filename": "img_6ae1d591ccb5c5.76360907-1200x675.webp"
+          },
+          "standard": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907-1200x900.webp",
+            "width": 1200,
+            "height": 900,
+            "mimeType": "image/webp",
+            "filesize": 217950,
+            "filename": "img_6ae1d591ccb5c5.76360907-1200x900.webp"
+          },
+          "square": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907-1200x1200.webp",
+            "width": 1200,
+            "height": 1200,
+            "mimeType": "image/webp",
+            "filesize": 266596,
+            "filename": "img_6ae1d591ccb5c5.76360907-1200x1200.webp"
+          }
+        }
+      },
+      "body": null,
+      "category": {
+        "id": 2,
+        "name": "देश",
+        "slug": "desh",
+        "description": null,
+        "order": 2,
+        "showInNav": true,
+        "color": null,
+        "legacyPath": null,
+        "seo": {
+          "metaTitle": null,
+          "metaDescription": null
+        },
+        "updatedAt": "2026-11-09T13:49:51.160Z",
+        "createdAt": "2026-11-09T13:49:51.160Z"
+      },
+      "location": null,
+      "tags": [],
+      "authors": [],
+      "publishedAt": "2026-11-12T08:15:37.502Z",
+      "isBreaking": false,
+      "breakingUntil": null,
+      "isTrending": false,
+      "isFeatured": false,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null,
+        "ogImage": null,
+        "focusKeyword": null,
+        "noindex": false
+      },
+      "articleType": "news",
+      "language": "hi",
+      "updatedAt": "2026-11-12T08:15:37.502Z",
+      "createdAt": "2026-11-12T08:15:37.502Z",
+      "_status": "published"
+    },
+    {
+      "id": 36,
+      "title": "भारतीय रेलवे का नया कीर्तिमान: वंदे भारत ट्रेनों के नेटवर्क का हुआ तेजी से विस्तार",
+      "slug": "vande-bharat-railway-network-vistar",
+      "summary": "देशभर में नई वंदे भारत ट्रेनों का संचालन शुरू।",
+      "featuredImage": {
+        "id": 6,
+        "alt": "Image",
+        "caption": null,
+        "credit": null,
+        "updatedAt": "2026-11-10T11:55:36.721Z",
+        "createdAt": "2026-11-10T11:55:36.721Z",
+        "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557.webp",
+        "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-320x172.webp",
+        "filename": "img_6ae824164f4584.72908557.webp",
+        "mimeType": "image/webp",
+        "filesize": 521102,
+        "width": 2560,
+        "height": 1378,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumb": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-320x172.webp",
+            "width": 320,
+            "height": 172,
+            "mimeType": "image/webp",
+            "filesize": 15764,
+            "filename": "img_6ae824164f4584.72908557-320x172.webp"
+          },
+          "card": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-640x344.webp",
+            "width": 640,
+            "height": 344,
+            "mimeType": "image/webp",
+            "filesize": 51090,
+            "filename": "img_6ae824164f4584.72908557-640x344.webp"
+          },
+          "article": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1200x646.webp",
+            "width": 1200,
+            "height": 646,
+            "mimeType": "image/webp",
+            "filesize": 146606,
+            "filename": "img_6ae824164f4584.72908557-1200x646.webp"
+          },
+          "og": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1200x630.webp",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/webp",
+            "filesize": 143064,
+            "filename": "img_6ae824164f4584.72908557-1200x630.webp"
+          },
+          "wide": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1200x675.webp",
+            "width": 1200,
+            "height": 675,
+            "mimeType": "image/webp",
+            "filesize": 145640,
+            "filename": "img_6ae824164f4584.72908557-1200x675.webp"
+          },
+          "standard": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1200x900.webp",
+            "width": 1200,
+            "height": 900,
+            "mimeType": "image/webp",
+            "filesize": 134088,
+            "filename": "img_6ae824164f4584.72908557-1200x900.webp"
+          },
+          "square": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1200x1200.webp",
+            "width": 1200,
+            "height": 1200,
+            "mimeType": "image/webp",
+            "filesize": 145388,
+            "filename": "img_6ae824164f4584.72908557-1200x1200.webp"
+          }
+        }
+      },
+      "body": null,
+      "category": {
+        "id": 2,
+        "name": "देश",
+        "slug": "desh",
+        "description": null,
+        "order": 2,
+        "showInNav": true,
+        "color": null,
+        "legacyPath": null,
+        "seo": {
+          "metaTitle": null,
+          "metaDescription": null
+        },
+        "updatedAt": "2026-11-09T13:49:51.160Z",
+        "createdAt": "2026-11-09T13:49:51.160Z"
+      },
+      "location": null,
+      "tags": [],
+      "authors": [],
+      "publishedAt": "2026-11-12T08:15:37.502Z",
+      "isBreaking": false,
+      "breakingUntil": null,
+      "isTrending": false,
+      "isFeatured": false,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null,
+        "ogImage": null,
+        "focusKeyword": null,
+        "noindex": false
+      },
+      "articleType": "news",
+      "language": "hi",
+      "updatedAt": "2026-11-12T08:15:37.502Z",
+      "createdAt": "2026-11-12T08:15:37.502Z",
+      "_status": "published"
+    },
+    {
+      "id": 40,
+      "title": "गैरसैंण में CM धामी ने 231.91 करोड़ की 12 योजनाओं का किया लोकार्पण-शिलान्यास",
+      "slug": "gairsain-cm-dhami-231-91-karor-12-yojnaon-kiya-lokarpan-shilanyas",
+      "summary": "मुख्यमंत्री पुष्कर सिंह धामी ने गैरसैंण (भराड़ीसैंण) में चमोली जिले की 231.91 करोड़ रुपये की 12 विकास योजनाओं का लोकार्पण और शिलान्यास किया।",
+      "featuredImage": {
+        "id": 10,
+        "alt": "उत्तराखंड समाचार फ़ोटो",
+        "caption": null,
+        "credit": null,
+        "updatedAt": "2026-11-14T15:58:27.787Z",
+        "createdAt": "2026-11-14T15:58:27.786Z",
+        "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1).webp",
+        "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-320x213.webp",
+        "filename": "img_6ae1d591ccb5c5.76360907 (1).webp",
+        "mimeType": "image/webp",
+        "filesize": 747970,
+        "width": 2560,
+        "height": 1703,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumb": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-320x213.webp",
+            "width": 320,
+            "height": 213,
+            "mimeType": "image/webp",
+            "filesize": 24354,
+            "filename": "img_6ae1d591ccb5c5.76360907 (1)-320x213.webp"
+          },
+          "card": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-640x426.webp",
+            "width": 640,
+            "height": 426,
+            "mimeType": "image/webp",
+            "filesize": 77294,
+            "filename": "img_6ae1d591ccb5c5.76360907 (1)-640x426.webp"
+          },
+          "article": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x798.webp",
+            "width": 1200,
+            "height": 798,
+            "mimeType": "image/webp",
+            "filesize": 207940,
+            "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x798.webp"
+          },
+          "og": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x630.webp",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/webp",
+            "filesize": 169126,
+            "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x630.webp"
+          },
+          "wide": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x675.webp",
+            "width": 1200,
+            "height": 675,
+            "mimeType": "image/webp",
+            "filesize": 178500,
+            "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x675.webp"
+          },
+          "standard": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x900.webp",
+            "width": 1200,
+            "height": 900,
+            "mimeType": "image/webp",
+            "filesize": 217950,
+            "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x900.webp"
+          },
+          "square": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x1200.webp",
+            "width": 1200,
+            "height": 1200,
+            "mimeType": "image/webp",
+            "filesize": 266596,
+            "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x1200.webp"
+          }
+        }
+      },
+      "body": {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "मुख्यमंत्री पुष्कर सिंह धामी ने गैरसैंण (भराड़ीसैंण) में चमोली जिले की 231.91 करोड़ रुपये की 12 विकास योजनाओं का लोकार्पण और शिलान्यास किया। इनमें 197.87 करोड़ की 6 योजनाओं का शिलान्यास और 34.04 करोड़ रुपये की 6 योजनाओं का लोकार्पण शामिल है। पेयजल, सड़क, शिक्षा, भू-धंसाव से सुरक्षा और पुलिस-फायर सेवाओं से जुड़ी योजनाओं को प्रमुखता दी गई।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "गैरसैंण। मुख्यमंत्री पुष्कर सिंह धामी ने बुधवार को गैरसैंण (भराड़ीसैंण) में चमोली जिले की 231.91 करोड़ रुपये की 12 विकास योजनाओं का लोकार्पण एवं शिलान्यास किया। इनमें 197.87 करोड़ रुपये की 6 योजनाओं का शिलान्यास और 34.04 करोड़ रुपये की 6 योजनाओं का लोकार्पण शामिल है। योजनाएं पेयजल, सड़क संपर्क, शिक्षा, भू-धंसाव से सुरक्षा और पुलिस एवं अग्निशमन सुविधाओं से संबंधित हैं।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "मुख्यमंत्री ने जिन योजनाओं का शिलान्यास किया, उनमें 122.69 करोड़ रुपये की लागत से रामगंगा नदी पर बांध निर्माण की योजना प्रमुख है। इसका उद्देश्य गैरसैंण शहर और आसपास की आबादी को पेयजल उपलब्ध कराना है। इसके अलावा कर्णप्रयाग विकासखंड के बहुगुणानगर में 50.18 करोड़ रुपये की लागत से भू-धंसाव से सुरक्षा संबंधी कार्यों का शिलान्यास किया गया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "अन्य शिलान्यास योजनाओं में 12.16 करोड़ रुपये की लागत से राजकीय पॉलिटेक्निक गैरसैंण के भवन का निर्माण और 22.75 लाख रुपये की लागत से राजकीय आयुर्वेदिक चिकित्सालय बछुवाबाण में भवन अनुरक्षण कार्य शामिल हैं। इसके साथ ही कुमोली रैवान मोटर मार्ग से फरखण्डे मोटर मार्ग और गैरसैंण-पज्याणा मोटर मार्ग से कुमोली रैवान मोटर मार्ग को जोड़ने से संबंधित कार्यों का भी शिलान्यास किया गया। इन दोनों सड़क योजनाओं की लागत क्रमशः 6.99 करोड़ और 5.60 करोड़ रुपये है।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "मुख्यमंत्री ने 34.04 करोड़ रुपये की लागत से पूरी हुई छह योजनाओं का लोकार्पण भी किया। इनमें 14.82 करोड़ रुपये की लागत से खजुरखाल-भण्डारीखोड़-कुनीगाड़ मोटर मार्ग (बछुवाबाण-चौखुटिया) के उच्चीकरण का कार्य शामिल है। इसके अलावा 4.37 करोड़ रुपये की लागत से राजकीय इंटर कॉलेज गैरसैंण में निर्मित ऑडिटोरियम भवन का लोकार्पण किया गया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "सड़क सुविधाओं को बेहतर बनाने के लिए सारकोट-भराड़ीसैंण मोटर मार्ग के किलोमीटर 6 से 11 तक सुधार एवं डामरीकरण कार्य और कारगिल शहीद रणजीत सिंह (आगर-जिनगोड़) मोटर मार्ग के किलोमीटर 1 से 8 तक सुधार, डामरीकरण एवं नवीनीकरण कार्य भी पूरा किया गया है। इनकी लागत क्रमशः 4.03 करोड़ और 2.17 करोड़ रुपये है।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "गैरसैंण में पुलिस एवं अग्निशमन सुविधाओं को मजबूत करने के लिए निर्मित दो भवनों का भी लोकार्पण किया गया। इनमें 4.37 करोड़ रुपये की लागत से बना फायर यूनिट भवन और 4.24 करोड़ रुपये की लागत से निर्मित थाना गैरसैंण भवन शामिल हैं।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "इन योजनाओं से गैरसैंण और आसपास के क्षेत्रों में पेयजल आपूर्ति, सड़क संपर्क, शैक्षिक सुविधाओं और सुरक्षा व्यवस्था को बेहतर बनाने का लक्ष्य रखा गया है। रामगंगा नदी पर प्रस्तावित बांध से पेयजल आवश्यकताओं को पूरा करने में मदद मिलने की उम्मीद है, जबकि बहुगुणानगर में भू-धंसाव से सुरक्षा संबंधी कार्य स्थानीय आबादी की सुरक्षा की दृष्टि से महत्वपूर्ण हैं।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम में कैबिनेट मंत्री सतपाल महाराज, डॉ. धन सिंह रावत, भरत चौधरी, स्थानीय विधायक अनिल नौटियाल, जिलाधिकारी गौरव कुमार, पुलिस अधीक्षक सुरजीत सिंह पंवार, मुख्य विकास अधिकारी डॉ. अभिषेक त्रिपाठी सहित अन्य जनप्रतिनिधि और अधिकारी उपस्थित रहे।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            }
+          ],
+          "direction": "ltr"
+        }
+      },
+      "category": {
+        "id": 1,
+        "name": "प्रदेश",
+        "slug": "pradesh",
+        "description": null,
+        "order": 1,
+        "showInNav": true,
+        "color": null,
+        "legacyPath": null,
+        "seo": {
+          "metaTitle": null,
+          "metaDescription": null
+        },
+        "updatedAt": "2026-11-09T13:49:51.074Z",
+        "createdAt": "2026-11-09T13:49:51.068Z"
+      },
+      "location": null,
+      "tags": [],
+      "authors": [],
+      "publishedAt": "2026-11-14T15:55:00.000Z",
+      "isBreaking": false,
+      "breakingUntil": null,
+      "isTrending": false,
+      "isFeatured": false,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null,
+        "ogImage": {
+          "id": 10,
+          "alt": "उत्तराखंड समाचार फ़ोटो",
+          "caption": null,
+          "credit": null,
+          "updatedAt": "2026-11-14T15:58:27.787Z",
+          "createdAt": "2026-11-14T15:58:27.786Z",
+          "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1).webp",
+          "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-320x213.webp",
+          "filename": "img_6ae1d591ccb5c5.76360907 (1).webp",
+          "mimeType": "image/webp",
+          "filesize": 747970,
+          "width": 2560,
+          "height": 1703,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumb": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-320x213.webp",
+              "width": 320,
+              "height": 213,
+              "mimeType": "image/webp",
+              "filesize": 24354,
+              "filename": "img_6ae1d591ccb5c5.76360907 (1)-320x213.webp"
+            },
+            "card": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-640x426.webp",
+              "width": 640,
+              "height": 426,
+              "mimeType": "image/webp",
+              "filesize": 77294,
+              "filename": "img_6ae1d591ccb5c5.76360907 (1)-640x426.webp"
+            },
+            "article": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x798.webp",
+              "width": 1200,
+              "height": 798,
+              "mimeType": "image/webp",
+              "filesize": 207940,
+              "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x798.webp"
+            },
+            "og": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x630.webp",
+              "width": 1200,
+              "height": 630,
+              "mimeType": "image/webp",
+              "filesize": 169126,
+              "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x630.webp"
+            },
+            "wide": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x675.webp",
+              "width": 1200,
+              "height": 675,
+              "mimeType": "image/webp",
+              "filesize": 178500,
+              "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x675.webp"
+            },
+            "standard": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x900.webp",
+              "width": 1200,
+              "height": 900,
+              "mimeType": "image/webp",
+              "filesize": 217950,
+              "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x900.webp"
+            },
+            "square": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae1d591ccb5c5.76360907%20(1)-1200x1200.webp",
+              "width": 1200,
+              "height": 1200,
+              "mimeType": "image/webp",
+              "filesize": 266596,
+              "filename": "img_6ae1d591ccb5c5.76360907 (1)-1200x1200.webp"
+            }
+          }
+        },
+        "focusKeyword": null,
+        "noindex": false
+      },
+      "articleType": "news",
+      "language": "hi",
+      "updatedAt": "2026-11-14T15:58:35.978Z",
+      "createdAt": "2026-11-14T15:58:35.978Z",
+      "_status": "published"
+    },
+    {
+      "id": 41,
+      "title": "रानीखेत कांग्रेस ने इंदिरा गांधी की पुण्यतिथि और सरदार पटेल की जयंती पर दी श्रद्धांजलि",
+      "slug": "ranikhet-kangres-indira-gandhi-punyatithi-sardar-patel-jayanti-di-shraddhanjli",
+      "summary": "रानीखेत कांग्रेस कमेटी ने 31 अक्टूबर को कांग्रेस कार्यालय में पूर्व प्रधानमंत्री इंदिरा गांधी की पुण्यतिथि और सरदार वल्लभभाई पटेल की जयंती पर स्मरण कार्यक्रम आयोजित किया।",
+      "featuredImage": {
+        "id": 11,
+        "alt": "उत्तराखंड समाचार फ़ोटो",
+        "caption": null,
+        "credit": null,
+        "updatedAt": "2026-11-14T16:02:44.891Z",
+        "createdAt": "2026-11-14T16:02:44.890Z",
+        "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671.webp",
+        "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-320x144.webp",
+        "filename": "img_6ae5d0f8d33dd9.01489671.webp",
+        "mimeType": "image/webp",
+        "filesize": 352742,
+        "width": 2560,
+        "height": 1153,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumb": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-320x144.webp",
+            "width": 320,
+            "height": 144,
+            "mimeType": "image/webp",
+            "filesize": 12232,
+            "filename": "img_6ae5d0f8d33dd9.01489671-320x144.webp"
+          },
+          "card": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-640x288.webp",
+            "width": 640,
+            "height": 288,
+            "mimeType": "image/webp",
+            "filesize": 35834,
+            "filename": "img_6ae5d0f8d33dd9.01489671-640x288.webp"
+          },
+          "article": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x540.webp",
+            "width": 1200,
+            "height": 540,
+            "mimeType": "image/webp",
+            "filesize": 91292,
+            "filename": "img_6ae5d0f8d33dd9.01489671-1200x540.webp"
+          },
+          "og": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x630.webp",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/webp",
+            "filesize": 98566,
+            "filename": "img_6ae5d0f8d33dd9.01489671-1200x630.webp"
+          },
+          "wide": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x675.webp",
+            "width": 1200,
+            "height": 675,
+            "mimeType": "image/webp",
+            "filesize": 102646,
+            "filename": "img_6ae5d0f8d33dd9.01489671-1200x675.webp"
+          },
+          "standard": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x900.webp",
+            "width": 1200,
+            "height": 900,
+            "mimeType": "image/webp",
+            "filesize": 112342,
+            "filename": "img_6ae5d0f8d33dd9.01489671-1200x900.webp"
+          },
+          "square": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x1200.webp",
+            "width": 1200,
+            "height": 1200,
+            "mimeType": "image/webp",
+            "filesize": 126414,
+            "filename": "img_6ae5d0f8d33dd9.01489671-1200x1200.webp"
+          }
+        }
+      },
+      "body": {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "रानीखेत कांग्रेस कमेटी ने 31 अक्टूबर को कांग्रेस कार्यालय में पूर्व प्रधानमंत्री इंदिरा गांधी की पुण्यतिथि और सरदार वल्लभभाई पटेल की जयंती पर स्मरण कार्यक्रम आयोजित किया। कांग्रेसजनों ने दोनों नेताओं के चित्रों पर पुष्प अर्पित कर उनके योगदान को याद किया और देश की एकता, अखंडता एवं संविधान की रक्षा का संकल्प लिया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "रानीखेत, 31 अक्टूबर। रानीखेत कांग्रेस कमेटी की ओर से कांग्रेस कार्यालय, डोलिया पहाड़ी के निकट पूर्व प्रधानमंत्री इंदिरा गांधी की पुण्यतिथि एवं लौह पुरुष सरदार वल्लभभाई पटेल की जयंती के अवसर पर श्रद्धांजलि एवं स्मरण कार्यक्रम आयोजित किया गया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "इस दौरान उपस्थित कांग्रेसजनों ने दोनों महान नेताओं के चित्रों पर पुष्प अर्पित कर उन्हें श्रद्धांजलि दी। वक्ताओं ने देश के प्रति उनके योगदान, त्याग, संघर्ष और राष्ट्रसेवा को याद किया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "वक्ताओं ने कहा कि इंदिरा गांधी ने अपने दृढ़ नेतृत्व और साहसिक निर्णयों से देश को नई दिशा दी, वहीं सरदार वल्लभभाई पटेल ने अपनी इच्छाशक्ति और दूरदर्शिता से देश की एकता एवं अखंडता को मजबूत करने में ऐतिहासिक भूमिका निभाई।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम की अध्यक्षता वरिष्ठ उपाध्यक्ष विजय तिवारी ने की, जबकि संचालन कॉर्डिनेटर कुलदीप कुमार ने किया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम में नगरपालिका अध्यक्ष अरुण रावत, पीसीसी सदस्य कैलाश पांडेय, एससी जिलाध्यक्ष गुसाईं राम, महिला जिलाध्यक्ष गीता पवार, चिलियानौला नगर अध्यक्ष कमलेश बोरा, गोपाल सिंह देव, मीडिया प्रभारी सोनू सिद्दीकी, हेमंत बिष्ट, जीतन जयाल, भूपेंद्र कुमार, सुरेंद्र पवार, रुद्र माहरा, दीपेश जोशी और सूरज कुँवार्बी सहित अनेक कांग्रेसजन उपस्थित रहे।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "अंत में उपस्थित कांग्रेसजनों ने दोनों नेताओं के आदर्शों पर चलने तथा देश की एकता, अखंडता, लोकतंत्र और संविधान की रक्षा के लिए प्रतिबद्ध रहने का संकल्प लिया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            }
+          ],
+          "direction": "ltr"
+        }
+      },
+      "category": {
+        "id": 1,
+        "name": "प्रदेश",
+        "slug": "pradesh",
+        "description": null,
+        "order": 1,
+        "showInNav": true,
+        "color": null,
+        "legacyPath": null,
+        "seo": {
+          "metaTitle": null,
+          "metaDescription": null
+        },
+        "updatedAt": "2026-11-09T13:49:51.074Z",
+        "createdAt": "2026-11-09T13:49:51.068Z"
+      },
+      "location": null,
+      "tags": [],
+      "authors": [],
+      "publishedAt": "2026-11-14T16:00:00.000Z",
+      "isBreaking": false,
+      "breakingUntil": null,
+      "isTrending": false,
+      "isFeatured": false,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null,
+        "ogImage": {
+          "id": 11,
+          "alt": "उत्तराखंड समाचार फ़ोटो",
+          "caption": null,
+          "credit": null,
+          "updatedAt": "2026-11-14T16:02:44.891Z",
+          "createdAt": "2026-11-14T16:02:44.890Z",
+          "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671.webp",
+          "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-320x144.webp",
+          "filename": "img_6ae5d0f8d33dd9.01489671.webp",
+          "mimeType": "image/webp",
+          "filesize": 352742,
+          "width": 2560,
+          "height": 1153,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumb": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-320x144.webp",
+              "width": 320,
+              "height": 144,
+              "mimeType": "image/webp",
+              "filesize": 12232,
+              "filename": "img_6ae5d0f8d33dd9.01489671-320x144.webp"
+            },
+            "card": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-640x288.webp",
+              "width": 640,
+              "height": 288,
+              "mimeType": "image/webp",
+              "filesize": 35834,
+              "filename": "img_6ae5d0f8d33dd9.01489671-640x288.webp"
+            },
+            "article": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x540.webp",
+              "width": 1200,
+              "height": 540,
+              "mimeType": "image/webp",
+              "filesize": 91292,
+              "filename": "img_6ae5d0f8d33dd9.01489671-1200x540.webp"
+            },
+            "og": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x630.webp",
+              "width": 1200,
+              "height": 630,
+              "mimeType": "image/webp",
+              "filesize": 98566,
+              "filename": "img_6ae5d0f8d33dd9.01489671-1200x630.webp"
+            },
+            "wide": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x675.webp",
+              "width": 1200,
+              "height": 675,
+              "mimeType": "image/webp",
+              "filesize": 102646,
+              "filename": "img_6ae5d0f8d33dd9.01489671-1200x675.webp"
+            },
+            "standard": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x900.webp",
+              "width": 1200,
+              "height": 900,
+              "mimeType": "image/webp",
+              "filesize": 112342,
+              "filename": "img_6ae5d0f8d33dd9.01489671-1200x900.webp"
+            },
+            "square": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae5d0f8d33dd9.01489671-1200x1200.webp",
+              "width": 1200,
+              "height": 1200,
+              "mimeType": "image/webp",
+              "filesize": 126414,
+              "filename": "img_6ae5d0f8d33dd9.01489671-1200x1200.webp"
+            }
+          }
+        },
+        "focusKeyword": null,
+        "noindex": false
+      },
+      "articleType": "news",
+      "language": "hi",
+      "updatedAt": "2026-11-14T16:02:48.312Z",
+      "createdAt": "2026-11-14T16:02:48.312Z",
+      "_status": "published"
+    },
+    {
+      "id": 42,
+      "title": "रानीखेत के गांधी चौक पर कांग्रेस ने उठाई ‘वोट बचाओ–देश बचाओ’ की आवाज",
+      "slug": "ranikhet-gandhi-chauk-kangres-uthai-vot-bachao-desh-bachao-avaj",
+      "summary": "रानीखेत कांग्रेस कमेटी के तत्वावधान में गांधी चौक पर ‘वोट बचाओ–देश बचाओ’ अभियान के तहत कार्यक्रम आयोजित किया गया।",
+      "featuredImage": {
+        "id": 12,
+        "alt": "उत्तराखंड समाचार फ़ोटो",
+        "caption": null,
+        "credit": null,
+        "updatedAt": "2026-11-14T16:04:38.092Z",
+        "createdAt": "2026-11-14T16:04:38.092Z",
+        "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1.webp",
+        "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-320x172.webp",
+        "filename": "img_6ae824164f4584.72908557-1.webp",
+        "mimeType": "image/webp",
+        "filesize": 521102,
+        "width": 2560,
+        "height": 1378,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumb": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-320x172.webp",
+            "width": 320,
+            "height": 172,
+            "mimeType": "image/webp",
+            "filesize": 15764,
+            "filename": "img_6ae824164f4584.72908557-1-320x172.webp"
+          },
+          "card": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-640x344.webp",
+            "width": 640,
+            "height": 344,
+            "mimeType": "image/webp",
+            "filesize": 51090,
+            "filename": "img_6ae824164f4584.72908557-1-640x344.webp"
+          },
+          "article": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x646.webp",
+            "width": 1200,
+            "height": 646,
+            "mimeType": "image/webp",
+            "filesize": 146606,
+            "filename": "img_6ae824164f4584.72908557-1-1200x646.webp"
+          },
+          "og": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x630.webp",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/webp",
+            "filesize": 143064,
+            "filename": "img_6ae824164f4584.72908557-1-1200x630.webp"
+          },
+          "wide": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x675.webp",
+            "width": 1200,
+            "height": 675,
+            "mimeType": "image/webp",
+            "filesize": 145640,
+            "filename": "img_6ae824164f4584.72908557-1-1200x675.webp"
+          },
+          "standard": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x900.webp",
+            "width": 1200,
+            "height": 900,
+            "mimeType": "image/webp",
+            "filesize": 134088,
+            "filename": "img_6ae824164f4584.72908557-1-1200x900.webp"
+          },
+          "square": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x1200.webp",
+            "width": 1200,
+            "height": 1200,
+            "mimeType": "image/webp",
+            "filesize": 145388,
+            "filename": "img_6ae824164f4584.72908557-1-1200x1200.webp"
+          }
+        }
+      },
+      "body": {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "रानीखेत कांग्रेस कमेटी के तत्वावधान में गांधी चौक पर ‘वोट बचाओ–देश बचाओ’ अभियान के तहत कार्यक्रम आयोजित किया गया। कांग्रेस पदाधिकारियों और कार्यकर्ताओं ने लोकतंत्र, संविधान और मताधिकार की रक्षा का संकल्प लेते हुए मतदाता सूची की निष्पक्षता सुनिश्चित करने की मांग उठाई।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "रानीखेत, 1 नवंबर। ‘वोट बचाओ–देश बचाओ’ अभियान के तहत रविवार को गांधी चौक, रानीखेत में कांग्रेस कमेटी की ओर से कार्यक्रम आयोजित किया गया। कार्यक्रम की अध्यक्षता कांग्रेस कमेटी के वरिष्ठ उपाध्यक्ष विजय तिवारी ने की।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम में कांग्रेस पदाधिकारियों और कार्यकर्ताओं ने भाग लेते हुए लोकतंत्र, संविधान और मताधिकार की रक्षा का संकल्प लिया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "इस अवसर पर वक्ताओं ने कहा कि लोकतंत्र की मजबूती के लिए प्रत्येक नागरिक के मताधिकार की रक्षा बेहद जरूरी है। वोट केवल एक अधिकार नहीं, बल्कि लोकतंत्र की सबसे बड़ी ताकत है। उन्होंने मतदाता सूची की निष्पक्षता सुनिश्चित करने और किसी भी पात्र मतदाता का नाम सूची से नहीं हटाए जाने की आवश्यकता पर जोर दिया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "वक्ताओं ने कहा कि ‘वोट बचाओ–देश बचाओ’ अभियान के माध्यम से कांग्रेस जनता को जागरूक करने और लोकतांत्रिक मूल्यों की रक्षा के लिए लगातार प्रयास करती रहेगी।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम में पीसीसी सदस्य कैलाश पांडेय, कॉर्डिनेटर कुलदीप कुमार, चिलियानौला नगर अध्यक्ष कमलेश बोरा, एससी जिलाध्यक्ष गुसाईं राम, पूर्व ब्लॉक अध्यक्ष गोपाल सिंह देव, मीडिया प्रभारी सोनू सिद्दीकी, प्रमोद पाल, पंकज गुरुरानी, वसीम कुरैशी, रुद्र माहरा और दीपेश जोशी सहित अनेक कांग्रेस पदाधिकारी एवं कार्यकर्ता उपस्थित रहे।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            }
+          ],
+          "direction": "ltr"
+        }
+      },
+      "category": {
+        "id": 1,
+        "name": "प्रदेश",
+        "slug": "pradesh",
+        "description": null,
+        "order": 1,
+        "showInNav": true,
+        "color": null,
+        "legacyPath": null,
+        "seo": {
+          "metaTitle": null,
+          "metaDescription": null
+        },
+        "updatedAt": "2026-11-09T13:49:51.074Z",
+        "createdAt": "2026-11-09T13:49:51.068Z"
+      },
+      "location": null,
+      "tags": [],
+      "authors": [],
+      "publishedAt": "2026-11-14T17:04:00.000Z",
+      "isBreaking": false,
+      "breakingUntil": null,
+      "isTrending": false,
+      "isFeatured": false,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null,
+        "ogImage": {
+          "id": 12,
+          "alt": "उत्तराखंड समाचार फ़ोटो",
+          "caption": null,
+          "credit": null,
+          "updatedAt": "2026-11-14T16:04:38.092Z",
+          "createdAt": "2026-11-14T16:04:38.092Z",
+          "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1.webp",
+          "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-320x172.webp",
+          "filename": "img_6ae824164f4584.72908557-1.webp",
+          "mimeType": "image/webp",
+          "filesize": 521102,
+          "width": 2560,
+          "height": 1378,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumb": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-320x172.webp",
+              "width": 320,
+              "height": 172,
+              "mimeType": "image/webp",
+              "filesize": 15764,
+              "filename": "img_6ae824164f4584.72908557-1-320x172.webp"
+            },
+            "card": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-640x344.webp",
+              "width": 640,
+              "height": 344,
+              "mimeType": "image/webp",
+              "filesize": 51090,
+              "filename": "img_6ae824164f4584.72908557-1-640x344.webp"
+            },
+            "article": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x646.webp",
+              "width": 1200,
+              "height": 646,
+              "mimeType": "image/webp",
+              "filesize": 146606,
+              "filename": "img_6ae824164f4584.72908557-1-1200x646.webp"
+            },
+            "og": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x630.webp",
+              "width": 1200,
+              "height": 630,
+              "mimeType": "image/webp",
+              "filesize": 143064,
+              "filename": "img_6ae824164f4584.72908557-1-1200x630.webp"
+            },
+            "wide": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x675.webp",
+              "width": 1200,
+              "height": 675,
+              "mimeType": "image/webp",
+              "filesize": 145640,
+              "filename": "img_6ae824164f4584.72908557-1-1200x675.webp"
+            },
+            "standard": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x900.webp",
+              "width": 1200,
+              "height": 900,
+              "mimeType": "image/webp",
+              "filesize": 134088,
+              "filename": "img_6ae824164f4584.72908557-1-1200x900.webp"
+            },
+            "square": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6ae824164f4584.72908557-1-1200x1200.webp",
+              "width": 1200,
+              "height": 1200,
+              "mimeType": "image/webp",
+              "filesize": 145388,
+              "filename": "img_6ae824164f4584.72908557-1-1200x1200.webp"
+            }
+          }
+        },
+        "focusKeyword": null,
+        "noindex": false
+      },
+      "articleType": "news",
+      "language": "hi",
+      "updatedAt": "2026-11-14T16:04:59.932Z",
+      "createdAt": "2026-11-14T16:04:52.427Z",
+      "_status": "published"
+    },
+    {
+      "id": 43,
+      "title": "रानीखेत में कांग्रेस का हस्ताक्षर अभियान, मुख्यमंत्री समेत चार मंत्रियों के खिलाफ जताया विरोध",
+      "slug": "ranikhet-kangres-hastakshar-abhiyan-mukhyamantri-samet-char-mantriyon-khilaph",
+      "summary": "रानीखेत के गांधी पार्क में कांग्रेस ने प्रदेश सरकार की नीतियों और भ्रष्टाचार के मुद्दों को लेकर हस्ताक्षर अभियान चलाया। अभियान के दौरान मुख्यमंत्री पुष्कर सिंह धामी सहित चार मंत्रियों के खिलाफ विरोध दर्ज कराया गया।",
+      "featuredImage": {
+        "id": 13,
+        "alt": "उत्तराखंड समाचार फ़ोटो",
+        "caption": null,
+        "credit": null,
+        "updatedAt": "2026-11-14T16:07:07.527Z",
+        "createdAt": "2026-11-14T16:07:07.527Z",
+        "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758.webp",
+        "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-320x144.webp",
+        "filename": "img_6af828318f57e9.03377758.webp",
+        "mimeType": "image/webp",
+        "filesize": 135250,
+        "width": 1280,
+        "height": 576,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumb": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-320x144.webp",
+            "width": 320,
+            "height": 144,
+            "mimeType": "image/webp",
+            "filesize": 14176,
+            "filename": "img_6af828318f57e9.03377758-320x144.webp"
+          },
+          "card": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-640x288.webp",
+            "width": 640,
+            "height": 288,
+            "mimeType": "image/webp",
+            "filesize": 43156,
+            "filename": "img_6af828318f57e9.03377758-640x288.webp"
+          },
+          "article": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x540.webp",
+            "width": 1200,
+            "height": 540,
+            "mimeType": "image/webp",
+            "filesize": 106630,
+            "filename": "img_6af828318f57e9.03377758-1200x540.webp"
+          },
+          "og": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x630.webp",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/webp",
+            "filesize": 107618,
+            "filename": "img_6af828318f57e9.03377758-1200x630.webp"
+          },
+          "wide": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x675.webp",
+            "width": 1200,
+            "height": 675,
+            "mimeType": "image/webp",
+            "filesize": 108814,
+            "filename": "img_6af828318f57e9.03377758-1200x675.webp"
+          },
+          "standard": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x900.webp",
+            "width": 1200,
+            "height": 900,
+            "mimeType": "image/webp",
+            "filesize": 119070,
+            "filename": "img_6af828318f57e9.03377758-1200x900.webp"
+          },
+          "square": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x1200.webp",
+            "width": 1200,
+            "height": 1200,
+            "mimeType": "image/webp",
+            "filesize": 124548,
+            "filename": "img_6af828318f57e9.03377758-1200x1200.webp"
+          }
+        }
+      },
+      "body": {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "रानीखेत। प्रदेश कांग्रेस कमेटी के अध्यक्ष गणेश गोदियाल के निर्देशानुसार प्रदेशभर में 10 से 30 नवंबर 2026 तक चलाए जा रहे जनजागरण एवं विरोध कार्यक्रमों के तहत शनिवार को रानीखेत कांग्रेस कमेटी की ओर से गांधी पार्क में हस्ताक्षर अभियान आयोजित किया गया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम की अध्यक्षता जिलाध्यक्ष दीपक किरौला ने की। अभियान का नेतृत्व रानीखेत विधानसभा प्रभारी दीप सिंह डांगी ने किया, जबकि संचालन गोपाल सिंह देव ने किया। अभियान में कांग्रेस नेताओं, पदाधिकारियों और कार्यकर्ताओं ने भागीदारी की।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "इस दौरान प्रदेश सरकार की नीतियों और भ्रष्टाचार से जुड़े मुद्दों को लेकर आम जनता को जागरूक किया गया। साथ ही मुख्यमंत्री पुष्कर सिंह धामी, कृषि मंत्री गणेश जोशी, महिला कल्याण मंत्री रेखा आर्या और सहकारिता मंत्री धन सिंह रावत के खिलाफ हस्ताक्षर अभियान चलाकर विरोध दर्ज कराया गया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कांग्रेस नेताओं ने कहा कि प्रदेश सरकार की नीतियों और जनहित से जुड़े मुद्दों पर पार्टी लोकतांत्रिक तरीके से अपना विरोध दर्ज करा रही है। जनता की आवाज बुलंद करने और सरकार को जवाबदेह बनाने के लिए जनजागरण अभियान प्रदेशभर में जारी रहेगा।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम में पीसीसी सदस्य कैलाश पांडेय, अगस्त लाल साह, एससी विभाग के जिलाध्यक्ष गुसाईं राम, जिला प्रवक्ता दीपक पंत, चिलियानौला नगर अध्यक्ष कमलेश बोरा, पंचायती राज जिलाध्यक्ष त्रिलोक आर्या, महिला नगर अध्यक्ष नेहा साह माहरा, कॉर्डिनेटर कुलदीप कुमार, यूथ विधानसभा अध्यक्ष अंकिता पंत, चंद्र किरण सिंह, मोहन सिंह बिष्ट, जयंत रौतेला, वरिष्ठ उपाध्यक्ष दीप उपाध्याय, विश्व विजय माहरा, ग्राम प्रधान जैनोली नवीन प्रकाश, मीडिया प्रभारी सोनू सिद्दीकी, वीरेंद्र कुमार, रुद्र माहरा, हेमंत बिष्ट, प्रमोद पाल, राजेन्द्र कुमार, ज्योति, मुन्नी देवी, ममता देवी, बसंती देवी, बीरबल बिष्ट, कमला देवी, मनोजन कोरंगा, वीरेंद्र बिष्ट, करन नेगी, बीरबल सिंह, यूथ जिला महासचिव नितिन प्रकाश, अभिनव मेहरा, हर्षित मेहरा, यूथ जिला उपाध्यक्ष संजय बिष्ट, दीपक बिष्ट, गिरीश चंद्र सिंह, दलीप सिंह, अखिलेश सती, जगत सिंह और लक्ष्मी नारायण सहित अन्य कार्यकर्ता उपस्थित रहे।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            }
+          ],
+          "direction": "ltr"
+        }
+      },
+      "category": {
+        "id": 1,
+        "name": "प्रदेश",
+        "slug": "pradesh",
+        "description": null,
+        "order": 1,
+        "showInNav": true,
+        "color": null,
+        "legacyPath": null,
+        "seo": {
+          "metaTitle": null,
+          "metaDescription": null
+        },
+        "updatedAt": "2026-11-09T13:49:51.074Z",
+        "createdAt": "2026-11-09T13:49:51.068Z"
+      },
+      "location": null,
+      "tags": [],
+      "authors": [],
+      "publishedAt": "2026-11-14T16:06:00.000Z",
+      "isBreaking": false,
+      "breakingUntil": null,
+      "isTrending": false,
+      "isFeatured": false,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null,
+        "ogImage": {
+          "id": 13,
+          "alt": "उत्तराखंड समाचार फ़ोटो",
+          "caption": null,
+          "credit": null,
+          "updatedAt": "2026-11-14T16:07:07.527Z",
+          "createdAt": "2026-11-14T16:07:07.527Z",
+          "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758.webp",
+          "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-320x144.webp",
+          "filename": "img_6af828318f57e9.03377758.webp",
+          "mimeType": "image/webp",
+          "filesize": 135250,
+          "width": 1280,
+          "height": 576,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumb": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-320x144.webp",
+              "width": 320,
+              "height": 144,
+              "mimeType": "image/webp",
+              "filesize": 14176,
+              "filename": "img_6af828318f57e9.03377758-320x144.webp"
+            },
+            "card": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-640x288.webp",
+              "width": 640,
+              "height": 288,
+              "mimeType": "image/webp",
+              "filesize": 43156,
+              "filename": "img_6af828318f57e9.03377758-640x288.webp"
+            },
+            "article": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x540.webp",
+              "width": 1200,
+              "height": 540,
+              "mimeType": "image/webp",
+              "filesize": 106630,
+              "filename": "img_6af828318f57e9.03377758-1200x540.webp"
+            },
+            "og": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x630.webp",
+              "width": 1200,
+              "height": 630,
+              "mimeType": "image/webp",
+              "filesize": 107618,
+              "filename": "img_6af828318f57e9.03377758-1200x630.webp"
+            },
+            "wide": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x675.webp",
+              "width": 1200,
+              "height": 675,
+              "mimeType": "image/webp",
+              "filesize": 108814,
+              "filename": "img_6af828318f57e9.03377758-1200x675.webp"
+            },
+            "standard": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x900.webp",
+              "width": 1200,
+              "height": 900,
+              "mimeType": "image/webp",
+              "filesize": 119070,
+              "filename": "img_6af828318f57e9.03377758-1200x900.webp"
+            },
+            "square": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af828318f57e9.03377758-1200x1200.webp",
+              "width": 1200,
+              "height": 1200,
+              "mimeType": "image/webp",
+              "filesize": 124548,
+              "filename": "img_6af828318f57e9.03377758-1200x1200.webp"
+            }
+          }
+        },
+        "focusKeyword": null,
+        "noindex": false
+      },
+      "articleType": "news",
+      "language": "hi",
+      "updatedAt": "2026-11-14T16:07:16.332Z",
+      "createdAt": "2026-11-14T16:07:16.332Z",
+      "_status": "published"
+    },
+    {
+      "id": 44,
+      "title": "मुख्यमंत्री धामी ने किया 74वें गौचर मेले का शुभारंभ, पेयजल योजनाओं का भी किया लोकार्पण",
+      "slug": "mukhyamantri-dhami-kiya-74ven-gauchar-mele-shubharambh-peyjal-yojnaon-kiya",
+      "summary": "चमोली के गौचर में मुख्यमंत्री पुष्कर सिंह धामी ने सात दिवसीय 74वें राजकीय औद्योगिक विकास एवं सांस्कृतिक गौचर मेले का शुभारंभ किया।",
+      "featuredImage": {
+        "id": 14,
+        "alt": "उत्तराखंड समाचार फ़ोटो",
+        "caption": null,
+        "credit": null,
+        "updatedAt": "2026-11-14T16:08:54.373Z",
+        "createdAt": "2026-11-14T16:08:54.373Z",
+        "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916.webp",
+        "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-320x213.webp",
+        "filename": "img_6af82c0f354c93.19345916.webp",
+        "mimeType": "image/webp",
+        "filesize": 296968,
+        "width": 2560,
+        "height": 1703,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumb": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-320x213.webp",
+            "width": 320,
+            "height": 213,
+            "mimeType": "image/webp",
+            "filesize": 14838,
+            "filename": "img_6af82c0f354c93.19345916-320x213.webp"
+          },
+          "card": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-640x426.webp",
+            "width": 640,
+            "height": 426,
+            "mimeType": "image/webp",
+            "filesize": 40524,
+            "filename": "img_6af82c0f354c93.19345916-640x426.webp"
+          },
+          "article": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x798.webp",
+            "width": 1200,
+            "height": 798,
+            "mimeType": "image/webp",
+            "filesize": 93686,
+            "filename": "img_6af82c0f354c93.19345916-1200x798.webp"
+          },
+          "og": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x630.webp",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/webp",
+            "filesize": 88280,
+            "filename": "img_6af82c0f354c93.19345916-1200x630.webp"
+          },
+          "wide": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x675.webp",
+            "width": 1200,
+            "height": 675,
+            "mimeType": "image/webp",
+            "filesize": 89098,
+            "filename": "img_6af82c0f354c93.19345916-1200x675.webp"
+          },
+          "standard": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x900.webp",
+            "width": 1200,
+            "height": 900,
+            "mimeType": "image/webp",
+            "filesize": 99280,
+            "filename": "img_6af82c0f354c93.19345916-1200x900.webp"
+          },
+          "square": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x1200.webp",
+            "width": 1200,
+            "height": 1200,
+            "mimeType": "image/webp",
+            "filesize": 105992,
+            "filename": "img_6af82c0f354c93.19345916-1200x1200.webp"
+          }
+        }
+      },
+      "body": {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "चमोली के गौचर में मुख्यमंत्री पुष्कर सिंह धामी ने सात दिवसीय 74वें राजकीय औद्योगिक विकास एवं सांस्कृतिक गौचर मेले का शुभारंभ किया। इस दौरान उन्होंने गौचर और गैरसैंण की पेयजल योजनाओं का लोकार्पण किया और सिमली अस्पताल से जुड़े विषय के समाधान के लिए शीघ्र कमेटी गठित करने की बात कही।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "गौचर। मुख्यमंत्री पुष्कर सिंह धामी ने शनिवार को चमोली के गौचर में 74वें राजकीय औद्योगिक विकास एवं सांस्कृतिक गौचर मेले का विधिवत शुभारंभ किया। सात दिवसीय मेले का उद्घाटन उन्होंने पूजा-अर्चना और दीप प्रज्ज्वलित कर किया। गौचर पहुंचने पर मुख्यमंत्री का पारंपरिक तरीके से स्वागत किया गया। उन्होंने मेले के संस्थापक स्वर्गीय गोविन्द प्रसाद नौटियाल की प्रतिमा पर माल्यार्पण कर श्रद्धांजलि अर्पित की। इस अवसर पर स्थानीय विद्यालयों की छात्राओं ने सांस्कृतिक प्रस्तुतियां दीं।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "मुख्यमंत्री ने कहा कि गौचर मेला उत्तराखंड की ऐतिहासिक विरासत, समृद्ध व्यापारिक परंपरा और सांस्कृतिक पहचान का प्रतीक है। वर्ष 1943 में भोटिया व्यापार मेले के रूप में इसकी शुरुआत हुई थी। उस समय गौचर भारत-तिब्बत व्यापार का महत्वपूर्ण केंद्र था, जहां ऊन, पश्मीना, जड़ी-बूटियों और अन्य स्थानीय उत्पादों का व्यापार होता था। समय के साथ मेले का स्वरूप विस्तृत हुआ और आज यह औद्योगिक एवं सांस्कृतिक आयोजन के रूप में अपनी पहचान बना चुका है।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "उन्होंने कहा कि गौचर मेला स्थानीय व्यापारियों, कारीगरों, छोटे उद्यमियों और स्वयं सहायता समूहों को अपने उत्पादों के प्रदर्शन एवं विपणन का अवसर देता है। यह प्रधानमंत्री नरेंद्र मोदी के ‘वोकल फॉर लोकल’ संकल्प को आगे बढ़ाने का माध्यम भी है। ऐसे आयोजन लोक संस्कृति, लोक कला और पारंपरिक विरासत को संरक्षित करने के साथ समाज को जोड़ने का काम करते हैं।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "मुख्यमंत्री ने चमोली को भगवान बद्री विशाल की तपस्थली, मां नंदा का मायका और चिपको आंदोलन की जन्मभूमि बताते हुए कहा कि सीमांत क्षेत्रों का विकास और वहां आधारभूत सुविधाओं का विस्तार सरकार की प्राथमिकता है। उन्होंने कहा कि सरकार कृषि, बागवानी, पशुपालन, पर्यटन और हस्तशिल्प के माध्यम से युवाओं के लिए स्थानीय स्तर पर रोजगार एवं स्वरोजगार के अवसर बढ़ाने का प्रयास कर रही है।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "मुख्यमंत्री ने बताया कि चमोली के ऊनी हस्तशिल्प, दालों, राजमा, मंडुवा, झंगोरा, शहद और जड़ी-बूटियों को बड़े बाजारों तक पहुंचाने के लिए ‘हाउस ऑफ हिमालयाज’ ब्रांड शुरू किया गया है। इस ब्रांड का कारोबार छह करोड़ रुपये का आंकड़ा पार कर चुका है। उन्होंने इसे प्रदेश की मातृशक्ति की मेहनत और आर्थिक आत्मनिर्भरता की उपलब्धि बताया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "उन्होंने चारधाम सड़क परियोजना और ऋषिकेश-कर्णप्रयाग रेल परियोजना का उल्लेख करते हुए कहा कि इनके माध्यम से क्षेत्र की कनेक्टिविटी, पर्यटन और स्थानीय अर्थव्यवस्था को गति मिलेगी।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "इस दौरान मुख्यमंत्री ने स्थानीय जनप्रतिनिधियों और नागरिकों की मांगों पर भी बात की। उन्होंने सिमली अस्पताल से जुड़े विषय के समाधान के लिए शीघ्र कमेटी गठित कर सभी संबंधित पक्षों को सुनने की बात कही। वहीं, प्रेस क्लब भवन निर्माण की मांग पर स्थानीय स्तर पर उपयुक्त भूमि चयनित करने का आग्रह किया और सकारात्मक आश्वासन दिया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम में मुख्यमंत्री ने पत्रकारिता एवं साहित्य के क्षेत्र में योगदान के लिए ग्राम बमोथ, चमोली निवासी वरिष्ठ पत्रकार ललित प्रसाद लखेड़ा को ‘गोविन्द प्रसाद नौटियाल स्मृति सम्मान-2026’ से सम्मानित किया। वहीं, बिनसर पब्लिकेशन, देहरादून के वरिष्ठ लेखक एवं प्रकाशक कीर्ति नवानी को ‘पंडित महेशानन्द नौटियाल शिक्षा एवं साहित्य प्रसार सम्मान-2026’ प्रदान किया गया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "इस अवसर पर मुख्यमंत्री ने पेयजल सुविधाओं के विस्तार के लिए दो योजनाओं का लोकार्पण भी किया। इनमें अमृत 2.0 के तहत कर्णप्रयाग विकासखंड में 32.45 करोड़ रुपये की लागत से निर्मित गौचर नगरीय पेयजल योजना और मुख्यमंत्री घोषणा के तहत गैरसैंण विकासखंड में 459.32 लाख रुपये की लागत से गैरसैंण नगरीय पेयजल योजना के सुदृढ़ीकरण एवं मरम्मत कार्य शामिल हैं। इन योजनाओं से दोनों क्षेत्रों में पेयजल आपूर्ति व्यवस्था को बेहतर बनाने में मदद मिलेगी।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम में प्रभारी मंत्री भरत सिंह चौधरी, थराली विधायक भूपाल राम टम्टा, कर्णप्रयाग विधायक अनिल नौटियाल, दर्जा राज्य मंत्री हरक सिंह नेगी, बलवीर घुनियाल, रमेश गड़िया, राम चन्द्र गौड़, माधव प्रसाद सेमवाल, प्रेम सिंह राणा, चन्द्रकला तिवारी, जिला सहकारी बैंक चमोली के अध्यक्ष गजेन्द्र सिंह रावत, भाजपा जिलाध्यक्ष गजपाल सिंह बर्त्वाल, गौचर नगर पालिका अध्यक्ष संदीप नेगी, ब्लॉक प्रमुख कर्णप्रयाग दीपिका मैखुरी, जिलाधिकारी गौरव कुमार, पुलिस अधीक्षक सुरजीत सिंह पंवार सहित जनप्रतिनिधि, अधिकारी, पत्रकार, व्यापारी और बड़ी संख्या में स्थानीय नागरिक उपस्थित रहे।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            }
+          ],
+          "direction": "ltr"
+        }
+      },
+      "category": {
+        "id": 1,
+        "name": "प्रदेश",
+        "slug": "pradesh",
+        "description": null,
+        "order": 1,
+        "showInNav": true,
+        "color": null,
+        "legacyPath": null,
+        "seo": {
+          "metaTitle": null,
+          "metaDescription": null
+        },
+        "updatedAt": "2026-11-09T13:49:51.074Z",
+        "createdAt": "2026-11-09T13:49:51.068Z"
+      },
+      "location": null,
+      "tags": [],
+      "authors": [],
+      "publishedAt": "2026-11-14T16:07:00.000Z",
+      "isBreaking": false,
+      "breakingUntil": null,
+      "isTrending": false,
+      "isFeatured": false,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null,
+        "ogImage": {
+          "id": 14,
+          "alt": "उत्तराखंड समाचार फ़ोटो",
+          "caption": null,
+          "credit": null,
+          "updatedAt": "2026-11-14T16:08:54.373Z",
+          "createdAt": "2026-11-14T16:08:54.373Z",
+          "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916.webp",
+          "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-320x213.webp",
+          "filename": "img_6af82c0f354c93.19345916.webp",
+          "mimeType": "image/webp",
+          "filesize": 296968,
+          "width": 2560,
+          "height": 1703,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumb": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-320x213.webp",
+              "width": 320,
+              "height": 213,
+              "mimeType": "image/webp",
+              "filesize": 14838,
+              "filename": "img_6af82c0f354c93.19345916-320x213.webp"
+            },
+            "card": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-640x426.webp",
+              "width": 640,
+              "height": 426,
+              "mimeType": "image/webp",
+              "filesize": 40524,
+              "filename": "img_6af82c0f354c93.19345916-640x426.webp"
+            },
+            "article": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x798.webp",
+              "width": 1200,
+              "height": 798,
+              "mimeType": "image/webp",
+              "filesize": 93686,
+              "filename": "img_6af82c0f354c93.19345916-1200x798.webp"
+            },
+            "og": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x630.webp",
+              "width": 1200,
+              "height": 630,
+              "mimeType": "image/webp",
+              "filesize": 88280,
+              "filename": "img_6af82c0f354c93.19345916-1200x630.webp"
+            },
+            "wide": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x675.webp",
+              "width": 1200,
+              "height": 675,
+              "mimeType": "image/webp",
+              "filesize": 89098,
+              "filename": "img_6af82c0f354c93.19345916-1200x675.webp"
+            },
+            "standard": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x900.webp",
+              "width": 1200,
+              "height": 900,
+              "mimeType": "image/webp",
+              "filesize": 99280,
+              "filename": "img_6af82c0f354c93.19345916-1200x900.webp"
+            },
+            "square": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af82c0f354c93.19345916-1200x1200.webp",
+              "width": 1200,
+              "height": 1200,
+              "mimeType": "image/webp",
+              "filesize": 105992,
+              "filename": "img_6af82c0f354c93.19345916-1200x1200.webp"
+            }
+          }
+        },
+        "focusKeyword": null,
+        "noindex": false
+      },
+      "articleType": "news",
+      "language": "hi",
+      "updatedAt": "2026-11-14T16:09:03.877Z",
+      "createdAt": "2026-11-14T16:09:03.876Z",
+      "_status": "published"
+    },
+    {
+      "id": 45,
+      "title": "अल्मोड़ा जिला कांग्रेस कार्यालय में मनाई गई पंडित जवाहरलाल नेहरू की जयंती",
+      "slug": "almora-jila-kangres-karyalay-manai-gai-pandit-javahralal-nehru-jayanti",
+      "summary": "जिला कांग्रेस कमेटी अल्मोड़ा की ओर से जिला कार्यालय में देश के प्रथम प्रधानमंत्री पंडित जवाहरलाल नेहरू की जयंती श्रद्धापूर्वक मनाई गई।",
+      "featuredImage": {
+        "id": 15,
+        "alt": "उत्तराखंड समाचार फ़ोटो",
+        "caption": null,
+        "credit": null,
+        "updatedAt": "2026-11-14T16:10:17.062Z",
+        "createdAt": "2026-11-14T16:10:17.062Z",
+        "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334.webp",
+        "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-320x180.webp",
+        "filename": "img_6af83420c4af91.42198334.webp",
+        "mimeType": "image/webp",
+        "filesize": 213608,
+        "width": 1599,
+        "height": 899,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumb": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-320x180.webp",
+            "width": 320,
+            "height": 180,
+            "mimeType": "image/webp",
+            "filesize": 14634,
+            "filename": "img_6af83420c4af91.42198334-320x180.webp"
+          },
+          "card": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-640x360.webp",
+            "width": 640,
+            "height": 360,
+            "mimeType": "image/webp",
+            "filesize": 46160,
+            "filename": "img_6af83420c4af91.42198334-640x360.webp"
+          },
+          "article": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x675.webp",
+            "width": 1200,
+            "height": 675,
+            "mimeType": "image/webp",
+            "filesize": 122616,
+            "filename": "img_6af83420c4af91.42198334-1200x675.webp"
+          },
+          "og": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x630.webp",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/webp",
+            "filesize": 117752,
+            "filename": "img_6af83420c4af91.42198334-1200x630.webp"
+          },
+          "wide": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x675.webp",
+            "width": 1200,
+            "height": 675,
+            "mimeType": "image/webp",
+            "filesize": 122616,
+            "filename": "img_6af83420c4af91.42198334-1200x675.webp"
+          },
+          "standard": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x900.webp",
+            "width": 1200,
+            "height": 900,
+            "mimeType": "image/webp",
+            "filesize": 147864,
+            "filename": "img_6af83420c4af91.42198334-1200x900.webp"
+          },
+          "square": {
+            "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x1200.webp",
+            "width": 1200,
+            "height": 1200,
+            "mimeType": "image/webp",
+            "filesize": 154712,
+            "filename": "img_6af83420c4af91.42198334-1200x1200.webp"
+          }
+        }
+      },
+      "body": {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "जिला कांग्रेस कमेटी अल्मोड़ा की ओर से जिला कार्यालय में देश के प्रथम प्रधानमंत्री पंडित जवाहरलाल नेहरू की जयंती श्रद्धापूर्वक मनाई गई। कांग्रेस कार्यकर्ताओं ने उनके चित्र पर पुष्प अर्पित कर आधुनिक भारत के निर्माण और लोकतांत्रिक संस्थाओं को मजबूत करने में उनके योगदान को याद किया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "अल्मोड़ा। जिला कांग्रेस कमेटी अल्मोड़ा के तत्वावधान में जिला कांग्रेस कार्यालय में देश के प्रथम प्रधानमंत्री एवं स्वतंत्रता सेनानी पंडित जवाहरलाल नेहरू की जयंती श्रद्धा और सम्मान के साथ मनाई गई। इस अवसर पर कांग्रेसजनों ने उनके चित्र पर पुष्प अर्पित कर श्रद्धांजलि दी और राष्ट्र निर्माण में उनके योगदान को याद किया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम को संबोधित करते हुए जिला कांग्रेस अध्यक्ष भूपेंद्र सिंह भोज ने कहा कि पंडित जवाहरलाल नेहरू आधुनिक भारत की मजबूत नींव रखने वाले दूरदर्शी नेता थे। उन्होंने देश को वैज्ञानिक सोच, शिक्षा, औद्योगिक विकास, लोकतांत्रिक मूल्यों और धर्मनिरपेक्षता की मजबूत विरासत दी।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "उन्होंने कहा कि नेहरू ने कठिन परिस्थितियों में देश का नेतृत्व करते हुए लोकतांत्रिक संस्थाओं को मजबूत किया और भारत को विकास एवं आत्मनिर्भरता के मार्ग पर आगे बढ़ाया। उनके विचार, आदर्श और राष्ट्र निर्माण के प्रति समर्पण आज भी सभी के लिए प्रेरणास्रोत हैं।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "भूपेंद्र सिंह भोज ने कहा कि वर्तमान समय में नेहरू के बताए भाईचारे, सामाजिक सद्भाव, समानता और लोकतांत्रिक मूल्यों के रास्ते पर चलकर देश की एकता और अखंडता को मजबूत करने की आवश्यकता है।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "इस अवसर पर उपस्थित कांग्रेसजनों ने नेहरू के आदर्शों को आत्मसात करने और कांग्रेस की विचारधारा को जन-जन तक पहुंचाने का संकल्प लिया।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "कार्यक्रम में एआईसीसी ऑब्जर्वर संजय चोकर, महानगर अध्यक्ष तारा चंद्र जोशी, प्रकाश जोशी, अम्बी राम, हरीश राम, राधा बिष्ट, तारा चंद्र शाह, बीके पांडे, पूरन रौतेला, जया जोशी, अख्तर हुसैन, दिनेश पिल्खवाल, पीताम्बर पाण्डेय, किरण आर्य, जगदीश पाण्डेय और गोपाल चौहान सहित अन्य कांग्रेसजन उपस्थित रहे।",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            }
+          ],
+          "direction": "ltr"
+        }
+      },
+      "category": {
+        "id": 1,
+        "name": "प्रदेश",
+        "slug": "pradesh",
+        "description": null,
+        "order": 1,
+        "showInNav": true,
+        "color": null,
+        "legacyPath": null,
+        "seo": {
+          "metaTitle": null,
+          "metaDescription": null
+        },
+        "updatedAt": "2026-11-09T13:49:51.074Z",
+        "createdAt": "2026-11-09T13:49:51.068Z"
+      },
+      "location": null,
+      "tags": [],
+      "authors": [],
+      "publishedAt": "2026-11-14T16:09:00.000Z",
+      "isBreaking": false,
+      "breakingUntil": null,
+      "isTrending": false,
+      "isFeatured": false,
+      "seo": {
+        "metaTitle": null,
+        "metaDescription": null,
+        "ogImage": {
+          "id": 15,
+          "alt": "उत्तराखंड समाचार फ़ोटो",
+          "caption": null,
+          "credit": null,
+          "updatedAt": "2026-11-14T16:10:17.062Z",
+          "createdAt": "2026-11-14T16:10:17.062Z",
+          "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334.webp",
+          "thumbnailURL": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-320x180.webp",
+          "filename": "img_6af83420c4af91.42198334.webp",
+          "mimeType": "image/webp",
+          "filesize": 213608,
+          "width": 1599,
+          "height": 899,
+          "focalX": 50,
+          "focalY": 50,
+          "sizes": {
+            "thumb": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-320x180.webp",
+              "width": 320,
+              "height": 180,
+              "mimeType": "image/webp",
+              "filesize": 14634,
+              "filename": "img_6af83420c4af91.42198334-320x180.webp"
+            },
+            "card": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-640x360.webp",
+              "width": 640,
+              "height": 360,
+              "mimeType": "image/webp",
+              "filesize": 46160,
+              "filename": "img_6af83420c4af91.42198334-640x360.webp"
+            },
+            "article": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x675.webp",
+              "width": 1200,
+              "height": 675,
+              "mimeType": "image/webp",
+              "filesize": 122616,
+              "filename": "img_6af83420c4af91.42198334-1200x675.webp"
+            },
+            "og": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x630.webp",
+              "width": 1200,
+              "height": 630,
+              "mimeType": "image/webp",
+              "filesize": 117752,
+              "filename": "img_6af83420c4af91.42198334-1200x630.webp"
+            },
+            "wide": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x675.webp",
+              "width": 1200,
+              "height": 675,
+              "mimeType": "image/webp",
+              "filesize": 122616,
+              "filename": "img_6af83420c4af91.42198334-1200x675.webp"
+            },
+            "standard": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x900.webp",
+              "width": 1200,
+              "height": 900,
+              "mimeType": "image/webp",
+              "filesize": 147864,
+              "filename": "img_6af83420c4af91.42198334-1200x900.webp"
+            },
+            "square": {
+              "url": "https://dev.loklensnews.com/api/media/file/img_6af83420c4af91.42198334-1200x1200.webp",
+              "width": 1200,
+              "height": 1200,
+              "mimeType": "image/webp",
+              "filesize": 154712,
+              "filename": "img_6af83420c4af91.42198334-1200x1200.webp"
+            }
+          }
+        },
+        "focusKeyword": null,
+        "noindex": false
+      },
+      "articleType": "news",
+      "language": "hi",
+      "updatedAt": "2026-11-14T16:10:25.924Z",
+      "createdAt": "2026-11-14T16:10:25.924Z",
+      "_status": "published"
+    }
+  ]
+}

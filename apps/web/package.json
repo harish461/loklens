@@ -18,7 +18,8 @@
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
     "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",
     "db:seed": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed.ts",
-    "db:verify": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/verify-data.ts"
+    "db:verify": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/verify-data.ts",
+    "db:sync-dev": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/sync-dev-articles.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1168.0",

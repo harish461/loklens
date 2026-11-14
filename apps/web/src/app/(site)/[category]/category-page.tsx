@@ -20,6 +20,8 @@ export async function CategoryPage({ slug, page }: { slug: string; page: number 
     listArticles({ pageSize: 6 }),
   ])
   if (page > 1 && page > result.totalPages) notFound()
+  const otherCategoryItems = latest.items.filter((a) => a.category.id !== category.id)
+  const sidebarItems = (otherCategoryItems.length >= 3 ? otherCategoryItems : latest.items).slice(0, 5)
   return (
     <ListingView
       title={category.name}
@@ -27,7 +29,7 @@ export async function CategoryPage({ slug, page }: { slug: string; page: number 
       crumbs={[{ label: 'होम', href: '/' }, { label: category.name }]}
       result={result}
       basePath={`/${category.slug}`}
-      sidebar={latest.items.filter((a) => a.category.id !== category.id).slice(0, 6)}
+      sidebar={sidebarItems}
       hideCategory
     />
   )

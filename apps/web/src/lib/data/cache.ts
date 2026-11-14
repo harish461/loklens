@@ -11,6 +11,6 @@ export const REVALIDATE_SECONDS = 300
  * unstable_cache throws. NEXT_RUNTIME is only set inside Next, so scripts run the same query uncached.
  */
 export function cachedRead<T>(keyParts: string[], tags: string[], fn: () => Promise<T>): Promise<T> {
-  if (!process.env.NEXT_RUNTIME) return fn()
+  if (!process.env.NEXT_RUNTIME || process.env.NODE_ENV === 'development') return fn()
   return unstable_cache(fn, keyParts, { tags: [...new Set(tags)], revalidate: REVALIDATE_SECONDS })()
 }
