@@ -1,8 +1,9 @@
 .header {
   background: #fff;
-  position: relative;
-  z-index: 20;
-  box-shadow: 0 1px 0 var(--color-border), 0 3px 10px rgba(22, 24, 29, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 0 var(--color-border), 0 4px 12px rgba(22, 24, 29, 0.08);
 }
 
 .top {
@@ -91,6 +92,7 @@
 
 /* Category bar — mobile: white, scrollable, red active underline */
 .catNav {
+  background: #fff;
   border-bottom: 1px solid var(--color-border);
 }
 

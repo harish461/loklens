@@ -1,14 +1,19 @@
 .category {
-  display: inline-block;
-  color: var(--color-brand);
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-logo-red, #c41d17);
+  background: rgba(196, 29, 23, 0.08);
+  padding: 2px 9px;
+  border-radius: 6px;
   font-size: 13px;
-  line-height: 20px;
-  font-weight: 500;
+  line-height: 19px;
+  font-weight: 600;
 }
 
 a.category:hover {
-  color: var(--color-brand-dark);
-  text-decoration: underline;
+  color: #ffffff;
+  background: var(--color-logo-red, #c41d17);
+  text-decoration: none;
 }
 
 .breaking {

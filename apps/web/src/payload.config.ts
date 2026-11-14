@@ -87,6 +87,10 @@ export default buildConfig({
     meta: { titleSuffix: ' – LokLens News Admin' },
     importMap: { baseDir: path.resolve(dirname) },
     components: {
+      graphics: {
+        Logo: '@/components/admin/AdminBranding#AdminLogo',
+        Icon: '@/components/admin/AdminBranding#AdminIcon',
+      },
       // LokLens dashboard (Eduplex-inspired Hindi News CMS home view).
       views: {
         dashboard: { Component: '@/components/admin/DashboardView#DashboardView' },

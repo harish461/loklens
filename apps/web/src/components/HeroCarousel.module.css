@@ -131,9 +131,12 @@
   }
 
   .root .slide article > div:last-child > div:first-child a {
-    padding: 2px 10px;
-    border-radius: 4px;
-    background: var(--color-brand);
+    padding: 3px 12px;
+    border-radius: 6px;
+    background: var(--color-logo-red, #c41d17);
     color: #fff;
+    font-size: 13.5px;
+    line-height: 20px;
+    font-weight: 600;
   }
 }

@@ -33,13 +33,13 @@
   display: inline-flex;
   align-items: center;
   min-height: var(--touch);
-  color: var(--color-brand);
-  font-weight: 500;
-  font-size: 15px;
+  color: var(--color-logo-red, #c41d17);
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .more:hover {
-  color: var(--color-brand-dark);
+  color: var(--color-logo-red-dark, #9e1611);
   text-decoration: underline;
 }
 

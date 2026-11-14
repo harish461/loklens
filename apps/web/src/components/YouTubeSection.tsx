@@ -22,7 +22,7 @@ export async function YouTubeSection({ channelUrl = YOUTUBE_CHANNEL_URL }: { cha
           LokLens YouTube पर
         </h2>
         <a href={channelUrl} target="_blank" rel="noopener" className={styles.subscribe}>
-          सब्सक्राइब करें
+          Subscribe
           <span className="visually-hidden"> (YouTube, नए टैब में खुलेगा)</span>
         </a>
       </header>

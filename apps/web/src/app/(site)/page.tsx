@@ -28,7 +28,7 @@ function BlockHead({ id, title, href }: { id: string; title: string; href?: stri
       </h2>
       {href && (
         <Link href={href} className={styles.blockMore}>
-          और देखें<span className="visually-hidden">: {title}</span>
+          View All<span className="visually-hidden">: {title}</span>
         </Link>
       )}
     </header>
@@ -64,11 +64,11 @@ export default async function HomePage() {
       <h1 className="visually-hidden">लोक Lens न्यूज़ — ताज़ा खबरें</h1>
 
       {/* Row 1: Editors' Picks (left) and the YouTube videos and Shorts (right). REMAINS SAME. */}
-      {picks.length > 0 && (
+      {(picks.length > 0 || youtubeVideos.posts.length > 0 || youtubeShorts.posts.length > 0) && (
         <div className={styles.topRow}>
           <section className={styles.picks} aria-labelledby="picks-title">
             <BlockHead id="picks-title" title="संपादक की पसंद" />
-            <HeroCarousel articles={picks} />
+            {picks.length > 0 ? <HeroCarousel articles={picks} /> : null}
           </section>
 
           <aside className={styles.sideCol} aria-label="YouTube">
@@ -98,10 +98,10 @@ export default async function HomePage() {
                   <h2 id="latest-stream-title" className={styles.streamTitle}>
                     ताज़ा समाचार
                   </h2>
-                  <span className={styles.streamTag}>लाइव बुलेटिन</span>
+                  <span className={styles.streamTag}>Live Bulletin</span>
                 </div>
                 <Link href={categoryTabs[0] ? `/${categoryTabs[0].category.slug}` : '/'} className={styles.streamMore}>
-                  सभी ताज़ा खबरें →
+                  View All →
                 </Link>
               </header>
 
@@ -137,7 +137,7 @@ export default async function HomePage() {
 
               {/* Digital E-Paper Promotion Mini-Card */}
               <div className={styles.epaperCard}>
-                <span className={styles.epaperBadge}>दैनिक ई-पेपर</span>
+                <span className={styles.epaperBadge}>Daily E-Paper</span>
                 <h3 className={styles.epaperHeading}>लोक Lens डिजिटल संस्करण</h3>
                 <p className={styles.epaperText}>
                   आज का पूरा समाचार पत्र डिजिटल फॉर्मेट में अपने मोबाइल व कंप्यूटर पर पढ़ें।
@@ -176,39 +176,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Row 5: Explore All Categories Ribbon */}
-      {home.sections.length > 0 && (
-        <section className={styles.categoryRibbon} aria-labelledby="all-cats-title">
-          <header className={styles.ribbonHeader}>
-            <h2 id="all-cats-title" className={styles.ribbonTitle}>
-              सभी प्रमुख श्रेणियां एक्सप्लोर करें
-            </h2>
-          </header>
-          <div className={styles.ribbonList}>
-            {home.sections.map((sec) => (
-              <Link key={sec.category.id} href={`/${sec.category.slug}`} className={styles.ribbonPill}>
-                <span className={styles.pillText}>{sec.category.name}</span>
-                <span className={styles.pillArrow} aria-hidden="true">
-                  →
-                </span>
-              </Link>
-            ))}
-            <Link href="/about" className={styles.ribbonPill}>
-              <span className={styles.pillText}>हमारे बारे में</span>
-              <span className={styles.pillArrow} aria-hidden="true">
-                →
-              </span>
-            </Link>
-            <Link href="/contact" className={styles.ribbonPill}>
-              <span className={styles.pillText}>संपर्क करें</span>
-              <span className={styles.pillArrow} aria-hidden="true">
-                →
-              </span>
-            </Link>
-          </div>
-        </section>
-      )}
     </div>
   )
 }

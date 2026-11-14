@@ -28,13 +28,13 @@
   min-height: var(--touch);
   padding: 0 var(--space-4);
   border-radius: var(--radius);
-  background: var(--color-brand);
+  background: var(--color-logo-red, #c41d17);
   color: #fff;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .subscribe:hover {
-  background: var(--color-brand-dark);
+  background: var(--color-logo-red-dark, #9e1611);
   color: #fff;
 }
 

@@ -9,6 +9,8 @@ import type { SocialFeed, SocialPost } from './types'
 export const YOUTUBE_CHANNEL_ID = 'UCQ9BfhKRBEESTPyscj1JmCg'
 export const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@loklensnews'
 export const YOUTUBE_FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`
+export const YOUTUBE_VIDEOS_FEED_URL = `https://www.youtube.com/feeds/videos.xml?playlist_id=UULF${YOUTUBE_CHANNEL_ID.slice(2)}`
+export const YOUTUBE_SHORTS_FEED_URL = `https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH${YOUTUBE_CHANNEL_ID.slice(2)}`
 
 const REVALIDATE_SECONDS = 300 // new uploads show within ~5 min
 const TIMEOUT_MS = 3000
@@ -100,10 +102,10 @@ export function parseYouTubeFeed(xml: string, limit = 3): SocialPost[] {
 
 // ---- fetch ---------------------------------------------------------------------------------------
 
-/** One RSS read (all entries). Never throws: any failure returns `{ status: 'error', posts: [] }` and logs once. */
-async function fetchFeedAll(): Promise<SocialFeed> {
+/** One RSS read (all entries) for a given feed URL. Never throws: any failure returns `{ status: 'error', posts: [] }` and logs once. */
+async function fetchFeedByUrl(feedUrl: string): Promise<SocialFeed> {
   try {
-    const res = await fetch(YOUTUBE_FEED_URL, {
+    const res = await fetch(feedUrl, {
       next: { revalidate: REVALIDATE_SECONDS, tags: ['social'] },
       signal: AbortSignal.timeout(TIMEOUT_MS),
     })
@@ -116,18 +118,20 @@ async function fetchFeedAll(): Promise<SocialFeed> {
   }
 }
 
-/** Shared by every helper: one fetch per server render (React cache) and one Next data-cache entry. */
-const getFeedAll = cache(fetchFeedAll)
+/** Shared by every helper: one fetch per feed URL per server render (React cache) and one Next data-cache entry. */
+const getFeedAll = cache(() => fetchFeedByUrl(YOUTUBE_FEED_URL))
+const getVideosFeedAll = cache(() => fetchFeedByUrl(YOUTUBE_VIDEOS_FEED_URL))
+const getShortsFeedAll = cache(() => fetchFeedByUrl(YOUTUBE_SHORTS_FEED_URL))
 
 /** Newest uploads of any kind (videos and Shorts). */
 export async function fetchYouTubeLatest(limit = 3): Promise<SocialFeed> {
-  const feed = await fetchFeedAll()
+  const feed = await fetchFeedByUrl(YOUTUBE_FEED_URL)
   return { status: feed.status, posts: feed.posts.slice(0, limit) }
 }
 
-/** Newest regular videos only (no /shorts/ links). Empty when the feed has no non-Shorts entries. */
+/** Newest regular videos only (uses YouTube's UULF long-form playlist feed so Shorts never push out regular videos). */
 export async function fetchYouTubeVideos(limit = 3): Promise<SocialFeed> {
-  const feed = await fetchFeedAll()
+  const feed = await fetchFeedByUrl(YOUTUBE_VIDEOS_FEED_URL)
   return { status: feed.status, posts: feed.posts.filter((p) => !p.isShort).slice(0, limit) }
 }
 
@@ -138,12 +142,12 @@ export const getYouTubeLatest = async (limit = 3): Promise<SocialFeed> => {
 }
 
 export const getYouTubeVideos = async (limit = 3): Promise<SocialFeed> => {
-  const feed = await getFeedAll()
+  const feed = await getVideosFeedAll()
   return { status: feed.status, posts: feed.posts.filter((p) => !p.isShort).slice(0, limit) }
 }
 
-/** Memoised per server render: newest Shorts only (links to /shorts/). Empty when the feed has none. */
+/** Memoised per server render: newest Shorts only (uses YouTube's UUSH Shorts playlist feed). */
 export const getYouTubeShorts = async (limit = 3): Promise<SocialFeed> => {
-  const feed = await getFeedAll()
+  const feed = await getShortsFeedAll()
   return { status: feed.status, posts: feed.posts.filter((p) => p.isShort).slice(0, limit) }
 }

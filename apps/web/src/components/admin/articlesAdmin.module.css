@@ -803,6 +803,16 @@
   line-height: 1.4;
 }
 
+.titleHeroInput::placeholder,
+.textInput::placeholder,
+.textareaInput::placeholder,
+.richTextarea::placeholder,
+.searchInput::placeholder {
+  font-size: 12px;
+  font-weight: 400;
+  color: #8b8fa3;
+}
+
 .titleHeroInput:focus,
 .textInput:focus,
 .textareaInput:focus,

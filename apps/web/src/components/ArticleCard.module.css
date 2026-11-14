@@ -225,10 +225,13 @@
 }
 
 .overlay .kicker a {
-  padding: 1px 8px;
-  border-radius: 4px;
-  background: var(--color-brand);
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: var(--color-logo-red, #c41d17);
   color: #fff;
+  font-size: 13px;
+  line-height: 19px;
+  font-weight: 600;
 }
 
 .overlayTitle {
@@ -274,15 +277,16 @@
 }
 
 .pill {
-  display: inline-block;
-  margin-bottom: 4px;
-  padding: 2px 8px;
-  border-radius: var(--radius-badge);
-  background: var(--color-brand);
-  color: #fff;
-  font-size: 11px;
-  line-height: 16px;
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 5px;
+  padding: 2px 9px;
+  border-radius: 6px;
+  background: rgba(196, 29, 23, 0.09);
+  color: var(--color-logo-red, #c41d17);
+  font-size: 13px;
+  line-height: 19px;
+  font-weight: 600;
 }
 
 .ranked .titleList {

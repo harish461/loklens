@@ -28,13 +28,13 @@ export function CategoryTabs({ tabs, title }: { tabs: CategoryTab[]; title: stri
     <section className={styles.wrap} aria-labelledby={`${baseId}-title`}>
       <div className={styles.headerRow}>
         <div className={styles.titleWrap}>
-          <span className={styles.badge} aria-hidden="true">कवरेज</span>
+          <span className={styles.badge} aria-hidden="true">Coverage</span>
           <h2 id={`${baseId}-title`} className={styles.title}>
             {title}
           </h2>
         </div>
         <Link href={`/${active.category.slug}`} className={styles.topMore}>
-          {active.category.name} की सभी खबरें →
+          View All →
         </Link>
       </div>
 
@@ -79,7 +79,7 @@ export function CategoryTabs({ tabs, title }: { tabs: CategoryTab[]; title: stri
         </div>
         <div className={styles.footerRow}>
           <Link href={`/${active.category.slug}`} className={styles.moreBtn}>
-            <span>{active.category.name} की सभी मुख्य खबरें देखें</span>
+            <span>View All Stories</span>
             <span aria-hidden="true" className={styles.arrowIcon}>→</span>
           </Link>
         </div>

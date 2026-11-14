@@ -3,6 +3,8 @@
   /* Palette: deep blue (#0c548d) as the prime colour, saffron as the accent. Red is kept only for "live" dots. */
   --color-brand: #0c548d;
   --color-brand-dark: #093f6b;
+  --color-logo-red: #c41d17;
+  --color-logo-red-dark: #9e1611;
   --color-accent: #f5a623;
   --color-breaking-bg: #f5a623;
   --color-live: #d62828;
@@ -70,6 +72,9 @@ body {
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   /* room for the mobile bottom nav */
   padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom));
 }

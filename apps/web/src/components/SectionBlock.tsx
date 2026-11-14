@@ -27,7 +27,7 @@ export function SectionBlock({ title, href, articles, links = 2, children, id }:
         </h2>
         {href && (
           <Link href={href} className={styles.more}>
-            और देखें<span className="visually-hidden">: {title}</span>
+            View All →<span className="visually-hidden">: {title}</span>
           </Link>
         )}
       </header>

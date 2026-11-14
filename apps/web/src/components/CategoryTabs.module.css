@@ -29,14 +29,14 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  background: var(--color-accent);
-  color: #ffffff;
+  padding: 3px 9px;
+  background: rgba(196, 29, 23, 0.1);
+  color: var(--color-logo-red, #c41d17);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  border-radius: var(--radius-badge);
-  letter-spacing: 0.05em;
+  border-radius: 6px;
+  letter-spacing: 0.06em;
 }
 
 .title {
@@ -53,13 +53,13 @@
   align-items: center;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-brand);
+  color: var(--color-logo-red, #c41d17);
   text-decoration: none;
   transition: color 0.15s ease, transform 0.15s ease;
 }
 
 .topMore:hover {
-  color: var(--color-brand-dark);
+  color: var(--color-logo-red-dark, #9e1611);
   transform: translateX(2px);
 }
 
@@ -170,7 +170,7 @@
   background: #ffffff;
   border: none;
   border-radius: var(--radius-pill);
-  color: var(--color-ink);
+  color: var(--color-logo-red, #c41d17);
   font-weight: 600;
   font-size: 14px;
   text-decoration: none;
@@ -179,9 +179,9 @@
 }
 
 .moreBtn:hover {
-  background: var(--color-brand);
+  background: var(--color-logo-red, #c41d17);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(12, 84, 141, 0.2);
+  box-shadow: 0 4px 12px rgba(196, 29, 23, 0.24);
 }
 
 .arrowIcon {

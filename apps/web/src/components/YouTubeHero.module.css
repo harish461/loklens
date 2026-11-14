@@ -38,21 +38,22 @@
   gap: 6px;
   min-height: 32px;
   padding: 5px 14px;
-  background: var(--color-brand);
+  background: var(--color-logo-red, #c41d17);
   color: #ffffff;
   font-weight: 600;
   font-size: 13px;
   line-height: 1;
+  letter-spacing: 0.01em;
   text-decoration: none;
   border-radius: var(--radius-pill);
-  box-shadow: 0 2px 8px rgba(12, 84, 141, 0.28);
+  box-shadow: 0 2px 8px rgba(196, 29, 23, 0.28);
   transition: all 0.2s ease;
 }
 
 .subscribe:hover {
-  background: var(--color-brand-dark);
+  background: var(--color-logo-red-dark, #9e1611);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(12, 84, 141, 0.38);
+  box-shadow: 0 4px 12px rgba(196, 29, 23, 0.38);
   transform: translateY(-1px);
   text-decoration: none;
 }

@@ -82,9 +82,11 @@ table {
   display: none !important;
 }
 
-/* Hide Payload's default DocumentHeader on the custom Article Studio view */
+/* Hide Payload's default DocumentHeader ([Untitled] banner) on custom Studio views */
+.doc-header,
+.collection-edit .doc-header,
 .collection-default-edit .doc-header {
-  display: none;
+  display: none !important;
 }
 
 /* Cards and panels on standard Payload collection/global views (Categories, Media, Users, SiteSettings) */
@@ -166,6 +168,13 @@ select {
   border-radius: 10px;
 }
 
+input::placeholder,
+textarea::placeholder {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: #8b8fa3 !important;
+}
+
 input:focus,
 textarea:focus,
 select:focus {
@@ -173,11 +182,190 @@ select:focus {
   outline-offset: 1px;
 }
 
-/* Login page card treatment */
-.login__form,
-.template-minimal .login {
-  background: var(--loklens-card);
-  border-radius: var(--loklens-radius);
-  box-shadow: var(--loklens-shadow);
-  border: 1px solid var(--loklens-line);
+/* ==========================================================================
+ * LokLens Newsroom Admin Login Page Redesign (.template-minimal)
+ * ========================================================================== */
+.template-minimal {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(196, 29, 23, 0.14) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(12, 84, 141, 0.16) 0%, transparent 45%),
+    linear-gradient(145deg, #0f172a 0%, #1c1b29 55%, #161822 100%) !important;
+}
+
+.template-minimal__wrap {
+  width: 100%;
+  max-width: 440px !important;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 40px 36px 36px !important;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.template-minimal__wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #c41d17 0%, #0c548d 100%);
+}
+
+.login__brand {
+  margin-bottom: 28px !important;
+  display: flex;
+  justify-content: center;
+}
+
+.loklens-login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.loklens-login-brand__logo-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 18px;
+  padding: 3px;
+  background: linear-gradient(135deg, #c41d17, #0c548d);
+  box-shadow: 0 10px 24px rgba(196, 29, 23, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loklens-login-brand__logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  display: block;
+}
+
+.loklens-login-brand__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.loklens-login-brand__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(196, 29, 23, 0.1);
+  color: #c41d17;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.loklens-login-brand__title {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.loklens-login-brand__subtitle {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #64748b;
+  max-width: 320px;
+}
+
+.template-minimal .login,
+.template-minimal .login__form {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.template-minimal .field-label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  margin-bottom: 6px !important;
+}
+
+.template-minimal input[type='email'],
+.template-minimal input[type='password'],
+.template-minimal input[type='text'] {
+  height: 46px !important;
+  padding: 0 14px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font-size: 14.5px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.template-minimal input[type='email']:focus,
+.template-minimal input[type='password']:focus,
+.template-minimal input[type='text']:focus {
+  background: #ffffff !important;
+  border-color: #c41d17 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(196, 29, 23, 0.14) !important;
+}
+
+.template-minimal a {
+  color: #64748b !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: color 0.15s ease !important;
+}
+
+.template-minimal a:hover {
+  color: #c41d17 !important;
+  text-decoration: underline !important;
+}
+
+.template-minimal .form-submit .btn,
+.template-minimal .btn--style-primary {
+  width: 100% !important;
+  height: 48px !important;
+  margin-top: 8px !important;
+  border-radius: 12px !important;
+  background: #c41d17 !important;
+  border-color: #c41d17 !important;
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  box-shadow: 0 8px 20px rgba(196, 29, 23, 0.28) !important;
+  transition: all 0.2s ease !important;
+}
+
+.template-minimal .form-submit .btn:hover,
+.template-minimal .btn--style-primary:hover {
+  background: #9e1611 !important;
+  border-color: #9e1611 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(196, 29, 23, 0.36) !important;
 }

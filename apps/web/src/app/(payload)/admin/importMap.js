@@ -18,6 +18,8 @@ import { ParagraphFeatureClient as ParagraphFeatureClient_e70f5e05f09f93e00b997e
 import { ArticleEditView as ArticleEditView_b53326299c96b6ce1376ccec10daf2c7 } from '@/components/admin/ArticleEditView'
 import { ArticlesListView as ArticlesListView_32f0f5b425159017898274d0cc79c6ae } from '@/components/admin/ArticlesListView'
 import { AdminNav as AdminNav_2623bc737c612ce9420322f2210a7f19 } from '@/components/admin/AdminNav'
+import { AdminIcon as AdminIcon_ad98af0c14218f1f97dd4606b184e035 } from '@/components/admin/AdminBranding'
+import { AdminLogo as AdminLogo_ad98af0c14218f1f97dd4606b184e035 } from '@/components/admin/AdminBranding'
 import { DashboardView as DashboardView_8d5ccf53266e3797f61e9453e2f2d431 } from '@/components/admin/DashboardView'
 import { SubcategoriesView as SubcategoriesView_bb8048bcc3ef213a622ea30c4f458226 } from '@/components/admin/AdminSectionView'
 import { AuthorsView as AuthorsView_bb8048bcc3ef213a622ea30c4f458226 } from '@/components/admin/AdminSectionView'
@@ -53,6 +55,8 @@ export const importMap = {
   "@/components/admin/ArticleEditView#ArticleEditView": ArticleEditView_b53326299c96b6ce1376ccec10daf2c7,
   "@/components/admin/ArticlesListView#ArticlesListView": ArticlesListView_32f0f5b425159017898274d0cc79c6ae,
   "@/components/admin/AdminNav#AdminNav": AdminNav_2623bc737c612ce9420322f2210a7f19,
+  "@/components/admin/AdminBranding#AdminIcon": AdminIcon_ad98af0c14218f1f97dd4606b184e035,
+  "@/components/admin/AdminBranding#AdminLogo": AdminLogo_ad98af0c14218f1f97dd4606b184e035,
   "@/components/admin/DashboardView#DashboardView": DashboardView_8d5ccf53266e3797f61e9453e2f2d431,
   "@/components/admin/AdminSectionView#SubcategoriesView": SubcategoriesView_bb8048bcc3ef213a622ea30c4f458226,
   "@/components/admin/AdminSectionView#AuthorsView": AuthorsView_bb8048bcc3ef213a622ea30c4f458226,

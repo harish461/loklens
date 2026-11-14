@@ -30,10 +30,10 @@ export function YouTubeShorts({
       <div className={styles.head}>
         <h2 id="yt-shorts-title" className={styles.title}>
           <YouTubeIcon size={22} color={YOUTUBE_RED} />
-          YouTube शॉर्ट्स
+          YouTube Shorts
         </h2>
         <a href={channelUrl} target="_blank" rel="noopener" className={styles.subscribe}>
-          सब्सक्राइब करें
+          Subscribe
           <span className="visually-hidden"> (YouTube, नए टैब में खुलेगा)</span>
         </a>
       </div>

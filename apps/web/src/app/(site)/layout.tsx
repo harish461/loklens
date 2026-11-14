@@ -14,14 +14,14 @@ export const dynamic = 'force-dynamic'
 // Montserrat is the site font. It has no Devanagari glyphs, so Hindi text falls back to Noto Sans Devanagari.
 const montserrat = Montserrat({
   subsets: ['latin'],
-  weight: ['400', '500'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-montserrat',
 })
 
 const notoDevanagari = Noto_Sans_Devanagari({
   subsets: ['devanagari'],
-  weight: ['400', '500'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-devanagari',
 })
