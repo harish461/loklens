@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { CategoryPage, categoryMetadata } from './category-page'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 300
 
 // Render on first request and cache (ISR); slugs come from the CMS.

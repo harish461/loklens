@@ -361,14 +361,14 @@ async function main() {
     const isPublished = (remoteArticle._status || 'published') === 'published'
     const createdArticle = await payload.create({
       collection: 'articles',
-      draft: !isPublished,
+      draft: false,
       context: { skipRevalidate: true },
       data: {
         title: remoteArticle.title,
         slug: remoteArticle.slug,
         summary: remoteArticle.summary,
         body: (remoteArticle.body && typeof remoteArticle.body === 'object' ? remoteArticle.body : fallbackBody) as never,
-        featuredImage: localFeaturedImageId,
+        featuredImage: localFeaturedImageId as number,
         category: localCategoryId,
         location: localLocationId,
         tags: localTagIds.length > 0 ? localTagIds : undefined,
