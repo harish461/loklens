@@ -13,6 +13,7 @@ import {
   type InitialArticleDoc,
 } from './ArticleEditorClient'
 import { mediaUrlOf } from './dashboard-data'
+import type { ArticleWorkflowStatus } from './mock-cms-data'
 
 const IST_OFFSET_MS = 330 * 60_000
 
@@ -41,27 +42,71 @@ type Props = {
   AfterDocument?: React.ReactNode
 }
 
+function serializeInline(nodes: unknown[] | undefined): string {
+  if (!Array.isArray(nodes)) return ''
+  return nodes
+    .map((node) => {
+      if (!node || typeof node !== 'object') return ''
+      const n = node as {
+        type?: string
+        text?: string
+        format?: number
+        fields?: { url?: string }
+        children?: unknown[]
+      }
+      if (n.type === 'linebreak') return '\n'
+      if (n.type === 'link' || n.type === 'autolink') {
+        const inner = serializeInline(n.children)
+        const url = typeof n.fields?.url === 'string' ? n.fields.url : ''
+        return url ? `[${inner || url}](${url})` : inner
+      }
+      if (typeof n.text === 'string') {
+        let out = n.text
+        const fmt = typeof n.format === 'number' ? n.format : 0
+        if (!out) return ''
+        if (fmt & 8) out = `__${out}__`
+        if (fmt & 2) out = `*${out}*`
+        if (fmt & 1) out = `**${out}**`
+        return out
+      }
+      if (Array.isArray(n.children)) return serializeInline(n.children)
+      return ''
+    })
+    .join('')
+}
+
 function lexicalToPlainText(body: unknown): string {
   if (!body || typeof body !== 'object') return ''
   const root = (body as { root?: { children?: unknown[] } }).root
   if (!root || !Array.isArray(root.children)) return ''
   const blocks: string[] = []
 
-  function walkText(node: unknown): string {
-    if (!node || typeof node !== 'object') return ''
-    const n = node as { type?: string; text?: string; children?: unknown[] }
-    if (typeof n.text === 'string') return n.text
-    if (Array.isArray(n.children)) return n.children.map(walkText).join('')
-    return ''
-  }
-
   for (const child of root.children) {
     if (!child || typeof child !== 'object') continue
-    const c = child as { type?: string; tag?: string }
-    const txt = walkText(child).trim()
+    const c = child as {
+      type?: string
+      tag?: string
+      listType?: string
+      children?: unknown[]
+    }
+    if (c.type === 'list' && Array.isArray(c.children)) {
+      const items = c.children
+        .map((li, idx) => {
+          if (!li || typeof li !== 'object') return ''
+          const liNode = li as { children?: unknown[] }
+          const txt = serializeInline(liNode.children).trim()
+          if (!txt) return ''
+          return c.listType === 'number' ? `${idx + 1}. ${txt}` : `• ${txt}`
+        })
+        .filter(Boolean)
+      if (items.length > 0) blocks.push(items.join('\n'))
+      continue
+    }
+    const txt = serializeInline(c.children).trim()
     if (!txt) continue
     if (c.type === 'heading' && c.tag === 'h2') blocks.push(`## ${txt}`)
     else if (c.type === 'heading' && c.tag === 'h3') blocks.push(`### ${txt}`)
+    else if (c.type === 'heading' && c.tag === 'h4') blocks.push(`#### ${txt}`)
     else if (c.type === 'quote') blocks.push(`> ${txt}`)
     else blocks.push(txt)
   }
@@ -69,22 +114,17 @@ function lexicalToPlainText(body: unknown): string {
 }
 
 /**
- * True when the Lexical body holds anything the plain-text Studio editor cannot round-trip
- * (links, lists, images, bold/italic, h1/h4+ headings...). Saving edited text would drop it.
+ * True only when the Lexical body holds custom block/upload nodes (`upload` or `block`)
+ * that can only be edited in Classic Lexical mode. Standard headings, lists, quotes, links,
+ * bold, italic, and underline round-trip cleanly in the Studio editor.
  */
 function hasRichContent(body: unknown): boolean {
   if (!body || typeof body !== 'object') return false
   const root = (body as { root?: unknown }).root
   function walk(node: unknown): boolean {
     if (!node || typeof node !== 'object') return false
-    const n = node as { type?: string; tag?: string; format?: unknown; children?: unknown[] }
-    if (n.type === 'text') {
-      if (typeof n.format === 'number' && n.format !== 0) return true
-    } else if (n.type === 'heading') {
-      if (n.tag !== 'h2' && n.tag !== 'h3') return true
-    } else if (n.type !== 'root' && n.type !== 'paragraph' && n.type !== 'quote' && n.type !== 'linebreak') {
-      return true
-    }
+    const n = node as { type?: string; children?: unknown[] }
+    if (n.type === 'upload' || n.type === 'block') return true
     return Array.isArray(n.children) && n.children.some(walk)
   }
   return walk(root)
@@ -104,15 +144,28 @@ function idsOfRelArray(val: unknown): number[] {
   return val.map(idOfRel).filter((x): x is number => typeof x === 'number')
 }
 
+function resolveInitialStatus(doc: Record<string, unknown> | null | undefined): ArticleWorkflowStatus {
+  if (!doc) return 'draft'
+  if (doc._status === 'published') return 'published'
+  if (doc.workflowStatus === 'pending_review' || doc.workflowStatus === 'rejected') {
+    return doc.workflowStatus
+  }
+  const pubMs = typeof doc.publishedAt === 'string' ? Date.parse(doc.publishedAt) : Number.NaN
+  if (!Number.isNaN(pubMs) && pubMs > Date.now()) {
+    return 'scheduled'
+  }
+  return 'draft'
+}
+
 export async function ArticleEditView(props: Props) {
   const { doc, payload, user } = props
   const accessOpt = { overrideAccess: false as const, user: user ?? undefined }
 
   const [catRes, userRes, tagRes, mediaRes, locRes] = await Promise.all([
-    payload.find({ collection: 'categories', limit: 100, depth: 0, pagination: false, ...accessOpt }).catch(() => ({ docs: [] })),
+    payload.find({ collection: 'categories', limit: 100, depth: 0, pagination: false, sort: 'order', ...accessOpt }).catch(() => ({ docs: [] })),
     payload.find({ collection: 'users', limit: 100, depth: 0, pagination: false, ...accessOpt }).catch(() => ({ docs: [] })),
     payload.find({ collection: 'tags', limit: 100, depth: 0, pagination: false, ...accessOpt }).catch(() => ({ docs: [] })),
-    payload.find({ collection: 'media', limit: 40, depth: 0, sort: '-updatedAt', ...accessOpt }).catch(() => ({ docs: [] })),
+    payload.find({ collection: 'media', limit: 50, depth: 0, sort: '-updatedAt', ...accessOpt }).catch(() => ({ docs: [] })),
     payload.find({ collection: 'locations', limit: 100, depth: 0, pagination: false, ...accessOpt }).catch(() => ({ docs: [] })),
   ])
 
@@ -137,11 +190,16 @@ export async function ArticleEditView(props: Props) {
     slug: String(t.slug),
   }))
 
-  const mediaItems: EditorMediaOption[] = mediaRes.docs.map((m) => ({
-    id: m.id,
-    url: mediaUrlOf(m),
-    alt: String((m as unknown as { alt?: string }).alt || `Media #${m.id}`),
-  }))
+  const mediaItems: EditorMediaOption[] = mediaRes.docs.map((m) => {
+    const raw = m as unknown as { alt?: string; width?: number; height?: number; filename?: string }
+    return {
+      id: m.id,
+      url: mediaUrlOf(m),
+      alt: String(raw.alt || raw.filename || `Media #${m.id}`),
+      width: typeof raw.width === 'number' ? raw.width : undefined,
+      height: typeof raw.height === 'number' ? raw.height : undefined,
+    }
+  })
 
   const locations = locRes.docs.map((l) => ({
     id: l.id,
@@ -152,10 +210,16 @@ export async function ArticleEditView(props: Props) {
   const seoGroup = (doc?.seo ?? {}) as {
     metaTitle?: string
     metaDescription?: string
+    focusKeyword?: string
+    noindex?: boolean
     ogImage?: unknown
   }
 
   const formattedLocalDateTime = toIstInputValue(doc?.publishedAt)
+  const featuredImageId = idOfRel(doc?.featuredImage)
+  const matchedFeaturedMedia = featuredImageId ? mediaItems.find((m) => m.id === featuredImageId) : undefined
+  const socialImageId = idOfRel(seoGroup.ogImage)
+  const matchedSocialMedia = socialImageId ? mediaItems.find((m) => m.id === socialImageId) : undefined
 
   const initialDoc: InitialArticleDoc = {
     id: typeof doc?.id === 'number' ? doc.id : undefined,
@@ -169,16 +233,28 @@ export async function ArticleEditView(props: Props) {
     locationId: idOfRel(doc?.location),
     authorIds: idsOfRelArray(doc?.authors),
     tagIds: idsOfRelArray(doc?.tags),
-    featuredImageId: idOfRel(doc?.featuredImage),
-    featuredImageUrl: doc?.featuredImage ? mediaUrlOf(doc.featuredImage) : '',
+    featuredImageId,
+    featuredImageUrl:
+      matchedFeaturedMedia?.url ||
+      (doc?.featuredImage && typeof doc.featuredImage === 'object' ? mediaUrlOf(doc.featuredImage) : ''),
     galleryUrls: [],
     seoTitle: String(seoGroup.metaTitle ?? ''),
     metaDescription: String(seoGroup.metaDescription ?? ''),
-    focusKeyword: '',
+    focusKeyword: String(seoGroup.focusKeyword ?? ''),
+    noindex: Boolean(seoGroup.noindex),
     canonicalUrl: '',
-    socialImageId: idOfRel(seoGroup.ogImage),
-    socialImageUrl: seoGroup.ogImage ? mediaUrlOf(seoGroup.ogImage) : '',
-    status: doc?._status === 'published' ? 'published' : 'draft',
+    socialImageId,
+    socialImageUrl:
+      matchedSocialMedia?.url ||
+      (seoGroup.ogImage && typeof seoGroup.ogImage === 'object' ? mediaUrlOf(seoGroup.ogImage) : ''),
+    status: resolveInitialStatus(doc),
+    reviewNote: typeof doc?.reviewNote === 'string' ? doc.reviewNote : '',
+    articleType:
+      typeof doc?.articleType === 'string' &&
+      ['news', 'opinion', 'interview', 'analysis', 'photo_story'].includes(doc.articleType)
+        ? (doc.articleType as InitialArticleDoc['articleType'])
+        : 'news',
+    language: doc?.language === 'en' ? 'en' : 'hi',
     isFeatured: Boolean(doc?.isFeatured),
     isBreaking: Boolean(doc?.isBreaking),
     isTrending: Boolean(doc?.isTrending),
@@ -206,4 +282,3 @@ export async function ArticleEditView(props: Props) {
     />
   )
 }
-
