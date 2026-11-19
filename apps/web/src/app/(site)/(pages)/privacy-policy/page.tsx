@@ -2,15 +2,23 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Breadcrumbs } from '@/components/Navigation'
+import { getSiteOrigin, resolveRobots } from '@/lib/seo'
 
 import styles from './privacy.module.css'
 
 export const revalidate = 300
 
-export const metadata: Metadata = {
-  title: 'गोपनीयता नीति (Privacy Policy) — लोक Lens न्यूज़',
-  description:
-    'LokLens News respects the privacy of its readers and visitors. Learn how we collect, use, and protect your information.',
+export function generateMetadata(): Metadata {
+  const origin = getSiteOrigin()
+  return {
+    title: 'गोपनीयता नीति (Privacy Policy)',
+    description:
+      'LokLens News respects the privacy of its readers and visitors. Learn how we collect, use, and protect your information.',
+    alternates: {
+      canonical: `${origin}/privacy-policy`,
+    },
+    robots: resolveRobots(false),
+  }
 }
 
 export default function PrivacyPolicyPage() {

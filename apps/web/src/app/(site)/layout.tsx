@@ -5,8 +5,8 @@ import { Suspense, type ReactNode } from 'react'
 import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
 import { SiteLoader } from '@/components/layout/SiteLoader'
-// TODO(data): switch to '@/lib/data' when the backend helpers land (same names and signatures).
 import { getHome, getSiteSettings, listCategories } from '@/lib/data'
+import { buildRootMetadata } from '@/lib/seo'
 
 import './globals.css'
 
@@ -27,10 +27,9 @@ const notoDevanagari = Noto_Sans_Devanagari({
   variable: '--font-devanagari',
 })
 
-// TODO(seo): replace with the src/lib/seo site defaults (metadataBase, title template, OG, verification).
-export const metadata: Metadata = {
-  title: { default: 'लोक Lens न्यूज़ — आपकी आवाज़, आपकी खबर', template: '%s | लोक Lens न्यूज़' },
-  description: 'उत्तराखंड और देश की ताज़ा खबरें — आपकी आवाज़, आपकी खबर',
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  return buildRootMetadata(settings)
 }
 
 export const viewport: Viewport = {

@@ -2,15 +2,23 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Breadcrumbs } from '@/components/Navigation'
+import { getSiteOrigin, resolveRobots } from '@/lib/seo'
 
 import styles from './terms.module.css'
 
 export const revalidate = 300
 
-export const metadata: Metadata = {
-  title: 'Terms & Conditions (नियम व शर्तें) — लोक Lens न्यूज़',
-  description:
-    'Welcome to LokLens News. These terms govern access to and use of our website and its news, video and other digital content.',
+export function generateMetadata(): Metadata {
+  const origin = getSiteOrigin()
+  return {
+    title: 'Terms & Conditions (नियम व शर्तें)',
+    description:
+      'Welcome to LokLens News. These terms govern access to and use of our website and its news, video and other digital content.',
+    alternates: {
+      canonical: `${origin}/terms`,
+    },
+    robots: resolveRobots(false),
+  }
 }
 
 export default function TermsPage() {

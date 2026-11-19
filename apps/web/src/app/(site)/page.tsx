@@ -7,6 +7,7 @@ import { HeroCarousel } from '@/components/HeroCarousel'
 import { YouTubeHero } from '@/components/YouTubeHero'
 import { YouTubeShorts } from '@/components/YouTubeShorts'
 import { getHome, getSiteSettings } from '@/lib/data'
+import { buildHomeMetadata, buildWebSiteJsonLd } from '@/lib/seo'
 import { getYouTubeShorts, getYouTubeVideos, YOUTUBE_CHANNEL_URL } from '@/lib/social'
 
 import styles from './home.module.css'
@@ -14,9 +15,9 @@ import styles from './home.module.css'
 export const dynamic = 'force-dynamic'
 export const revalidate = 300 // safety net; publishing revalidates the `home` tag on demand (architecture §4)
 
-// TODO(seo): use the src/lib/seo home metadata + Organization/WebSite JSON-LD.
-export const metadata: Metadata = {
-  title: { absolute: 'लोक Lens न्यूज़ — आपकी आवाज़, आपकी खबर' },
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  return buildHomeMetadata(settings)
 }
 
 /** Section heading row: bold title over a thin rule, optional "more" link. */
@@ -58,9 +59,14 @@ export default async function HomePage() {
 
   // Category tabs: only categories that have stories, each with its newest three shown as cards.
   const categoryTabs = home.sections.filter((s) => s.articles.length > 0)
+  const webSiteJsonLd = buildWebSiteJsonLd(settings)
 
   return (
     <div className="container">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+      />
       <h1 className="visually-hidden">लोक Lens न्यूज़ — ताज़ा खबरें</h1>
 
       {/* Row 1: Editors' Picks (left) and the YouTube videos and Shorts (right). REMAINS SAME. */}

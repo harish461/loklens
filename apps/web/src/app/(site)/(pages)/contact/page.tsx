@@ -2,16 +2,24 @@ import type { Metadata } from 'next'
 
 import { FacebookIcon, InstagramIcon, WhatsAppIcon, XIcon, YouTubeIcon } from '@/components/Icon'
 import { Breadcrumbs } from '@/components/Navigation'
+import { getSiteOrigin, resolveRobots } from '@/lib/seo'
 
 import styles from './contact.module.css'
 import { ContactForm } from './ContactForm'
 
 export const revalidate = 300
 
-export const metadata: Metadata = {
-  title: 'संपर्क करें (Contact Us) — लोक Lens न्यूज़',
-  description:
-    'लोकलेंस न्यूज़ से संपर्क करें। समाचार सुझाव, विज्ञापन, संपादकीय पूछताछ और प्रतिक्रिया के लिए हमसे जुड़ें।',
+export function generateMetadata(): Metadata {
+  const origin = getSiteOrigin()
+  return {
+    title: 'संपर्क करें (Contact Us)',
+    description:
+      'लोकलेंस न्यूज़ से संपर्क करें। समाचार सुझाव, विज्ञापन, संपादकीय पूछताछ और प्रतिक्रिया के लिए हमसे जुड़ें।',
+    alternates: {
+      canonical: `${origin}/contact`,
+    },
+    robots: resolveRobots(false),
+  }
 }
 
 export default function ContactPage() {

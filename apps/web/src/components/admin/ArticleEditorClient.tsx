@@ -86,6 +86,7 @@ export interface InitialArticleDoc {
   tagIds: number[]
   featuredImageId?: number
   featuredImageUrl?: string
+  featuredImageAlt?: string
   galleryUrls: string[]
   seoTitle: string
   metaDescription: string
@@ -102,6 +103,8 @@ export interface InitialArticleDoc {
   isBreaking: boolean
   isTrending: boolean
   publishedAt: string
+  publishedAtIso?: string
+  updatedAtIso?: string
 }
 
 export interface ArticleEditorClientProps {
@@ -477,16 +480,23 @@ export function ArticleEditorClient({
     initialDoc.featuredImageUrl || '',
   )
   const [featuredAlt, setFeaturedAlt] = useState(
-    initialDoc.title || 'उत्तराखंड समाचार फ़ोटो',
+    initialDoc.featuredImageAlt || initialDoc.title || '',
+  )
+  const [altTouched, setAltTouched] = useState(
+    Boolean(initialDoc.featuredImageAlt && initialDoc.featuredImageAlt !== initialDoc.title),
   )
   const [galleryUrls, setGalleryUrls] = useState<string[]>(initialDoc.galleryUrls)
 
-  // SEO Fields
+  // SEO & Social Media Settings Panel Fields
+  const [seoPanelOpen, setSeoPanelOpen] = useState(true)
   const [seoTitle, setSeoTitle] = useState(initialDoc.seoTitle)
   const [metaDescription, setMetaDescription] = useState(initialDoc.metaDescription)
   const [focusKeyword, setFocusKeyword] = useState(initialDoc.focusKeyword)
   const [noindex, setNoindex] = useState(Boolean(initialDoc.noindex))
   const [canonicalUrl, setCanonicalUrl] = useState(initialDoc.canonicalUrl)
+  const [ogTitle, setOgTitle] = useState(initialDoc.seoTitle || '')
+  const [ogDescription, setOgDescription] = useState(initialDoc.metaDescription || '')
+  const [googleNewsStandout, setGoogleNewsStandout] = useState(Boolean(initialDoc.isBreaking))
   const [socialImageId, setSocialImageId] = useState<number | undefined>(
     initialDoc.socialImageId,
   )
@@ -511,6 +521,9 @@ export function ArticleEditorClient({
     setTitle(val)
     if (!slugTouched) {
       setSlug(slugifyTitle(val))
+    }
+    if (!altTouched) {
+      setFeaturedAlt(val)
     }
   }
 
@@ -539,18 +552,33 @@ export function ArticleEditorClient({
     }, 10)
   }
 
-  // Upload image helper to Payload /api/media
+  // Upload image helper to Payload /api/media with automatic SEO filename slug sanitization
   async function uploadMediaFile(rawFile: File, target: 'featured' | 'gallery' | 'social') {
     setUploadingImage(true)
     try {
-      const file =
+      const processed =
         target === 'featured' ? await ensureMinimumImageWidth(rawFile, 1200) : rawFile
+      const resolvedAlt = (featuredAlt.trim() || title.trim() || slug.trim() || 'LokLens News').slice(0, 250)
+      const extMatch = processed.name.match(/\.([a-zA-Z0-9]+)$/)
+      const ext = (extMatch ? extMatch[1].toLowerCase() : 'webp').replace(/^jpeg$/, 'jpg')
+      const rawBase = processed.name.replace(/\.[^.]+$/, '')
+      const isGenericName =
+        /^(?:whatsapp[\s_-]*image|img|dsc|pxl|screenshot|image|photo|pic|untitled)[\s_0-9().:-]*$/i.test(
+          rawBase.trim(),
+        )
+      const seoBase =
+        slugifyTitle(resolvedAlt).slice(0, 56).replace(/-+$/, '') ||
+        (!isGenericName ? slugifyTitle(rawBase).slice(0, 56).replace(/-+$/, '') : '') ||
+        'loklens-news'
+      const cleanFilename = `${seoBase}-${Date.now().toString(36).slice(-5)}.${ext}`
+      const file = new File([processed], cleanFilename, { type: processed.type || 'image/webp' })
+
       const formData = new FormData()
       formData.append('file', file)
       formData.append(
         '_payload',
         JSON.stringify({
-          alt: (featuredAlt.trim() || title.trim() || 'LokLens News Image').slice(0, 250),
+          alt: resolvedAlt,
         }),
       )
       const res = await fetch('/api/media', {
@@ -821,6 +849,9 @@ export function ArticleEditorClient({
         title.trim()
       ).slice(0, 300)
 
+      const resolvedMetaTitle = (seoTitle.trim() || ogTitle.trim() || title.trim()).slice(0, 70)
+      const resolvedMetaDesc = (metaDescription.trim() || ogDescription.trim() || derivedSummary).slice(0, 200)
+
       const payloadBody: Record<string, unknown> = {
         title: title.trim().slice(0, 200),
         slug: finalSlug,
@@ -835,12 +866,12 @@ export function ArticleEditorClient({
         articleType,
         language,
         isFeatured,
-        isBreaking,
+        isBreaking: isBreaking || googleNewsStandout,
         isTrending,
         publishedAt: effectivePublishedAt,
         seo: {
-          metaTitle: seoTitle.trim() ? seoTitle.trim().slice(0, 70) : undefined,
-          metaDescription: metaDescription.trim() ? metaDescription.trim().slice(0, 200) : undefined,
+          metaTitle: resolvedMetaTitle || undefined,
+          metaDescription: resolvedMetaDesc || undefined,
           focusKeyword: focusKeyword.trim() ? focusKeyword.trim().slice(0, 100) : undefined,
           noindex,
           ogImage: socialImageId || featuredImageId || undefined,
@@ -852,7 +883,18 @@ export function ArticleEditorClient({
       if (resolvedCatId) payloadBody.category = resolvedCatId
       if (typeof locationId === 'number') payloadBody.location = locationId
       else if (initialDoc.locationId && locationId === '') payloadBody.location = null
-      if (featuredImageId) payloadBody.featuredImage = featuredImageId
+      if (featuredImageId) {
+        payloadBody.featuredImage = featuredImageId
+        const finalAlt = (featuredAlt.trim() || title.trim()).slice(0, 250)
+        if (finalAlt) {
+          fetch(`/api/media/${featuredImageId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ alt: finalAlt }),
+          }).catch(() => null)
+        }
+      }
       payloadBody.authors = selectedAuthors
       payloadBody.tags = selectedTags.filter((id) => id < 1_000_000_000)
 
@@ -1292,14 +1334,35 @@ export function ArticleEditorClient({
                   />
                 </div>
 
+                <div className={styles.fieldLabelRow} style={{ marginTop: 8 }}>
+                  <label htmlFor="featured-image-alt" className={styles.fieldLabel}>
+                    Image Alt Text (फ़ोटो का विवरण — Required for SEO) *
+                  </label>
+                  <button
+                    type="button"
+                    className={styles.selectChip}
+                    style={{ padding: '2px 8px', fontSize: 11 }}
+                    onClick={() => {
+                      setFeaturedAlt(title)
+                      setAltTouched(true)
+                    }}
+                  >
+                    Auto-fill from Headline
+                  </button>
+                </div>
                 <input
+                  id="featured-image-alt"
                   type="text"
+                  required
                   maxLength={250}
-                  value={featuredAlt}
-                  onChange={(e) => setFeaturedAlt(e.target.value)}
-                  placeholder="Hindi Alt Text (फ़ोटो का विवरण)..."
+                  value={featuredAlt || title}
+                  onChange={(e) => {
+                    setFeaturedAlt(e.target.value)
+                    setAltTouched(true)
+                  }}
+                  placeholder={title || 'फ़ोटो का हिंदी विवरण (Alt Text)...'}
                   className={styles.textInput}
-                  style={{ marginTop: 6 }}
+                  style={{ marginTop: 4 }}
                 />
 
                 {mediaList.length > 0 && (
@@ -1648,13 +1711,32 @@ export function ArticleEditorClient({
             </div>
           </section>
 
-          {/* Card 5: SEO Settings (SEO Title, Meta Description, Focus Keyword, Canonical URL, Social Image) */}
+          {/* Card 5: Collapsible SEO & Social Media Settings Panel */}
           <section className={styles.editorCard}>
-            <div className={styles.editorCardTitle}>
-              <span>
-                <Globe size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                SEO &amp; Social Sharing Optimization
-              </span>
+            <div className={styles.editorCardTitle} style={{ marginBottom: seoPanelOpen ? 14 : 0 }}>
+              <button
+                type="button"
+                onClick={() => setSeoPanelOpen((open) => !open)}
+                aria-expanded={seoPanelOpen}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  font: 'inherit',
+                  fontWeight: 700,
+                  color: 'inherit',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <Globe size={16} />
+                <span>SEO &amp; Social Media Settings</span>
+                <span style={{ fontSize: 12, color: '#6E7185', marginLeft: 4 }}>
+                  {seoPanelOpen ? '▼ Hide' : '▶ Expand'}
+                </span>
+              </button>
               <span
                 className={`${styles.statusBadge} ${
                   seoScore >= 80 ? styles.badgePublished : styles.badgePending
@@ -1664,139 +1746,417 @@ export function ArticleEditorClient({
               </span>
             </div>
 
-            <div className={styles.twoColFields}>
-              <div className={styles.fieldBlock}>
-                <label htmlFor="seo-focus-kw" className={styles.fieldLabel}>
-                  Focus Keyword (मुख्य कीवर्ड)
-                </label>
-                <input
-                  id="seo-focus-kw"
-                  type="text"
-                  maxLength={100}
-                  value={focusKeyword}
-                  onChange={(e) => setFocusKeyword(e.target.value)}
-                  placeholder="e.g. देहरादून दिल्ली एक्सप्रेसवे"
-                  className={styles.textInput}
-                />
-              </div>
+            {seoPanelOpen && (
+              <>
+                {/* 1. SEO Meta Title & Meta Description with Live Character Counters */}
+                <div className={styles.fieldBlock}>
+                  <div className={styles.fieldLabelRow}>
+                    <label htmlFor="seo-title" className={styles.fieldLabel}>
+                      SEO Meta Title (metaTitle)
+                    </label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button
+                        type="button"
+                        className={styles.selectChip}
+                        style={{ padding: '2px 8px', fontSize: 11 }}
+                        onClick={() => setSeoTitle(title.slice(0, 70))}
+                      >
+                        Auto-fill from Headline
+                      </button>
+                      <span
+                        className={styles.fieldHint}
+                        style={{
+                          color:
+                            (seoTitle || title).length >= 45 && (seoTitle || title).length <= 65
+                              ? '#15803D'
+                              : '#6E7185',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {(seoTitle || title).length} chars (recommended 50–60)
+                      </span>
+                    </div>
+                  </div>
+                  <input
+                    id="seo-title"
+                    type="text"
+                    maxLength={70}
+                    value={seoTitle}
+                    onChange={(e) => setSeoTitle(e.target.value)}
+                    placeholder={title || 'Auto-fills from the Article Headline if left empty...'}
+                    className={styles.textInput}
+                  />
+                </div>
 
-              <div className={styles.fieldBlock}>
-                <label htmlFor="seo-canonical" className={styles.fieldLabel}>
-                  Canonical URL
-                </label>
-                <input
-                  id="seo-canonical"
-                  type="url"
-                  value={canonicalUrl}
-                  onChange={(e) => setCanonicalUrl(e.target.value)}
-                  placeholder={resolvedCanonical}
-                  className={styles.textInput}
-                />
-              </div>
-            </div>
+                <div className={styles.fieldBlock}>
+                  <div className={styles.fieldLabelRow}>
+                    <label htmlFor="seo-desc" className={styles.fieldLabel}>
+                      Meta Description (metaDescription)
+                    </label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button
+                        type="button"
+                        className={styles.selectChip}
+                        style={{ padding: '2px 8px', fontSize: 11 }}
+                        onClick={() => setMetaDescription(summary.slice(0, 160))}
+                      >
+                        Auto-fill from Excerpt
+                      </button>
+                      <span
+                        className={styles.fieldHint}
+                        style={{
+                          color:
+                            (metaDescription || summary).length >= 120 &&
+                            (metaDescription || summary).length <= 160
+                              ? '#15803D'
+                              : '#6E7185',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {(metaDescription || summary).length} chars (recommended 140–155)
+                      </span>
+                    </div>
+                  </div>
+                  <textarea
+                    id="seo-desc"
+                    rows={2}
+                    maxLength={200}
+                    value={metaDescription}
+                    onChange={(e) => setMetaDescription(e.target.value)}
+                    placeholder={summary || 'Auto-fills from the Article Excerpt/Summary if left empty...'}
+                    className={styles.textareaInput}
+                  />
+                </div>
 
-            <div className={styles.fieldBlock}>
-              <div className={styles.fieldLabelRow}>
-                <label htmlFor="seo-title" className={styles.fieldLabel}>
-                  SEO Title (Meta Title)
-                </label>
-                <span className={styles.fieldHint}>
-                  {seoTitle.length} / 70 chars
-                </span>
-              </div>
-              <input
-                id="seo-title"
-                type="text"
-                maxLength={70}
-                value={seoTitle}
-                onChange={(e) => setSeoTitle(e.target.value)}
-                placeholder={title || 'Defaults to the Hindi headline...'}
-                className={styles.textInput}
-              />
-            </div>
+                {/* 2. Custom URL Slug & Focus Keywords / News Tags */}
+                <div className={styles.twoColFields}>
+                  <div className={styles.fieldBlock}>
+                    <div className={styles.fieldLabelRow}>
+                      <label htmlFor="seo-custom-slug" className={styles.fieldLabel}>
+                        Custom URL Slug (slug)
+                      </label>
+                      <span className={styles.fieldHint}>
+                        ID suffix: -{initialDoc.id ?? 'ID'}
+                      </span>
+                    </div>
+                    <div className={styles.slugRow}>
+                      <input
+                        id="seo-custom-slug"
+                        type="text"
+                        value={slug}
+                        onChange={(e) => {
+                          setSlug(
+                            e.target.value
+                              .toLowerCase()
+                              .replace(/[^a-z0-9-]+/g, '-')
+                              .replace(/^-+|-+$/g, ''),
+                          )
+                          setSlugTouched(true)
+                        }}
+                        placeholder="auto-transliterated-latin-slug"
+                        className={styles.textInput}
+                      />
+                      <button
+                        type="button"
+                        onClick={regenerateSlug}
+                        className={styles.secondaryBtn}
+                        title="Auto-transliterate from Hindi headline"
+                      >
+                        <Wand2 size={14} /> Auto
+                      </button>
+                    </div>
+                  </div>
 
-            <div className={styles.fieldBlock}>
-              <div className={styles.fieldLabelRow}>
-                <label htmlFor="seo-desc" className={styles.fieldLabel}>
-                  Meta Description
-                </label>
-                <span className={styles.fieldHint}>
-                  {metaDescription.length} / 200 chars (160 recommended)
-                </span>
-              </div>
-              <textarea
-                id="seo-desc"
-                rows={2}
-                maxLength={200}
-                value={metaDescription}
-                onChange={(e) => setMetaDescription(e.target.value)}
-                placeholder={summary || 'Defaults to the short description...'}
-                className={styles.textareaInput}
-              />
-            </div>
+                  <div className={styles.fieldBlock}>
+                    <label htmlFor="seo-focus-kw" className={styles.fieldLabel}>
+                      Focus Keywords / News Tags (keywords)
+                    </label>
+                    <input
+                      id="seo-focus-kw"
+                      type="text"
+                      maxLength={100}
+                      value={focusKeyword}
+                      onChange={(e) => setFocusKeyword(e.target.value)}
+                      placeholder="e.g. उत्तराखंड समाचार, रानीखेत, मुख्यमंत्री धामी"
+                      className={styles.textInput}
+                    />
+                  </div>
+                </div>
 
-            <div className={styles.fieldBlock}>
-              <label className={styles.fieldLabel}>
-                Social Sharing Image (Open Graph / WhatsApp 1200×630)
-              </label>
-              <div className={styles.slugRow}>
-                <input
-                  type="text"
-                  value={socialImageUrl || featuredImageUrl}
-                  onChange={(e) => setSocialImageUrl(e.target.value)}
-                  placeholder="Defaults to Featured Image unless overridden..."
-                  className={styles.textInput}
-                />
-                <button
-                  type="button"
-                  disabled={uploadingImage}
-                  className={styles.secondaryBtn}
-                  onClick={() => socialInputRef.current?.click()}
-                >
-                  <Upload size={14} /> Upload OG Image
-                </button>
-                <input
-                  ref={socialInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/avif"
-                  style={{ display: 'none' }}
-                  onChange={(e) => {
-                    const f = e.target.files?.[0]
-                    if (f) uploadMediaFile(f, 'social')
-                    e.target.value = ''
-                  }}
-                />
-              </div>
-            </div>
+                {/* 3. Social Sharing Overrides (ogTitle, ogDescription, ogImage) */}
+                <div className={styles.twoColFields} style={{ marginTop: 4 }}>
+                  <div className={styles.fieldBlock}>
+                    <label htmlFor="seo-og-title" className={styles.fieldLabel}>
+                      Social Share Title Override (ogTitle)
+                    </label>
+                    <input
+                      id="seo-og-title"
+                      type="text"
+                      maxLength={90}
+                      value={ogTitle}
+                      onChange={(e) => setOgTitle(e.target.value)}
+                      placeholder={seoTitle || title || 'Defaults to SEO Meta Title...'}
+                      className={styles.textInput}
+                    />
+                  </div>
 
-            <div className={styles.toggleRow} style={{ marginTop: 8 }}>
-              <div className={styles.toggleMeta}>
-                <strong>Hide from Search Engines (noindex)</strong>
-                <small>Prevent Google from indexing this article</small>
-              </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={noindex}
-                onClick={() => setNoindex((v) => !v)}
-                className={`${styles.switchBtn} ${noindex ? styles.switchBtnOn : ''}`}
-              >
-                <span className={styles.switchThumb} />
-              </button>
-            </div>
+                  <div className={styles.fieldBlock}>
+                    <label htmlFor="seo-og-desc" className={styles.fieldLabel}>
+                      Social Share Description Override (ogDescription)
+                    </label>
+                    <input
+                      id="seo-og-desc"
+                      type="text"
+                      maxLength={200}
+                      value={ogDescription}
+                      onChange={(e) => setOgDescription(e.target.value)}
+                      placeholder={metaDescription || summary || 'Defaults to Meta Description...'}
+                      className={styles.textInput}
+                    />
+                  </div>
+                </div>
 
-            {/* Live Google Search Snippet Preview */}
-            <div className={styles.seoPreviewBox}>
-              <div className={styles.seoPreviewUrl}>{resolvedCanonical}</div>
-              <div className={styles.seoPreviewTitle}>
-                {seoTitle || title || 'लोकलेंस न्यूज़: आपकी आवाज़, आपकी खबर'} | LokLens News
-              </div>
-              <div className={styles.seoPreviewDesc}>
-                {metaDescription ||
-                  summary ||
-                  'उत्तराखंड और देश-दुनिया की ताज़ा हिंदी खबरें, राजनीति, समाज और खेल समाचार।'}
-              </div>
-            </div>
+                <div className={styles.twoColFields}>
+                  <div className={styles.fieldBlock}>
+                    <label className={styles.fieldLabel}>
+                      Social Sharing Image Override (ogImage — 1200×675 / 1200×630)
+                    </label>
+                    <div className={styles.slugRow}>
+                      <input
+                        type="text"
+                        value={socialImageUrl || featuredImageUrl}
+                        onChange={(e) => setSocialImageUrl(e.target.value)}
+                        placeholder="Defaults to Featured Image..."
+                        className={styles.textInput}
+                      />
+                      <button
+                        type="button"
+                        disabled={uploadingImage}
+                        className={styles.secondaryBtn}
+                        onClick={() => socialInputRef.current?.click()}
+                      >
+                        <Upload size={14} /> Upload OG
+                      </button>
+                      <input
+                        ref={socialInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/avif"
+                        style={{ display: 'none' }}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0]
+                          if (f) uploadMediaFile(f, 'social')
+                          e.target.value = ''
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.fieldBlock}>
+                    <label htmlFor="seo-canonical" className={styles.fieldLabel}>
+                      Canonical URL (Self-Referencing)
+                    </label>
+                    <input
+                      id="seo-canonical"
+                      type="url"
+                      value={canonicalUrl}
+                      onChange={(e) => setCanonicalUrl(e.target.value)}
+                      placeholder={resolvedCanonical}
+                      className={styles.textInput}
+                    />
+                  </div>
+                </div>
+
+                {/* 4. Indexing & Google News Controls + Read-only ISO 8601 (+05:30 IST) Timestamps */}
+                <div className={styles.twoColFields} style={{ marginTop: 8 }}>
+                  <div className={styles.toggleRow} style={{ marginTop: 0 }}>
+                    <div className={styles.toggleMeta}>
+                      <strong>Hide from Search Engines (noindex)</strong>
+                      <small>Inject robots noindex, nofollow for draft/sensitive pages</small>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={noindex}
+                      onClick={() => setNoindex((v) => !v)}
+                      className={`${styles.switchBtn} ${noindex ? styles.switchBtnOn : ''}`}
+                    >
+                      <span className={styles.switchThumb} />
+                    </button>
+                  </div>
+
+                  <div className={styles.toggleRow} style={{ marginTop: 0 }}>
+                    <div className={styles.toggleMeta}>
+                      <strong>Breaking News / Google News Standout</strong>
+                      <small>Prioritize in Google News Sitemap &amp; Top Stories</small>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={isBreaking || googleNewsStandout}
+                      onClick={() => {
+                        const next = !(isBreaking || googleNewsStandout)
+                        setIsBreaking(next)
+                        setGoogleNewsStandout(next)
+                      }}
+                      className={`${styles.switchBtn} ${
+                        isBreaking || googleNewsStandout ? styles.switchBtnOn : ''
+                      }`}
+                    >
+                      <span className={styles.switchThumb} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.twoColFields} style={{ marginTop: 6 }}>
+                  <div className={styles.fieldBlock}>
+                    <label className={styles.fieldLabel}>
+                      datePublished (ISO 8601 +05:30 IST — Read-only)
+                    </label>
+                    <input
+                      type="text"
+                      readOnly
+                      value={initialDoc.publishedAtIso || `${publishedAt}:00+05:30`}
+                      className={styles.textInput}
+                      style={{ background: '#F4F5F9', color: '#4B5563', fontFamily: 'monospace', fontSize: 12 }}
+                    />
+                  </div>
+                  <div className={styles.fieldBlock}>
+                    <label className={styles.fieldLabel}>
+                      dateModified (ISO 8601 +05:30 IST — Auto-updated)
+                    </label>
+                    <input
+                      type="text"
+                      readOnly
+                      value={initialDoc.updatedAtIso || `${publishedAt}:00+05:30`}
+                      className={styles.textInput}
+                      style={{ background: '#F4F5F9', color: '#4B5563', fontFamily: 'monospace', fontSize: 12 }}
+                    />
+                  </div>
+                </div>
+
+                {/* 5. Live Google SERP & WhatsApp Preview Cards */}
+                <div className={styles.twoColFields} style={{ marginTop: 12 }}>
+                  {/* Google SERP Preview */}
+                  <div className={styles.seoPreviewBox} style={{ marginTop: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: '#6E7185',
+                        marginBottom: 6,
+                      }}
+                    >
+                      🔍 Live Google Search (SERP) Preview
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <img
+                        src="/brand/logo-96.webp"
+                        alt=""
+                        width={20}
+                        height={20}
+                        style={{ borderRadius: 4 }}
+                      />
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#202124', lineHeight: 1.2 }}>
+                          लोक Lens न्यूज़
+                        </div>
+                        <div className={styles.seoPreviewUrl} style={{ marginBottom: 0 }}>
+                          {resolvedCanonical}
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles.seoPreviewTitle}>
+                      {seoTitle || title || 'लोक Lens न्यूज़: आपकी आवाज़, आपकी खबर'} | लोक Lens न्यूज़
+                    </div>
+                    <div className={styles.seoPreviewDesc}>
+                      {metaDescription ||
+                        summary ||
+                        'उत्तराखंड और देश-दुनिया की ताज़ा हिंदी खबरें, राजनीति, समाज और खेल समाचार।'}
+                    </div>
+                  </div>
+
+                  {/* WhatsApp / Social Link Preview Card */}
+                  <div
+                    className={styles.seoPreviewBox}
+                    style={{
+                      marginTop: 0,
+                      background: '#E7FFDB',
+                      borderColor: '#B7E4C7',
+                      padding: 12,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: '#166534',
+                        marginBottom: 6,
+                      }}
+                    >
+                      💬 Live WhatsApp Share Preview
+                    </div>
+                    <div
+                      style={{
+                        background: '#FFFFFF',
+                        borderRadius: 10,
+                        overflow: 'hidden',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                      }}
+                    >
+                      {(socialImageUrl || featuredImageUrl) && (
+                        <div style={{ width: '100%', height: 110, background: '#0F172A', overflow: 'hidden' }}>
+                          <img
+                            src={socialImageUrl || featuredImageUrl}
+                            alt=""
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                          />
+                        </div>
+                      )}
+                      <div style={{ padding: '8px 10px' }}>
+                        <div
+                          style={{
+                            fontSize: 13,
+                            fontWeight: 700,
+                            color: '#111827',
+                            lineHeight: '18px',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {ogTitle || seoTitle || title || 'लोक Lens न्यूज़ — ताज़ा हिंदी समाचार'}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 11.5,
+                            color: '#4B5563',
+                            lineHeight: '16px',
+                            marginTop: 3,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {ogDescription ||
+                            metaDescription ||
+                            summary ||
+                            'लोक Lens न्यूज़ पर पढ़ें पूरी खबर और ताज़ा अपडेट।'}
+                        </div>
+                        <div style={{ fontSize: 11, color: '#6B7280', marginTop: 4 }}>
+                          loklensnews.com
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </section>
         </div>
 

@@ -4,6 +4,7 @@
  */
 import type { Payload, TypedUser } from 'payload'
 
+import { toIST } from '@/lib/data/time'
 import {
   ArticleEditorClient,
   type EditorAuthorOption,
@@ -237,6 +238,10 @@ export async function ArticleEditView(props: Props) {
     featuredImageUrl:
       matchedFeaturedMedia?.url ||
       (doc?.featuredImage && typeof doc.featuredImage === 'object' ? mediaUrlOf(doc.featuredImage) : ''),
+    featuredImageAlt:
+      (matchedFeaturedMedia?.alt && matchedFeaturedMedia.alt !== 'उत्तराखंड समाचार फ़ोटो'
+        ? matchedFeaturedMedia.alt
+        : '') || (typeof doc?.title === 'string' ? doc.title : ''),
     galleryUrls: [],
     seoTitle: String(seoGroup.metaTitle ?? ''),
     metaDescription: String(seoGroup.metaDescription ?? ''),
@@ -259,6 +264,8 @@ export async function ArticleEditView(props: Props) {
     isBreaking: Boolean(doc?.isBreaking),
     isTrending: Boolean(doc?.isTrending),
     publishedAt: formattedLocalDateTime,
+    publishedAtIso: toIST((doc?.publishedAt as string | Date | undefined) ?? (doc?.createdAt as string | Date | undefined) ?? new Date()),
+    updatedAtIso: toIST((doc?.updatedAt as string | Date | undefined) ?? new Date()),
   }
 
   return (

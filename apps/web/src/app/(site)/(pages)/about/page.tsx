@@ -2,15 +2,23 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Breadcrumbs } from '@/components/Navigation'
+import { getSiteOrigin, resolveRobots } from '@/lib/seo'
 
 import styles from './about.module.css'
 
 export const revalidate = 300
 
-export const metadata: Metadata = {
-  title: 'हमारे बारे में (About Us) — लोक Lens न्यूज़',
-  description:
-    'लोकलेंस न्यूज़ (LokLens News) एक डिजिटल समाचार मंच है, जो विश्वसनीय, प्रासंगिक और सार्थक पत्रकारिता के लिए समर्पित है।',
+export function generateMetadata(): Metadata {
+  const origin = getSiteOrigin()
+  return {
+    title: 'हमारे बारे में (About Us)',
+    description:
+      'लोकलेंस न्यूज़ (LokLens News) एक डिजिटल समाचार मंच है, जो विश्वसनीय, प्रासंगिक और सार्थक पत्रकारिता के लिए समर्पित है।',
+    alternates: {
+      canonical: `${origin}/about`,
+    },
+    robots: resolveRobots(false),
+  }
 }
 
 export default function AboutPage() {

@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation'
 
 import { LISTING_PAGE_SIZE, ListingView } from '@/components/ListingView'
 import { isReservedSlug } from '@/lib/slug/reserved'
-import { getCategory, listArticles } from '@/lib/data'
+import { getCategory, getSiteSettings, listArticles } from '@/lib/data'
+import { buildBreadcrumbJsonLd, buildCategoryMetadata } from '@/lib/seo'
 
 export async function loadCategory(slug: string) {
   // Reserved route names (architecture §3) never resolve as categories.
@@ -22,23 +23,31 @@ export async function CategoryPage({ slug, page }: { slug: string; page: number 
   if (page > 1 && page > result.totalPages) notFound()
   const otherCategoryItems = latest.items.filter((a) => a.category.id !== category.id)
   const sidebarItems = (otherCategoryItems.length >= 3 ? otherCategoryItems : latest.items).slice(0, 5)
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'होम', path: '/' },
+    { name: category.name, path: `/${category.slug}` },
+  ])
   return (
-    <ListingView
-      title={category.name}
-      description={category.description}
-      crumbs={[{ label: 'होम', href: '/' }, { label: category.name }]}
-      result={result}
-      basePath={`/${category.slug}`}
-      sidebar={sidebarItems}
-      hideCategory
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <ListingView
+        title={category.name}
+        description={category.description}
+        crumbs={[{ label: 'होम', href: '/' }, { label: category.name }]}
+        result={result}
+        basePath={`/${category.slug}`}
+        sidebar={sidebarItems}
+        hideCategory
+      />
+    </>
   )
 }
 
-// TODO(seo): replace with src/lib/seo category metadata (canonical, prev/next, OG).
 export async function categoryMetadata(slug: string, page: number): Promise<Metadata> {
-  const category = await loadCategory(slug)
+  const [category, settings] = await Promise.all([loadCategory(slug), getSiteSettings()])
   if (!category) return {}
-  const suffix = page > 1 ? ` — पेज ${page}` : ''
-  return { title: `${category.seo.title}${suffix}`, description: category.seo.description }
+  return buildCategoryMetadata(category, page, settings)
 }

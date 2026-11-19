@@ -230,14 +230,22 @@ export default buildConfig({
     access: { queue: editorsCanQueue, run: editorsCanQueue, cancel: editorsCanQueue },
   },
   onInit: async (payload) => {
-    if (s3.enabled) {
-      try {
+    try {
+      if (s3.enabled) {
         await payload.db.drizzle.execute(
           `UPDATE "media" SET "prefix" = 'images' WHERE "prefix" IS NULL OR "prefix" = '';`,
         )
-      } catch {
-        // Ignore if table not yet migrated
       }
+      // Backfill generic image alt text with the linked article's Hindi headline
+      await payload.db.drizzle.execute(`
+        UPDATE "media" m
+        SET "alt" = a."title"
+        FROM "articles" a
+        WHERE a."featured_image_id" = m."id"
+          AND (m."alt" IS NULL OR m."alt" = '' OR m."alt" = 'उत्तराखंड समाचार फ़ोटो');
+      `)
+    } catch {
+      // Ignore if table not yet migrated
     }
   },
   telemetry: false,

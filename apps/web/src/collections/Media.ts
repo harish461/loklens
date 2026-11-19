@@ -1,10 +1,11 @@
 import path from 'path'
 
-import { APIError, type CollectionBeforeValidateHook, type CollectionConfig, type ImageSize } from 'payload'
+import { APIError, type CollectionBeforeOperationHook, type CollectionBeforeValidateHook, type CollectionConfig, type ImageSize } from 'payload'
 
 import { anyone, editorsOnly, mediaUpdate, staffOnly } from '../access'
 import { createdByField } from '../fields/common'
 import { normalizeCollectionData } from '../hooks/normalize'
+import { slugifyTitle } from '../lib/slug/transliterate'
 
 /**
  * Originals live in <app cwd>/media (apps/web/media locally), outside /public and the build output;
@@ -29,10 +30,46 @@ export const IMAGE_SIZES: ImageSize[] = [
   { name: 'square', width: 1200, height: 1200, position: 'centre', formatOptions: webp },
 ]
 
-const limitImageSize: CollectionBeforeValidateHook = ({ req }) => {
+/**
+ * Converts raw camera / WhatsApp filenames ("WhatsApp Image 2026-11-14 at 10.30.12 PM (1).jpeg")
+ * into clean, hyphenated SEO slugs derived from alt text or sanitized filename base.
+ */
+export function toSeoImageFilename(rawName: string, altHint?: string): string {
+  const extMatch = rawName.match(/\.([a-zA-Z0-9]+)$/)
+  const ext = (extMatch ? extMatch[1].toLowerCase() : 'webp').replace(/^jpeg$/, 'jpg')
+  const baseWithoutExt = rawName.replace(/\.[^.]+$/, '')
+  const isGenericName =
+    /^(?:whatsapp[\s_-]*image|img|dsc|pxl|screenshot|image|photo|pic|untitled)[\s_0-9().:-]*$/i.test(
+      baseWithoutExt.trim(),
+    )
+
+  const candidateFromAlt = altHint ? slugifyTitle(altHint).slice(0, 56).replace(/-+$/, '') : ''
+  const candidateFromBase = isGenericName
+    ? ''
+    : slugifyTitle(baseWithoutExt.replace(/\(\d+\)/g, ' '))
+        .slice(0, 56)
+        .replace(/-+$/, '')
+
+  const slugBase = candidateFromAlt || candidateFromBase || 'loklens-news'
+  const uniqueSuffix = Date.now().toString(36).slice(-5)
+  return `${slugBase}-${uniqueSuffix}.${ext}`
+}
+
+const sanitizeUploadFilename: CollectionBeforeOperationHook = ({ args, operation, req }) => {
+  if ((operation === 'create' || operation === 'update') && req.file?.name) {
+    const data = (args as { data?: { alt?: string } })?.data
+    req.file.name = toSeoImageFilename(req.file.name, data?.alt)
+  }
+  return args
+}
+
+const limitImageSize: CollectionBeforeValidateHook = ({ req, data }) => {
   const size = req.file?.size
   if (typeof size === 'number' && size > MAX_IMAGE_BYTES) {
     throw new APIError(`Image is too large (max ${MAX_IMAGE_BYTES / 1024 / 1024} MB).`, 413, undefined, true)
+  }
+  if (req.file?.name && /^(?:whatsapp|img_|dsc|screenshot)/i.test(req.file.name)) {
+    req.file.name = toSeoImageFilename(req.file.name, typeof data?.alt === 'string' ? data.alt : undefined)
   }
 }
 
@@ -47,6 +84,7 @@ export const Media: CollectionConfig = {
     delete: editorsOnly,
   },
   hooks: {
+    beforeOperation: [sanitizeUploadFilename],
     beforeValidate: [limitImageSize, normalizeCollectionData],
   },
   upload: {

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { getPage } from '@/lib/data'
+import { getSiteOrigin, resolveRobots } from '@/lib/seo'
 
 import { formatDate } from './format'
 import { Breadcrumbs } from './Navigation'
@@ -34,8 +35,15 @@ export async function StaticPage({ slug }: { slug: string }) {
   )
 }
 
-// TODO(seo): replace with src/lib/seo page metadata.
 export async function staticPageMetadata(slug: string): Promise<Metadata> {
   const page = await getPage(slug)
-  return page ? { title: page.title } : {}
+  const origin = getSiteOrigin()
+  if (!page) return {}
+  return {
+    title: page.title,
+    alternates: {
+      canonical: `${origin}/${slug}`,
+    },
+    robots: resolveRobots(false),
+  }
 }

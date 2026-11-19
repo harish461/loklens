@@ -11,14 +11,16 @@ import {
   MessageSquare,
   Pencil,
   Plus,
+  Save,
   Search,
   Sparkles,
   Trash2,
+  Upload,
   UserCheck,
   XCircle,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Area,
   AreaChart,
@@ -75,6 +77,140 @@ export function AdminSectionClient({
   const [adSlots, setAdSlots] = useState(SAMPLE_AD_SLOTS)
   const [search, setSearch] = useState('')
   const [toast, setToast] = useState<string | null>(null)
+
+  // Global Site SEO Settings state (Admin > Settings > SEO)
+  const [savingSeo, setSavingSeo] = useState(false)
+  const [uploadingOg, setUploadingOg] = useState(false)
+  const [titleSuffix, setTitleSuffix] = useState('| लोक Lens न्यूज़')
+  const [homeMetaTitle, setHomeMetaTitle] = useState(
+    'लोक Lens न्यूज़ — उत्तराखंड और देश की ताज़ा हिंदी खबरें | आपकी आवाज़, आपकी खबर',
+  )
+  const [homeMetaDescription, setHomeMetaDescription] = useState(
+    'लोक Lens न्यूज़ (LokLens News) पर पढ़ें उत्तराखंड, देश, राजनीति, समाज, खेल और दुनिया की ताज़ा, निष्पक्ष और विश्वसनीय हिंदी खबरें।',
+  )
+  const [defaultOgImageUrl, setDefaultOgImageUrl] = useState('/brand/logo-square-1024.jpg')
+  const [defaultOgImageId, setDefaultOgImageId] = useState<number | null>(null)
+  const [googleSiteVerification, setGoogleSiteVerification] = useState('')
+  const [categorySeo, setCategorySeo] = useState<
+    Record<string, { metaTitle: string; metaDescription: string }>
+  >({
+    pradesh: {
+      metaTitle: 'उत्तराखंड प्रदेश समाचार (Uttarakhand News in Hindi) — ताज़ा खबरें',
+      metaDescription:
+        'उत्तराखंड के सभी 13 जिलों (अल्मोड़ा, रानीखेत, देहरादून, नैनीताल, हल्द्वानी, हरिद्वार, गैरसैंण) की ताज़ा और विश्वसनीय हिंदी खबरें।',
+    },
+    desh: {
+      metaTitle: 'देश समाचार (National News in Hindi) — भारत की ताज़ा खबरें',
+      metaDescription:
+        'भारत की प्रमुख राष्ट्रीय खबरें, संसद, केंद्र सरकार की योजनाएं, आर्थिक सुधार और देश भर के ताज़ा समाचार हिंदी में।',
+    },
+    rajniti: {
+      metaTitle: 'राजनीति समाचार (Politics News in Hindi) — सियासी विश्लेषण व चुनाव खबरें',
+      metaDescription:
+        'उत्तराखंड और देश की राजनीति, विधानसभा व लोकसभा सत्र, राजनीतिक दलों के बयान और चुनावी हलचल की सटीक रिपोर्टिंग।',
+    },
+    samaj: {
+      metaTitle: 'समाज एवं जनसरोकार (Society & Community News in Hindi)',
+      metaDescription:
+        'जनसरोकार, संस्कृति, शिक्षा, स्वास्थ्य, पर्यावरण और सामाजिक मुद्दों से जुड़ी जमीनी खबरें व विशेष रिपोर्ट।',
+    },
+    khel: {
+      metaTitle: 'खेल समाचार (Sports News in Hindi) — क्रिकेट व खेल जगत की खबरें',
+      metaDescription:
+        'क्रिकेट, फुटबॉल, ओलंपिक और उत्तराखंड के स्थानीय खेल टूर्नामेंटों की ताज़ा खबरें, स्कोर और खिलाड़ियों की उपलब्धियां।',
+    },
+    duniya: {
+      metaTitle: 'दुनिया समाचार (World & International News in Hindi)',
+      metaDescription:
+        'अंतरराष्ट्रीय खबरें, विदेश नीति, वैश्विक अर्थव्यवस्था और दुनिया भर की प्रमुख घटनाओं का हिंदी समाचार विश्लेषण।',
+    },
+    vichar: {
+      metaTitle: 'विचार एवं संपादकीय (Opinion & Editorial in Hindi)',
+      metaDescription:
+        'समसामयिक मुद्दों पर वरिष्ठ पत्रकारों व विशेषज्ञों के लेख, संपादकीय दृष्टिकोण और गहन विश्लेषण।',
+    },
+  })
+
+  useEffect(() => {
+    if (section !== 'seo') return
+    fetch('/api/admin/seo-settings', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((data: { ok?: boolean; settings?: Record<string, unknown> }) => {
+        if (!data?.ok || !data.settings) return
+        const s = data.settings
+        if (typeof s.titleSuffix === 'string') setTitleSuffix(s.titleSuffix)
+        if (typeof s.homeMetaTitle === 'string') setHomeMetaTitle(s.homeMetaTitle)
+        if (typeof s.homeMetaDescription === 'string') setHomeMetaDescription(s.homeMetaDescription)
+        if (typeof s.defaultOgImageUrl === 'string') setDefaultOgImageUrl(s.defaultOgImageUrl)
+        if (typeof s.defaultOgImageId === 'number') setDefaultOgImageId(s.defaultOgImageId)
+        if (typeof s.googleSiteVerification === 'string')
+          setGoogleSiteVerification(s.googleSiteVerification)
+        if (s.categories && typeof s.categories === 'object') {
+          setCategorySeo((prev) => ({
+            ...prev,
+            ...(s.categories as Record<string, { metaTitle: string; metaDescription: string }>),
+          }))
+        }
+      })
+      .catch(() => null)
+  }, [section])
+
+  async function handleSaveGlobalSeo() {
+    setSavingSeo(true)
+    try {
+      const res = await fetch('/api/admin/seo-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          titleSuffix,
+          homeMetaTitle,
+          homeMetaDescription,
+          defaultOgImageUrl,
+          defaultOgImageId,
+          googleSiteVerification,
+          categories: categorySeo,
+        }),
+      })
+      if (res.ok) {
+        notify('Global & Category SEO settings saved!')
+      } else {
+        notify('Failed to save SEO settings.')
+      }
+    } catch {
+      notify('Could not reach server to save SEO settings.')
+    } finally {
+      setSavingSeo(false)
+    }
+  }
+
+  async function handleUploadDefaultOg(file: File) {
+    setUploadingOg(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('_payload', JSON.stringify({ alt: 'लोक Lens न्यूज़ — Default Social Share Image' }))
+      const res = await fetch('/api/media', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      })
+      if (res.ok) {
+        const body = (await res.json()) as { doc?: { id: number; url?: string } }
+        if (body.doc?.id) {
+          setDefaultOgImageId(body.doc.id)
+          if (body.doc.url) setDefaultOgImageUrl(body.doc.url)
+          notify('Default OG Image uploaded!')
+        }
+      } else {
+        notify('Failed to upload OG image.')
+      }
+    } catch {
+      notify('Could not upload OG image.')
+    } finally {
+      setUploadingOg(false)
+    }
+  }
 
   function notify(msg: string) {
     setToast(msg)
@@ -588,32 +724,265 @@ export function AdminSectionClient({
     )
   }
 
-  // 7. SEO MANAGEMENT VIEW
+  // 7. SEO MANAGEMENT VIEW (Global Site SEO Settings + Category SEO + Article SEO Audit)
   if (section === 'seo') {
+    const seoCategoryList = [
+      { slug: 'pradesh', label: 'प्रदेश (/pradesh)' },
+      { slug: 'desh', label: 'देश (/desh)' },
+      { slug: 'rajniti', label: 'राजनीति (/rajniti)' },
+      { slug: 'samaj', label: 'समाज (/samaj)' },
+      { slug: 'khel', label: 'खेल (/khel)' },
+      { slug: 'duniya', label: 'दुनिया (/duniya)' },
+      { slug: 'vichar', label: 'विचार (/vichar)' },
+    ]
+
     return (
       <div className={styles.pageShell}>
+        {toast && (
+          <div className={styles.toast}>
+            <Sparkles size={15} /> <span>{toast}</span>
+          </div>
+        )}
         <header className={styles.pageHeader}>
           <div className={styles.titleGroup}>
             <div className={styles.titleIcon} style={{ background: '#ECF8C5', color: '#3F6212' }}>
               <Globe size={22} />
             </div>
             <div>
-              <h1 className={styles.pageTitle}>SEO Management</h1>
+              <h1 className={styles.pageTitle}>Global Site SEO &amp; News Sitemaps</h1>
               <p className={styles.pageSubtitle}>
-                Google News structured data (NewsArticle JSON-LD), Hindi meta tags, sitemaps &amp; 301/410 redirects
+                Homepage &amp; Category Meta Tags, Google Search Console Verification, NewsArticle JSON-LD &amp; Google News Sitemaps
               </p>
             </div>
           </div>
           <div className={styles.headerActions}>
+            <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className={styles.secondaryBtn}>
+              <ExternalLink size={14} /> /sitemap.xml
+            </a>
+            <a href="/news-sitemap.xml" target="_blank" rel="noopener noreferrer" className={styles.secondaryBtn}>
+              <ExternalLink size={14} /> /news-sitemap.xml
+            </a>
+            <a href="/robots.txt" target="_blank" rel="noopener noreferrer" className={styles.secondaryBtn}>
+              <ExternalLink size={14} /> /robots.txt
+            </a>
             <Link href="/admin/collections/redirects" className={styles.secondaryBtn}>
-              Manage 301 / 410 Redirects
+              301 / 410 Redirects
             </Link>
-            <Link href="/admin/globals/site-settings" className={styles.primaryLimeBtn}>
-              Global SEO Defaults
-            </Link>
+            <button
+              type="button"
+              disabled={savingSeo}
+              onClick={handleSaveGlobalSeo}
+              className={styles.primaryLimeBtn}
+            >
+              <Save size={15} />
+              <span>{savingSeo ? 'Saving SEO...' : 'Save SEO Settings'}</span>
+            </button>
           </div>
         </header>
 
+        {/* Card 1: Global Site SEO Settings */}
+        <div className={styles.cardSurface} style={{ marginBottom: 18 }}>
+          <h2 className={styles.editorCardTitle}>
+            <span>Global Site SEO Defaults (Homepage, Suffix, OG Image &amp; Search Console)</span>
+          </h2>
+
+          <div className={styles.twoColFields}>
+            <div className={styles.fieldBlock}>
+              <div className={styles.fieldLabelRow}>
+                <label htmlFor="global-title-suffix" className={styles.fieldLabel}>
+                  Default Site Title Suffix
+                </label>
+                <span className={styles.fieldHint}>Appended to inner pages (%s | लोक Lens न्यूज़)</span>
+              </div>
+              <input
+                id="global-title-suffix"
+                type="text"
+                maxLength={50}
+                value={titleSuffix}
+                onChange={(e) => setTitleSuffix(e.target.value)}
+                placeholder="| लोक Lens न्यूज़"
+                className={styles.textInput}
+              />
+            </div>
+
+            <div className={styles.fieldBlock}>
+              <div className={styles.fieldLabelRow}>
+                <label htmlFor="global-gsc-verify" className={styles.fieldLabel}>
+                  Google Search Console Verification Meta Tag
+                </label>
+                <span className={styles.fieldHint}>google-site-verification content code</span>
+              </div>
+              <input
+                id="global-gsc-verify"
+                type="text"
+                maxLength={120}
+                value={googleSiteVerification}
+                onChange={(e) => setGoogleSiteVerification(e.target.value)}
+                placeholder="Paste Google Search Console verification code..."
+                className={styles.textInput}
+              />
+            </div>
+          </div>
+
+          <div className={styles.fieldBlock} style={{ marginTop: 12 }}>
+            <div className={styles.fieldLabelRow}>
+              <label htmlFor="global-home-title" className={styles.fieldLabel}>
+                Homepage Meta Title
+              </label>
+              <span className={styles.fieldHint}>
+                {homeMetaTitle.length} chars (recommended 50–65)
+              </span>
+            </div>
+            <input
+              id="global-home-title"
+              type="text"
+              maxLength={110}
+              value={homeMetaTitle}
+              onChange={(e) => setHomeMetaTitle(e.target.value)}
+              className={styles.textInput}
+            />
+          </div>
+
+          <div className={styles.fieldBlock} style={{ marginTop: 12 }}>
+            <div className={styles.fieldLabelRow}>
+              <label htmlFor="global-home-desc" className={styles.fieldLabel}>
+                Homepage Meta Description
+              </label>
+              <span className={styles.fieldHint}>
+                {homeMetaDescription.length} chars (recommended 140–160)
+              </span>
+            </div>
+            <textarea
+              id="global-home-desc"
+              rows={2}
+              maxLength={220}
+              value={homeMetaDescription}
+              onChange={(e) => setHomeMetaDescription(e.target.value)}
+              className={styles.textareaInput}
+            />
+          </div>
+
+          <div className={styles.fieldBlock} style={{ marginTop: 12 }}>
+            <label htmlFor="global-og-image" className={styles.fieldLabel}>
+              Default Open Graph / WhatsApp Image (1200×630)
+            </label>
+            <div className={styles.slugRow}>
+              <input
+                id="global-og-image"
+                type="text"
+                value={defaultOgImageUrl}
+                onChange={(e) => setDefaultOgImageUrl(e.target.value)}
+                placeholder="/brand/logo-square-1024.jpg"
+                className={styles.textInput}
+              />
+              <label className={styles.secondaryBtn} style={{ cursor: 'pointer' }}>
+                <Upload size={14} />
+                <span>{uploadingOg ? 'Uploading...' : 'Upload Default OG'}</span>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0]
+                    if (f) handleUploadDefaultOg(f)
+                    e.target.value = ''
+                  }}
+                />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2: Category-Level Meta Titles & Descriptions */}
+        <div className={styles.cardSurface} style={{ marginBottom: 18 }}>
+          <div className={styles.editorCardTitle}>
+            <span>Category-Level Meta Titles &amp; Descriptions (/pradesh, /desh, /rajniti, /samaj, /khel, /duniya, /vichar)</span>
+            <button
+              type="button"
+              disabled={savingSeo}
+              onClick={handleSaveGlobalSeo}
+              className={styles.primaryLimeBtn}
+            >
+              <Save size={14} />
+              <span>{savingSeo ? 'Saving...' : 'Save All Categories'}</span>
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gap: 14 }}>
+            {seoCategoryList.map((cat) => {
+              const entry = categorySeo[cat.slug] ?? { metaTitle: '', metaDescription: '' }
+              return (
+                <div
+                  key={cat.slug}
+                  style={{
+                    padding: 14,
+                    borderRadius: 10,
+                    border: '1px solid #E5E7EB',
+                    background: '#FAFAFC',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: 8,
+                    }}
+                  >
+                    <strong style={{ fontSize: 14, color: '#111827' }}>{cat.label}</strong>
+                    <span className={styles.slugMono}>https://loklensnews.com/{cat.slug}</span>
+                  </div>
+                  <div className={styles.twoColFields}>
+                    <div className={styles.fieldBlock}>
+                      <div className={styles.fieldLabelRow}>
+                        <label className={styles.fieldLabel}>Meta Title</label>
+                        <span className={styles.fieldHint}>{entry.metaTitle.length} chars</span>
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={90}
+                        value={entry.metaTitle}
+                        onChange={(e) =>
+                          setCategorySeo((prev) => ({
+                            ...prev,
+                            [cat.slug]: {
+                              ...entry,
+                              metaTitle: e.target.value,
+                            },
+                          }))
+                        }
+                        className={styles.textInput}
+                      />
+                    </div>
+                    <div className={styles.fieldBlock}>
+                      <div className={styles.fieldLabelRow}>
+                        <label className={styles.fieldLabel}>Meta Description</label>
+                        <span className={styles.fieldHint}>{entry.metaDescription.length} chars</span>
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={200}
+                        value={entry.metaDescription}
+                        onChange={(e) =>
+                          setCategorySeo((prev) => ({
+                            ...prev,
+                            [cat.slug]: {
+                              ...entry,
+                              metaDescription: e.target.value,
+                            },
+                          }))
+                        }
+                        className={styles.textInput}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Card 3: Article SEO Readiness Audit */}
         <div className={styles.cardSurface}>
           <h2 className={styles.editorCardTitle}>Article SEO Readiness Audit</h2>
           <div className={styles.tableWrap} style={{ display: 'block' }}>

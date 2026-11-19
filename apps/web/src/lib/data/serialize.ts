@@ -187,13 +187,18 @@ export function toArticleCard(doc: PArticle, ctx: MapContext): ArticleCard | nul
   const category = toCategoryRef(doc.category)
   if (!category) return null
   const location = toLocationRef(doc.location)
+  const rawImage = toImage(doc.featuredImage, ctx.defaultImage)
+  const image: Image =
+    !rawImage.alt || rawImage.alt === 'उत्तराखंड समाचार फ़ोटो'
+      ? { ...rawImage, alt: doc.title }
+      : rawImage
   return {
     id: doc.id,
     title: doc.title,
     slug: doc.slug,
     url: articlePath(category.slug, doc.slug, doc.id),
     summary: doc.summary,
-    image: toImage(doc.featuredImage, ctx.defaultImage),
+    image,
     category,
     ...(location ? { location } : {}),
     publishedAt: toIST(doc.publishedAt ?? doc.createdAt),
