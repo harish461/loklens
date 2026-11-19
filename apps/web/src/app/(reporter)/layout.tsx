@@ -5,10 +5,10 @@ import type { ReactNode } from 'react'
 import './reporter.css'
 
 // Same fonts as the site and admin: Montserrat, with Noto Sans Devanagari for Hindi.
-const montserrat = Montserrat({ subsets: ['latin'], weight: ['400', '500', '600', '700'], display: 'swap', variable: '--font-montserrat' })
+const montserrat = Montserrat({ subsets: ['latin'], weight: 'variable', display: 'swap', variable: '--font-montserrat' })
 const notoDevanagari = Noto_Sans_Devanagari({
   subsets: ['devanagari'],
-  weight: ['400', '500', '600', '700'],
+  weight: 'variable',
   display: 'swap',
   variable: '--font-devanagari',
 })

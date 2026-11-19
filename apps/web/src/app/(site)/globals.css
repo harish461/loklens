@@ -44,7 +44,7 @@
   --touch: 44px;
   --bottom-nav-h: 64px;
 
-  --font-sans: var(--font-montserrat), var(--font-devanagari), 'Noto Sans Devanagari', system-ui, sans-serif;
+  --font-sans: var(--font-montserrat, 'Montserrat'), var(--font-devanagari, 'Noto Sans Devanagari'), 'Noto Sans Devanagari', system-ui, sans-serif;
   --focus-ring: 0 0 0 3px #fff, 0 0 0 5px var(--color-ink);
 }
 
@@ -70,6 +70,7 @@ body {
   background: #f7f7f7;
   color: var(--color-ink);
   font-family: var(--font-sans);
+  font-synthesis: none;
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
