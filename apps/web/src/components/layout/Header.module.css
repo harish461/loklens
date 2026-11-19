@@ -90,8 +90,9 @@
   display: none;
 }
 
-/* Category bar — mobile: white, scrollable, red active underline */
+/* Category bar — hidden on mobile (categories are inside the hamburger drawer) */
 .catNav {
+  display: none;
   background: #fff;
   border-bottom: 1px solid var(--color-border);
 }
@@ -315,6 +316,7 @@
 
   /* Red band with white text; active item darker red. */
   .catNav {
+    display: block;
     background: var(--color-brand);
     border-bottom: 2px solid var(--color-ink);
   }

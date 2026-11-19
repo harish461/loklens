@@ -217,18 +217,20 @@ export function ListingView({
             </div>
           )}
 
-          {/* E-Paper Promo Card */}
-          <div className={styles.epaperPromo}>
-            <span className={styles.epaperBadge}>Daily E-Paper</span>
-            <h3 className={styles.epaperTitle}>लोक Lens डिजिटल संस्करण</h3>
-            <p className={styles.epaperDesc}>
-              आज का पूरा समाचार पत्र डिजिटल फॉर्मेट में अपने मोबाइल व कंप्यूटर पर पढ़ें।
-            </p>
-            <Link href="/e-paper" className={styles.epaperBtn}>
-              <span>ई-पेपर पढ़ें</span>
-              <span aria-hidden="true">→</span>
-            </Link>
-          </div>
+          {/* E-Paper Promo Card (Hidden for now) */}
+          {false && (
+            <div className={styles.epaperPromo}>
+              <span className={styles.epaperBadge}>Daily E-Paper</span>
+              <h3 className={styles.epaperTitle}>लोक Lens डिजिटल संस्करण</h3>
+              <p className={styles.epaperDesc}>
+                आज का पूरा समाचार पत्र डिजिटल फॉर्मेट में अपने मोबाइल व कंप्यूटर पर पढ़ें।
+              </p>
+              <Link href="/e-paper" className={styles.epaperBtn}>
+                <span>ई-पेपर पढ़ें</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+          )}
 
           <AdSlot size="sidebar" />
         </aside>

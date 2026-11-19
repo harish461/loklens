@@ -1,11 +1,10 @@
 /**
  * The article page body, shared by the public article route and the draft preview (/preview/[id]) so a
- * preview looks exactly like the published page. Moved unchanged from page.tsx.
+ * preview looks exactly like the published page.
  */
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { ArticleCard } from '@/components/ArticleCard'
 import { RelatedList, TagChips, WhatsAppChannelBanner } from '@/components/ArticleExtras'
 import { AdSlot } from '@/components/AdSlot'
 import { BreakingBadge, CategoryLabel } from '@/components/Badges'
@@ -86,6 +85,11 @@ export function ArticleView({
   sidebar: ArticleCardType[]
 }) {
   const updated = article.updatedAt !== article.publishedAt
+  const otherStories = sidebar.filter((item) => item.id !== article.id)
+  const itemsToRender = otherStories.length > 0 ? otherStories : sidebar
+  const spotlightStory = itemsToRender[0]
+  const feedStories = itemsToRender.slice(1, 6)
+
   return (
     <div className={`container ${styles.layout}`}>
       <article className={styles.article}>
@@ -121,9 +125,9 @@ export function ArticleView({
         <figure className={styles.figure}>
           <NewsImage
             image={article.image}
-            displayWidth={760}
+            displayWidth={860}
             preferred="article"
-            sizes="(min-width: 1024px) 760px, 100vw"
+            sizes="(min-width: 1024px) 860px, 100vw"
             priority
           />
           {(article.image.caption || article.image.credit) && (
@@ -143,17 +147,103 @@ export function ArticleView({
         </div>
       </article>
 
+      {/* Redesigned Right Sidebar: Spotlight Story + Media Feed + E-Paper Widget */}
       <aside className={styles.sidebar} aria-labelledby="article-side">
-        <h2 id="article-side" className={styles.sideTitle}>
-          ताज़ा खबरें
-        </h2>
-        <ol className={styles.sideList}>
-          {sidebar.map((a, i) => (
-            <li key={a.id}>
-              <ArticleCard article={a} variant="numbered" index={i + 1} />
-            </li>
-          ))}
-        </ol>
+        <div className={styles.sidePanel}>
+          <header className={styles.sideHeader}>
+            <div className={styles.sideTitleWrap}>
+              <span className={styles.liveDot} aria-hidden="true" />
+              <h2 id="article-side" className={styles.sideTitle}>
+                ताज़ा खबरें
+              </h2>
+            </div>
+            <Link href={`/${article.category.slug}`} className={styles.sideViewAll}>
+              सभी देखें →
+            </Link>
+          </header>
+
+          {/* Top #1 Spotlight Card with 16:9 Thumbnail */}
+          {spotlightStory && (
+            <article className={styles.spotlightCard}>
+              <Link href={spotlightStory.url} className={styles.spotlightMedia}>
+                <NewsImage
+                  image={spotlightStory.image}
+                  displayWidth={360}
+                  preferred="card"
+                  sizes="360px"
+                />
+                <span className={styles.spotlightRank}>#1 प्रमुख खबर</span>
+              </Link>
+              <div className={styles.spotlightBody}>
+                <div className={styles.spotlightMetaRow}>
+                  <span className={styles.sideCatPill}>{spotlightStory.category.name}</span>
+                  <time className={styles.sideTime} dateTime={spotlightStory.publishedAt}>
+                    {formatDateTime(spotlightStory.publishedAt)}
+                  </time>
+                </div>
+                <h3 className={styles.spotlightTitle}>
+                  <Link href={spotlightStory.url}>{spotlightStory.title}</Link>
+                </h3>
+              </div>
+            </article>
+          )}
+
+          {/* Compact Media Cards with Thumbnail + Numbered Badge */}
+          {feedStories.length > 0 && (
+            <ol className={styles.sideList} start={2}>
+              {feedStories.map((item, idx) => (
+                <li key={item.id} className={styles.sideItem}>
+                  <Link href={item.url} className={styles.sideCardLink}>
+                    <div className={styles.sideCardContent}>
+                      <div className={styles.sideCardTop}>
+                        <span className={styles.sideRankBadge}>
+                          {String(idx + 2).padStart(2, '0')}
+                        </span>
+                        <span className={styles.sideCatText}>{item.category.name}</span>
+                      </div>
+                      <h3 className={styles.sideItemTitle}>{item.title}</h3>
+                      <time className={styles.sideTime} dateTime={item.publishedAt}>
+                        {formatDateTime(item.publishedAt)}
+                      </time>
+                    </div>
+                    <div className={styles.sideThumb}>
+                      <NewsImage
+                        image={item.image}
+                        displayWidth={96}
+                        preferred="thumb"
+                        sizes="96px"
+                      />
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+
+        {/* Category Quick Explore + E-Paper Widget (Hidden for now) */}
+        {false && (
+          <div className={styles.epaperWidget}>
+            <div className={styles.epaperBadgeRow}>
+              <span className={styles.epaperBadge}>Digital Edition</span>
+              <span className={styles.epaperBrand}>लोक Lens</span>
+            </div>
+            <h3 className={styles.epaperTitle}>आज का डिजिटल ई-पेपर पढ़ें</h3>
+            <p className={styles.epaperDesc}>
+              उत्तराखंड और देश-दुनिया की प्रमुख खबरें डिजिटल अख़बार फ़ॉर्मेट में।
+            </p>
+            <div className={styles.epaperActions}>
+              <Link href="/e-paper" className={styles.epaperPrimaryBtn}>
+                <span>ई-पेपर खोलें</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link href={`/${article.category.slug}`} className={styles.epaperSecondaryBtn}>
+                <span>{article.category.name} समाचार</span>
+              </Link>
+            </div>
+          </div>
+        )}
+
         <AdSlot size="sidebar" />
       </aside>
     </div>

@@ -4,15 +4,14 @@ import type { ReactNode } from 'react'
 
 import type { NavItem, SiteSettings } from '@/lib/data/types'
 
-import { FacebookIcon, Icon, InstagramIcon, WhatsAppIcon, YouTubeIcon } from '../Icon'
+import { FacebookIcon, InstagramIcon, WhatsAppIcon, YouTubeIcon } from '../Icon'
 import styles from './Footer.module.css'
-import { NavLink } from './NavLink'
 
 const SOCIAL: Record<string, { label: string; icon: ReactNode }> = {
-  youtube: { label: 'YouTube', icon: <YouTubeIcon size={20} color="#fff" triangle="#16181D" /> },
-  facebook: { label: 'Facebook', icon: <FacebookIcon size={20} /> },
-  instagram: { label: 'Instagram', icon: <InstagramIcon size={20} /> },
-  whatsapp: { label: 'WhatsApp चैनल', icon: <WhatsAppIcon size={20} /> },
+  youtube: { label: 'YouTube', icon: <YouTubeIcon size={18} color="#fff" triangle="#16181D" /> },
+  facebook: { label: 'Facebook', icon: <FacebookIcon size={18} /> },
+  instagram: { label: 'Instagram', icon: <InstagramIcon size={18} /> },
+  whatsapp: { label: 'WhatsApp चैनल', icon: <WhatsAppIcon size={18} /> },
 }
 
 /** Profile links from SiteSettings.social; unknown platforms are skipped. */
@@ -46,24 +45,43 @@ export function Footer({ settings, categories }: { settings: SiteSettings; categ
 
   return (
     <footer className={styles.footer}>
-      <div className={`container ${styles.brandRow}`}>
-        <Link href="/" className={styles.brand} aria-label={`${settings.name} — होम`}>
-          <Image src="/brand/logo-96.webp" width={52} height={52} alt="" unoptimized className={styles.logo} />
-          <div className={styles.brandText}>
-            <span className={styles.name}>लोक Lens न्यूज़</span>
-            <span className={styles.tagline}>{settings.tagline || 'आपकी आवाज़, आपकी खबर'}</span>
+      {/* Top Brand & Community Card */}
+      <div className="container">
+        <div className={styles.brandCard}>
+          <div className={styles.brandMain}>
+            <Link href="/" className={styles.brand} aria-label={`${settings.name} — होम`}>
+              <Image src="/brand/logo-96.webp" width={52} height={52} alt="" unoptimized className={styles.logo} />
+              <div className={styles.brandText}>
+                <span className={styles.name}>लोक Lens न्यूज़</span>
+                <span className={styles.tagline}>{settings.tagline || 'आपकी आवाज़, आपकी खबर'}</span>
+              </div>
+            </Link>
+            <p className={styles.mobileMission}>
+              उत्तराखंड और देश-दुनिया की निष्पक्ष, सटीक और जनसरोकार से जुड़ी खबरों का विश्वसनीय डिजिटल मंच।
+            </p>
           </div>
-        </Link>
-        <SocialLinks social={settings.social} />
+
+          <div className={styles.brandActions}>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.whatsappHeaderBtn}>
+              <WhatsAppIcon size={17} />
+              <span>WhatsApp चैनल से जुड़ें</span>
+            </a>
+            <SocialLinks social={settings.social} />
+          </div>
+        </div>
       </div>
 
+      {/* Navigation Sections */}
       <div className={`container ${styles.grid}`}>
-        {/* Column 1: Categories */}
-        <nav aria-labelledby="footer-cats" id="footer-categories" className={styles.col}>
+        {/* Column 1: Categories (Pill Chips on Mobile, Vertical List on Desktop) */}
+        <nav aria-labelledby="footer-cats" id="footer-categories" className={`${styles.col} ${styles.catCol}`}>
           <h2 id="footer-cats" className={styles.colTitle}>
-            श्रेणियां
+            प्रमुख श्रेणियां
           </h2>
-          <ul>
+          <ul className={styles.catList}>
+            <li>
+              <Link href="/">होम</Link>
+            </li>
             {categories.map((c) => (
               <li key={c.url}>
                 <Link href={c.url}>{c.label}</Link>
@@ -77,21 +95,37 @@ export function Footer({ settings, categories }: { settings: SiteSettings; categ
           <h2 id="footer-quicklinks" className={styles.colTitle}>
             त्वरित लिंक
           </h2>
-          <ul>
+          <ul className={styles.linkList}>
             <li>
-              <Link href="/about">हमारे बारे में (About Us)</Link>
+              <Link href="/about">
+                <span>हमारे बारे में</span>
+                <span className={styles.enSubtext}>(About Us)</span>
+              </Link>
             </li>
             <li>
-              <Link href="/contact">संपर्क करें (Contact Us)</Link>
+              <Link href="/contact">
+                <span>संपर्क करें</span>
+                <span className={styles.enSubtext}>(Contact Us)</span>
+              </Link>
             </li>
             <li>
-              <Link href="/video">वीडियो बुलेटिन</Link>
+              <Link href="/video">
+                <span>वीडियो बुलेटिन</span>
+              </Link>
             </li>
+            {false && (
+              <li>
+                <Link href="/e-paper">
+                  <span>ई-पेपर</span>
+                  <span className={styles.enSubtext}>(E-Paper)</span>
+                </Link>
+              </li>
+            )}
             <li>
-              <Link href="/e-paper">ई-पेपर (E-Paper)</Link>
-            </li>
-            <li>
-              <Link href="/advertise">विज्ञापन दें (Advertise)</Link>
+              <Link href="/advertise">
+                <span>विज्ञापन दें</span>
+                <span className={styles.enSubtext}>(Advertise)</span>
+              </Link>
             </li>
           </ul>
         </nav>
@@ -99,9 +133,9 @@ export function Footer({ settings, categories }: { settings: SiteSettings; categ
         {/* Column 3: Policies & Legal */}
         <nav aria-labelledby="footer-policies" className={styles.col}>
           <h2 id="footer-policies" className={styles.colTitle}>
-            नीतियां (Policies)
+            नीतियां
           </h2>
-          <ul>
+          <ul className={styles.linkList}>
             {policies.map((item) => (
               <li key={item.url}>
                 <Link href={item.url}>
@@ -113,29 +147,30 @@ export function Footer({ settings, categories }: { settings: SiteSettings; categ
           </ul>
         </nav>
 
-        {/* Column 4: Stay Connected & About */}
-        <div className={styles.col}>
-          <h2 className={styles.colTitle}>जुड़े रहें</h2>
+        {/* Column 4: Stay Connected & Office (Desktop Column / Mobile Contact Strip) */}
+        <div className={`${styles.col} ${styles.connectCol}`}>
+          <h2 className={styles.colTitle}>संपर्क एवं कार्यालय</h2>
           <div className={styles.contactBox}>
             <p className={styles.contactDesc}>
-              लोक Lens न्यूज़ — उत्तराखंड और देश-दुनिया की निष्पक्ष, सटीक और जनसरोकार से जुड़ी खबरों का विश्वसनीय मंच।
+              <strong>LokLens News</strong>, Sanga Cottage, Lower Mall Road, Almora, Uttarakhand – 263601
             </p>
-            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.whatsappPill}>
-              <WhatsAppIcon size={18} />
-              <span>WhatsApp चैनल से जुड़ें</span>
-            </a>
+            <div className={styles.contactMetaRow}>
+              <a href="mailto:newsloklens@gmail.com" className={styles.contactChip}>
+                ✉️ newsloklens@gmail.com
+              </a>
+              <a href="tel:+917037455895" className={styles.contactChip}>
+                📞 +91 70374 55895
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom Bar: Copyright & English Legal Links */}
       <div className={`container ${styles.bottomBar}`}>
-        <div className={styles.copy}>
-          © {year} {settings.name}। सर्वाधिकार सुरक्षित। All rights reserved.
-        </div>
         <div className={styles.legalLinks}>
           <Link href={p.terms || '/terms'} className={styles.legalLink}>
-            Terms and Conditions
+            Terms & Conditions
           </Link>
           <span className={styles.dot} aria-hidden="true">•</span>
           <Link href={p.privacy || '/privacy-policy'} className={styles.legalLink}>
@@ -150,41 +185,10 @@ export function Footer({ settings, categories }: { settings: SiteSettings; categ
             Contact Us
           </Link>
         </div>
+        <div className={styles.copy}>
+          © {year} {settings.name} • सर्वाधिकार सुरक्षित (All rights reserved)
+        </div>
       </div>
     </footer>
-  )
-}
-
-/** Mobile-only bottom navigation (hidden ≥768px). */
-export function BottomNav() {
-  return (
-    <nav aria-label="मुख्य नेविगेशन" className={styles.bottomNav}>
-      <ul>
-        <li>
-          <NavLink href="/" className={styles.bottomLink}>
-            <Icon name="home" />
-            होम
-          </NavLink>
-        </li>
-        <li>
-          <NavLink href="/video" className={styles.bottomLink}>
-            <Icon name="video" />
-            वीडियो
-          </NavLink>
-        </li>
-        <li>
-          <NavLink href="/e-paper" className={styles.bottomLink}>
-            <Icon name="paper" />
-            ई-पेपर
-          </NavLink>
-        </li>
-        <li>
-          <a href="#footer-categories" className={styles.bottomLink}>
-            <Icon name="grid" />
-            श्रेणियां
-          </a>
-        </li>
-      </ul>
-    </nav>
   )
 }

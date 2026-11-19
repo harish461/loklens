@@ -47,11 +47,11 @@ export default async function HomePage() {
   const youtubeUrl = settings.social.find((s) => s.platform === 'youtube')?.url ?? YOUTUBE_CHANNEL_URL
   const whatsappUrl = settings.social.find((s) => s.platform === 'whatsapp')?.url ?? 'https://whatsapp.com'
 
-  // Editors' Picks carousel: the three latest stories.
-  const picks = home.latest.slice(0, 3)
+  // Editors' Picks / Top Hero Thumbnail Slider: up to 10 latest stories.
+  const picks = home.latest.slice(0, 10)
 
-  // ताज़ा खबरें: the newest stories, after picks (fallback to all latest if < 4)
-  const latestStories = home.latest.length > 3 ? home.latest.slice(3, 9) : home.latest.slice(0, 6)
+  // ताज़ा खबरें: latest stories grid below category tabs
+  const latestStories = home.latest.slice(0, 6)
 
   // ट्रेंडिंग / सर्वाधिक पढ़ी गई खबरें
   const trendingStories = (home.featured.length > 0 ? home.featured : home.latest).slice(0, 5)
@@ -67,7 +67,7 @@ export default async function HomePage() {
       {(picks.length > 0 || youtubeVideos.posts.length > 0 || youtubeShorts.posts.length > 0) && (
         <div className={styles.topRow}>
           <section className={styles.picks} aria-labelledby="picks-title">
-            <BlockHead id="picks-title" title="संपादक की पसंद" />
+            <BlockHead id="picks-title" title="ताज़ा ख़बरें" />
             {picks.length > 0 ? <HeroCarousel articles={picks} /> : null}
           </section>
 
@@ -135,18 +135,20 @@ export default async function HomePage() {
                 </ol>
               </div>
 
-              {/* Digital E-Paper Promotion Mini-Card */}
-              <div className={styles.epaperCard}>
-                <span className={styles.epaperBadge}>Daily E-Paper</span>
-                <h3 className={styles.epaperHeading}>लोक Lens डिजिटल संस्करण</h3>
-                <p className={styles.epaperText}>
-                  आज का पूरा समाचार पत्र डिजिटल फॉर्मेट में अपने मोबाइल व कंप्यूटर पर पढ़ें।
-                </p>
-                <Link href="/e-paper" className={styles.epaperAction}>
-                  <span>ई-पेपर पढ़ें</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
+              {/* Digital E-Paper Promotion Mini-Card (Hidden for now) */}
+              {false && (
+                <div className={styles.epaperCard}>
+                  <span className={styles.epaperBadge}>Daily E-Paper</span>
+                  <h3 className={styles.epaperHeading}>लोक Lens डिजिटल संस्करण</h3>
+                  <p className={styles.epaperText}>
+                    आज का पूरा समाचार पत्र डिजिटल फॉर्मेट में अपने मोबाइल व कंप्यूटर पर पढ़ें।
+                  </p>
+                  <Link href="/e-paper" className={styles.epaperAction}>
+                    <span>ई-पेपर पढ़ें</span>
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              )}
             </aside>
           )}
         </div>

@@ -19,7 +19,8 @@
     "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",
     "db:seed": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed.ts",
     "db:verify": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/verify-data.ts",
-    "db:sync-dev": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/sync-dev-articles.ts"
+    "db:sync-dev": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/sync-dev-articles.ts",
+    "media:check": "node scripts/check-media-storage.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1168.0",
@@ -43,6 +44,7 @@
     "lexical": "0.50.0",
     "lucide-react": "1.72.0",
     "next": "16.4.5",
+    "nodemailer": "^10.6.0",
     "payload": "3.93.0",
     "react": "19.2.9",
     "react-dom": "19.2.9",
@@ -51,6 +53,7 @@
   },
   "devDependencies": {
     "@types/node": "22.19.9",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.5",

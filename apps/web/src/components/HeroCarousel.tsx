@@ -1,11 +1,14 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 import type { ArticleCard as Card } from '@/lib/data/types'
 
-import { ArticleCard } from './ArticleCard'
+import { BreakingBadge } from './Badges'
+import { formatDateTime } from './format'
 import { Icon } from './Icon'
+import { NewsImage } from './NewsImage'
 import styles from './HeroCarousel.module.css'
 
 const AUTO_MS = 6000
@@ -21,23 +24,42 @@ const getReduced = () => window.matchMedia(REDUCED).matches
 const getReducedServer = () => false
 
 /**
- * Hero carousel of the latest stories. All slides are rendered on the server and stacked in one grid
- * cell, so the page is complete without JS and switching slides never changes the layout height.
- * Previous/next arrows sit on the image. Auto-advances every 6 s; paused on hover/focus and under
- * reduced motion. Swipe and arrow keys work too. The first slide's image is the LCP (priority) image.
+ * Broadcast Thumbnail Hero Slider for the homepage (up to 10 latest stories).
+ * Features a high-contrast frosted caption panel for crystal-clear Hindi text readability
+ * over bright photos, plus an interactive scrollable thumbnail strip at the bottom.
  */
 export function HeroCarousel({ articles }: { articles: Card[] }) {
   const [index, setIndex] = useState(0)
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
   const [touchX, setTouchX] = useState<number | null>(null)
+  const stripRef = useRef<HTMLDivElement | null>(null)
+  const thumbRefs = useRef<(HTMLButtonElement | null)[]>([])
+
   const reduced = useSyncExternalStore(subscribeReduced, getReduced, getReducedServer)
   const count = articles.length
   const paused = hovered || focused || reduced
 
-  const go = (next: number) => setIndex(((next % count) + count) % count)
+  const go = (next: number) => {
+    if (count === 0) return
+    setIndex(((next % count) + count) % count)
+  }
 
   useIntervalWhen(!paused && count > 1, AUTO_MS, () => setIndex((i) => (i + 1) % count))
+
+  // Horizontally center the active thumbnail inside the strip without scrolling the window
+  useEffect(() => {
+    const strip = stripRef.current
+    const thumb = thumbRefs.current[index]
+    if (!strip || !thumb) return
+    const targetLeft = thumb.offsetLeft - strip.clientWidth / 2 + thumb.clientWidth / 2
+    strip.scrollTo({
+      left: Math.max(0, targetLeft),
+      behavior: reduced ? 'auto' : 'smooth',
+    })
+  }, [index, reduced])
+
+  if (count === 0) return null
 
   return (
     <section
@@ -65,29 +87,161 @@ export function HeroCarousel({ articles }: { articles: Card[] }) {
         setTouchX(null)
       }}
     >
-      <div className={styles.viewport}>
-        {articles.map((a, i) => (
-          <div
-            key={a.id}
-            role="group"
-            aria-roledescription="slide"
-            aria-label={`${i + 1} / ${count}`}
-            aria-hidden={i !== index}
-            className={`${styles.slide} ${i === index ? styles.active : ''}`}
-          >
-            <ArticleCard article={a} variant="hero" priority={i === 0} headingLevel="h2" />
-          </div>
-        ))}
+      {/* Main Hero Stage */}
+      <div className={styles.stage}>
+        <div className={styles.viewport}>
+          {articles.map((a, i) => {
+            const isActive = i === index
+            return (
+              <article
+                key={a.id}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${i + 1} / ${count}`}
+                aria-hidden={!isActive}
+                className={`${styles.slide} ${isActive ? styles.active : ''}`}
+              >
+                {/* Hero Image */}
+                <Link href={a.url} tabIndex={isActive ? 0 : -1} className={styles.mediaLink}>
+                  <NewsImage
+                    image={a.image}
+                    displayWidth={880}
+                    preferred="wide"
+                    sizes="(min-width: 1024px) 840px, 100vw"
+                    priority={i === 0}
+                  />
+                  <span className={styles.imageScrim} aria-hidden="true" />
+                </Link>
+
+                {/* Top Meta Bar: Category Pill + Slide Counter */}
+                <div className={styles.topBar}>
+                  <div className={styles.kickerBadges}>
+                    {a.isBreaking && <BreakingBadge />}
+                    <Link
+                      href={`/${a.category.slug}`}
+                      tabIndex={isActive ? 0 : -1}
+                      className={styles.categoryBadge}
+                    >
+                      {a.category.name}
+                    </Link>
+                  </div>
+
+                  <div className={styles.topControls}>
+                    <span className={styles.counterPill} aria-hidden="true">
+                      {String(i + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
+                    </span>
+                    {count > 1 && (
+                      <div className={styles.navBtns}>
+                        <button
+                          type="button"
+                          className={styles.navBtn}
+                          onClick={() => go(index - 1)}
+                          aria-label="पिछली खबर"
+                          tabIndex={isActive ? 0 : -1}
+                        >
+                          <Icon name="chevronLeft" size={18} />
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.navBtn}
+                          onClick={() => go(index + 1)}
+                          aria-label="अगली खबर"
+                          tabIndex={isActive ? 0 : -1}
+                        >
+                          <Icon name="chevronRight" size={18} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Compact Editorial Caption Panel: Date at Top-Right + 1-Line Ellipsis Heading */}
+                <div className={styles.captionOverlay}>
+                  <div className={styles.captionBox}>
+                    <div className={styles.dateTopRow}>
+                      <time className={styles.timestamp} dateTime={a.publishedAt}>
+                        {formatDateTime(a.publishedAt)}
+                      </time>
+                    </div>
+                    <h2 className={styles.headline}>
+                      <Link
+                        href={a.url}
+                        tabIndex={isActive ? 0 : -1}
+                        className={styles.headlineLink}
+                        title={a.title}
+                      >
+                        {a.title}
+                      </Link>
+                    </h2>
+                  </div>
+                </div>
+              </article>
+            )
+          })}
+        </div>
       </div>
 
+      {/* Bottom Thumbnail Slider Strip (Up to 10 Latest Stories) */}
       {count > 1 && (
-        <div className={styles.arrows}>
-          <button type="button" className={`${styles.arrow} ${styles.prev}`} onClick={() => go(index - 1)} aria-label="पिछली खबर">
-            <Icon name="chevronLeft" size={22} />
-          </button>
-          <button type="button" className={`${styles.arrow} ${styles.next}`} onClick={() => go(index + 1)} aria-label="अगली खबर">
-            <Icon name="chevronRight" size={22} />
-          </button>
+        <div className={styles.thumbDock}>
+          <div className={styles.thumbHeader}>
+            <span className={styles.thumbSectionLabel}>
+              <span className={styles.thumbDot} aria-hidden="true" />
+              प्रमुख {count} ताज़ा खबरें
+            </span>
+            <div className={styles.thumbScrollBtns}>
+              <button
+                type="button"
+                className={styles.thumbArrow}
+                onClick={() => go(index - 1)}
+                aria-label="पिछली थंबनेल खबर"
+              >
+                <Icon name="chevronLeft" size={16} />
+              </button>
+              <button
+                type="button"
+                className={styles.thumbArrow}
+                onClick={() => go(index + 1)}
+                aria-label="अगली थंबनेल खबर"
+              >
+                <Icon name="chevronRight" size={16} />
+              </button>
+            </div>
+          </div>
+
+          <div ref={stripRef} className={styles.thumbStrip} role="tablist" aria-label="खबरें चुनें">
+            {articles.map((a, i) => {
+              const isSelected = i === index
+              return (
+                <button
+                  key={a.id}
+                  ref={(el) => {
+                    thumbRefs.current[i] = el
+                  }}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  aria-label={`${i + 1}: ${a.title}`}
+                  onClick={() => go(i)}
+                  className={`${styles.thumbCard} ${isSelected ? styles.thumbCardActive : ''}`}
+                >
+                  <span className={styles.thumbMedia}>
+                    <NewsImage
+                      image={a.image}
+                      displayWidth={120}
+                      preferred="thumb"
+                      sizes="120px"
+                    />
+                    <span className={styles.thumbIndex}>{String(i + 1).padStart(2, '0')}</span>
+                  </span>
+                  <span className={styles.thumbText}>
+                    <span className={styles.thumbCat}>{a.category.name}</span>
+                    <span className={styles.thumbTitle}>{a.title}</span>
+                  </span>
+                </button>
+              )
+            })}
+          </div>
         </div>
       )}
     </section>

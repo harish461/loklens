@@ -75,6 +75,37 @@ function resolveDatabasePoolConfig(): {
   return { connectionString: url }
 }
 
+const S3_ENV_NAMES = ['S3_BUCKET', 'S3_REGION', 'S3_ENDPOINT', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const
+type S3EnvName = (typeof S3_ENV_NAMES)[number]
+
+const S3_DEFAULTS: Partial<Record<S3EnvName, string>> = {
+  S3_BUCKET: 'loklens-media',
+  S3_REGION: 'ap-northeast-2',
+  S3_ENDPOINT: 'https://sfsfwcyrnddxjlrvuakf.storage.supabase.co/storage/v1/s3',
+}
+
+/**
+ * Reads the Supabase S3 settings (trimmed). If any is missing the S3 plugin is disabled and Payload falls
+ * back to the local disk - on managed hosting that disk is empty/ephemeral, so every media URL fails with a
+ * generic 500. Log the missing variable NAMES (never values) at boot so this is obvious in the server logs.
+ */
+function resolveS3Env(): { enabled: boolean; env: Record<S3EnvName, string> } {
+  const env = Object.fromEntries(
+    S3_ENV_NAMES.map((name) => [name, process.env[name]?.trim() || S3_DEFAULTS[name] || '']),
+  ) as Record<S3EnvName, string>
+  const missing = S3_ENV_NAMES.filter((name) => !env[name])
+  if (missing.length > 0 && process.env.NODE_ENV === 'production') {
+    console.error(
+      `[LokLens] S3 media storage is DISABLED - missing environment variable(s): ${missing.join(', ')}. ` +
+        'Media files will be read from local disk and existing images will fail to load. ' +
+        'Set these variables in the hosting environment and restart the app.',
+    )
+  }
+  return { enabled: missing.length === 0, env }
+}
+
+const s3 = resolveS3Env()
+
 const editorsCanQueue = ({ req }: { req: { user?: unknown } }) => isEditorOrAdmin(req.user as MaybeUser)
 
 export default buildConfig({
@@ -149,13 +180,7 @@ export default buildConfig({
   globals: [SiteSettings, Navigation, Ticker],
   plugins: [
     s3Storage({
-      enabled: Boolean(
-        process.env.S3_BUCKET &&
-        process.env.S3_REGION &&
-        process.env.S3_ENDPOINT &&
-        process.env.S3_ACCESS_KEY_ID &&
-        process.env.S3_SECRET_ACCESS_KEY
-      ),
+      enabled: s3.enabled,
       collections: {
         media: {
           prefix: 'images',
@@ -164,14 +189,14 @@ export default buildConfig({
           // Do not set disablePayloadAccessControl: true.
         },
       },
-      bucket: process.env.S3_BUCKET || '',
+      bucket: s3.env.S3_BUCKET,
       config: {
         credentials: {
-          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+          accessKeyId: s3.env.S3_ACCESS_KEY_ID,
+          secretAccessKey: s3.env.S3_SECRET_ACCESS_KEY,
         },
-        region: process.env.S3_REGION || '',
-        endpoint: process.env.S3_ENDPOINT,
+        region: s3.env.S3_REGION,
+        endpoint: s3.env.S3_ENDPOINT || undefined,
         forcePathStyle: true,
       },
     }),
@@ -203,6 +228,17 @@ export default buildConfig({
     shouldAutoRun: () => Boolean(process.env.NEXT_RUNTIME),
     deleteJobOnComplete: true,
     access: { queue: editorsCanQueue, run: editorsCanQueue, cancel: editorsCanQueue },
+  },
+  onInit: async (payload) => {
+    if (s3.enabled) {
+      try {
+        await payload.db.drizzle.execute(
+          `UPDATE "media" SET "prefix" = 'images' WHERE "prefix" IS NULL OR "prefix" = '';`,
+        )
+      } catch {
+        // Ignore if table not yet migrated
+      }
+    }
   },
   telemetry: false,
 })

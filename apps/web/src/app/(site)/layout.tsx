@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next'
 import { Montserrat, Noto_Sans_Devanagari } from 'next/font/google'
-import type { ReactNode } from 'react'
+import { Suspense, type ReactNode } from 'react'
 
-import { Footer, BottomNav } from '@/components/layout/Footer'
+import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
+import { SiteLoader } from '@/components/layout/SiteLoader'
 // TODO(data): switch to '@/lib/data' when the backend helpers land (same names and signatures).
 import { getHome, getSiteSettings, listCategories } from '@/lib/data'
 
@@ -46,6 +47,9 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="hi" className={`${montserrat.variable} ${notoDevanagari.variable}`}>
       <body>
+        <Suspense fallback={null}>
+          <SiteLoader />
+        </Suspense>
         <a href="#main" className="skip-link">
           मुख्य सामग्री पर जाएं
         </a>
@@ -54,7 +58,6 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
           {children}
         </main>
         <Footer settings={settings} categories={nav} />
-        <BottomNav />
       </body>
     </html>
   )

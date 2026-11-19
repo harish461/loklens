@@ -1,5 +1,6 @@
 .body {
-  max-width: var(--measure);
+  width: 100%;
+  max-width: 100%;
   font-size: 18px;
   line-height: 32px;
   color: var(--color-ink);

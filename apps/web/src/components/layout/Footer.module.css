@@ -1,38 +1,43 @@
 .footer {
-  background: #0d131a;
-  color: #fff;
+  background: #0b111a;
+  color: #ffffff;
   margin-top: var(--space-8);
-  border-top: 3px solid var(--color-brand);
+  border-top: 3px solid var(--color-logo-red, #c41d17);
+  padding-top: 22px;
 }
 
-.brandRow {
+/* =========================================================
+   Top Brand & Community Card
+   ========================================================= */
+
+.brandCard {
+  background: linear-gradient(145deg, #131d2b 0%, #0f1722 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-5);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 16px;
 }
 
-@media (min-width: 768px) {
-  .brandRow {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+.brandMain {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 12px;
   text-decoration: none;
 }
 
 .logo {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-badge);
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  flex: none;
 }
 
 .brandText {
@@ -41,22 +46,64 @@
 }
 
 .name {
-  font-size: 22px;
+  font-size: 20px;
+  line-height: 26px;
   font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.01em;
 }
 
 .tagline {
-  color: #9aa4b2;
+  color: #94a3b8;
+  font-size: 12.5px;
+  line-height: 18px;
+  margin-top: 2px;
+}
+
+.mobileMission {
+  margin: 0;
   font-size: 13px;
-  margin: 2px 0 0;
+  line-height: 20px;
+  color: #cbd5e1;
+}
+
+.brandActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.whatsappHeaderBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #1f8f4e;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(31, 143, 78, 0.3);
+  transition: all 0.2s ease;
+}
+
+.whatsappHeaderBtn:hover {
+  background: #18773f;
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-1px);
 }
 
 .social {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 8px;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -65,154 +112,202 @@
 .social a {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
   transition: all 0.2s ease;
 }
 
 .social a:hover {
-  border-color: var(--color-brand);
-  background: var(--color-brand);
-  color: #fff;
+  border-color: var(--color-logo-red, #c41d17);
+  background: var(--color-logo-red, #c41d17);
+  color: #ffffff;
   transform: translateY(-2px);
 }
+
+/* =========================================================
+   Main Footer Grid (Mobile-First Cards -> Desktop 4-Columns)
+   ========================================================= */
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-6) var(--space-5);
-  padding-block: var(--space-6);
+  gap: 16px 14px;
+  padding-block: 20px;
 }
 
-@media (min-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+/* On mobile: Categories and Contact span full width; Quick Links & Policies sit side-by-side in clean cards */
+.catCol,
+.connectCol {
+  grid-column: 1 / -1;
+}
+
+.col {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 16px;
 }
 
 .colTitle {
-  font-size: 16px;
+  font-size: 14.5px;
+  line-height: 20px;
   font-weight: 700;
   color: #ffffff;
-  margin-top: 0;
-  margin-bottom: var(--space-3);
+  margin: 0 0 12px;
   letter-spacing: 0.02em;
-  position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.colTitle::after {
+.colTitle::before {
   content: '';
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--color-accent);
-  margin-top: 6px;
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  background: var(--color-logo-red, #c41d17);
   border-radius: 2px;
 }
 
-.col ul {
+/* Mobile Categories: Pill Chips */
+.catList {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 8px;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.col a {
+.catList a {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+
+.catList a:hover {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #ffffff;
+}
+
+/* Quick Links & Policies List */
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.linkList a {
   display: inline-flex;
   align-items: baseline;
-  flex-wrap: wrap;
-  gap: 4px;
-  color: #b0b8c4;
-  font-size: 14px;
+  gap: 5px;
+  color: #cbd5e1;
+  font-size: 13.5px;
   line-height: 20px;
   text-decoration: none;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition: color 0.15s ease;
 }
 
-.col a:hover {
+.linkList a:hover {
   color: #ffffff;
-  transform: translateX(3px);
 }
 
+/* Hide verbose English subtext on narrow mobile columns so links stay 1-line and crisp */
 .enSubtext {
-  font-size: 12px;
-  color: #7e899b;
+  display: none;
+  font-size: 11.5px;
+  color: #64748b;
 }
 
+/* Contact & Office Strip */
 .contactBox {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 10px;
 }
 
 .contactDesc {
   font-size: 13px;
   line-height: 20px;
-  color: #9aa4b2;
+  color: #94a3b8;
   margin: 0;
 }
 
-.whatsappPill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  padding: 8px 16px;
-  background: rgba(31, 143, 78, 0.15);
-  border: 1px solid rgba(31, 143, 78, 0.4);
-  color: #25d366;
-  border-radius: var(--radius-pill);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
+.contactDesc strong {
+  color: #f8fafc;
 }
 
-.whatsappPill:hover {
-  background: #1f8f4e;
+.contactMetaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.contactChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+
+.contactChip:hover {
+  border-color: var(--color-brand);
   color: #ffffff;
 }
+
+/* =========================================================
+   Bottom Legal & Copyright Bar
+   ========================================================= */
 
 .bottomBar {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  align-items: center;
+  text-align: center;
+  gap: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-block: var(--space-4);
-  font-size: 13px;
-  color: #8b95a5;
-}
-
-@media (min-width: 768px) {
-  .bottomBar {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.copy {
-  color: #8b95a5;
+  padding-block: 16px 20px;
+  font-size: 12.5px;
+  color: #94a3b8;
 }
 
 .legalLinks {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px 10px;
 }
 
 .legalLink {
-  color: #b0b8c4;
+  color: #cbd5e1;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12.5px;
+  font-weight: 500;
   transition: color 0.15s ease;
 }
 
@@ -222,52 +317,98 @@
 }
 
 .dot {
-  color: #4b5563;
+  color: #475569;
   font-size: 10px;
 }
 
-.bottomNav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 50;
-  background: #fff;
-  border-top: 1px solid var(--color-border);
-  box-shadow: 0 -2px 10px rgba(22, 24, 29, 0.06);
-  padding-bottom: env(safe-area-inset-bottom);
+.copy {
+  color: #64748b;
+  font-size: 12px;
 }
 
-.bottomNav ul {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.bottomLink {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  height: var(--bottom-nav-h);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-muted);
-}
-
-.bottomLink[aria-current='page'] {
-  color: var(--color-brand);
-}
-
-.bottomLink:focus-visible {
-  outline-offset: -3px;
-}
+/* =========================================================
+   Desktop Layout (≥ 768px)
+   ========================================================= */
 
 @media (min-width: 768px) {
-  .bottomNav {
-    display: none;
+  .footer {
+    padding-top: 28px;
+  }
+
+  .brandCard {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+  }
+
+  .brandMain {
+    max-width: 520px;
+  }
+
+  .brandActions {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    padding-block: 28px;
+  }
+
+  .catCol,
+  .connectCol {
+    grid-column: auto;
+  }
+
+  .col {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .colTitle {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .catList {
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .catList a {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: #cbd5e1;
+    font-size: 14px;
+  }
+
+  .catList a:hover {
+    background: transparent;
+    color: #ffffff;
+  }
+
+  .linkList a {
+    font-size: 14px;
+  }
+
+  .enSubtext {
+    display: inline;
+  }
+
+  .contactMetaRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bottomBar {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    text-align: left;
   }
 }

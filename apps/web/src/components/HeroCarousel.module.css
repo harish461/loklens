@@ -1,79 +1,419 @@
 .root {
   position: relative;
   min-width: 0;
-  border-radius: var(--radius-card);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0b1120;
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, 0.14),
+    0 2px 6px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.1);
 }
 
 .root:focus-visible {
-  outline: 3px solid var(--color-ink);
-  outline-offset: 4px;
+  outline: 3px solid var(--color-brand);
+  outline-offset: 3px;
 }
 
-/* All slides share one grid cell: the box is as tall as the tallest slide, so switching never shifts layout. */
+/* =========================================================
+   Main Hero Stage
+   ========================================================= */
+
+.stage {
+  position: relative;
+  width: 100%;
+  background: #090e1a;
+}
+
 .viewport {
   display: grid;
 }
 
 .slide {
   grid-area: 1 / 1;
+  position: relative;
   visibility: hidden;
   opacity: 0;
-  transition: opacity 300ms ease, visibility 300ms ease;
+  transition: opacity 380ms cubic-bezier(0.22, 1, 0.36, 1), visibility 380ms ease;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .active {
   visibility: visible;
   opacity: 1;
+  z-index: 1;
 }
 
-/*
- * Arrows sit on the image, vertically centred. The overlay box is exactly the image box: 16:9 on phones
- * (the image is full width), and the same fixed height as the image on desktop.
- */
-.arrows {
+.mediaLink {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background: #060a13;
+}
+
+/* On mobile: full 16:9 image with zero text covering the photo */
+.mediaLink img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.65s ease;
+}
+
+.active .mediaLink:hover img {
+  transform: scale(1.02);
+}
+
+/* Only a light top vignette for the top badge/controls — photo remains 100% clear & visible */
+.imageScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 10, 19, 0.52) 0%,
+    rgba(6, 10, 19, 0.12) 24%,
+    rgba(6, 10, 19, 0) 45%
+  );
+  pointer-events: none;
+}
+
+/* Top Bar: Category Badge (Left) + Slide Counter & Prev/Next (Right) */
+.topBar {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  aspect-ratio: 16 / 9;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-inline: var(--space-2);
+  gap: 8px;
+  z-index: 3;
   pointer-events: none;
-  z-index: 2;
 }
 
-.arrow {
+.kickerBadges {
   pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 11px;
+  border-radius: 999px;
+  background: var(--color-logo-red, #c41d17);
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 17px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.categoryBadge:hover {
+  background: var(--color-logo-red-dark, #9e1611);
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.topControls {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.counterPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(11, 17, 32, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.navBtns {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.navBtn {
   display: grid;
   place-items: center;
-  width: var(--touch);
-  height: var(--touch);
+  width: 30px;
+  height: 30px;
   padding: 0;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: #fff;
-  color: var(--color-ink);
-  box-shadow: 0 2px 8px rgba(22, 24, 29, 0.22);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(11, 17, 32, 0.76);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.arrow:hover {
-  color: var(--color-brand);
+.navBtn:hover {
+  background: var(--color-logo-red, #c41d17);
+  border-color: var(--color-logo-red, #c41d17);
+  transform: scale(1.06);
 }
 
-.arrow:focus-visible {
-  outline: 3px solid var(--color-ink);
-  outline-offset: 2px;
+/* =========================================================
+   Editorial Caption Panel — Docked BELOW the Image
+   Compact 1-Line Ellipsis Heading + Date at Top-Right
+   ========================================================= */
+
+.captionOverlay {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, #0d1527 0%, #0b1120 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 14px 10px;
 }
 
-/* Without JavaScript the arrows do nothing, so they are hidden (the first slide still shows). */
-@media (scripting: none) {
-  .arrows {
-    display: none;
-  }
+.captionBox {
+  border-left: 3.5px solid var(--color-logo-red, #c41d17);
+  padding-left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.dateTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.timestamp {
+  font-size: 11.5px;
+  line-height: 16px;
+  font-weight: 500;
+  color: rgba(203, 213, 225, 0.88);
+  white-space: nowrap;
+}
+
+.headline {
+  margin: 0;
+  font-size: 17.5px;
+  line-height: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  min-width: 0;
+}
+
+.headlineLink {
+  display: block;
+  width: 100%;
+  color: #ffffff;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.18s ease;
+}
+
+.headlineLink:hover {
+  color: #ffd54f;
+  text-decoration: none;
+}
+
+/* =========================================================
+   Bottom Thumbnail Slider Strip (Up to 10 Latest News)
+   ========================================================= */
+
+.thumbDock {
+  background: #111827;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.thumbHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.thumbSectionLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: 0.02em;
+}
+
+.thumbDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-logo-red, #c41d17);
+  box-shadow: 0 0 0 3px rgba(196, 29, 23, 0.28);
+}
+
+.thumbScrollBtns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.thumbArrow {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.thumbArrow:hover {
+  background: var(--color-logo-red, #c41d17);
+  border-color: var(--color-logo-red, #c41d17);
+}
+
+.thumbStrip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.24) transparent;
+  padding-bottom: 4px;
+}
+
+.thumbStrip::-webkit-scrollbar {
+  height: 4px;
+}
+
+.thumbStrip::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+}
+
+.thumbStrip::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+}
+
+.thumbCard {
+  scroll-snap-align: start;
+  flex: 0 0 198px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 41, 59, 0.65);
+  color: #cbd5e1;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.thumbCard:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+}
+
+.thumbCardActive {
+  background: linear-gradient(135deg, rgba(196, 29, 23, 0.24) 0%, rgba(12, 84, 141, 0.34) 100%);
+  border-color: var(--color-logo-red, #c41d17);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(196, 29, 23, 0.25);
+}
+
+.thumbMedia {
+  position: relative;
+  flex: none;
+  width: 64px;
+  height: 46px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.thumbMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbIndex {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(11, 17, 32, 0.85);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.thumbCardActive .thumbIndex {
+  background: var(--color-logo-red, #c41d17);
+}
+
+.thumbText {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.thumbCat {
+  font-size: 10px;
+  font-weight: 700;
+  color: #f87171;
+  line-height: 13px;
+}
+
+.thumbTitle {
+  font-size: 11.5px;
+  line-height: 16px;
+  font-weight: 600;
+  color: inherit;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -82,61 +422,68 @@
   }
 }
 
-/* Desktop: keep the whole slide (image, headline, summary, meta) inside the first screen. The image
-   height scales with the viewport and is capped; object-fit: cover keeps it framed. */
-@media (min-width: 1024px) {
-  .root {
-    --media-h: clamp(200px, 34vh, 340px);
+@media (min-width: 768px) {
+  .topBar {
+    padding: 14px 18px;
   }
 
-  .root .slide img {
-    aspect-ratio: auto;
-    height: var(--media-h);
+  .categoryBadge {
+    font-size: 13px;
+    padding: 4px 13px;
   }
 
-  .arrows {
-    aspect-ratio: auto;
-    height: var(--media-h);
+  .counterPill {
+    font-size: 12px;
+    padding: 4px 11px;
+  }
+
+  .navBtn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .captionOverlay {
+    padding: 10px 18px 12px;
+  }
+
+  .captionBox {
+    border-left-width: 4px;
+    padding-left: 14px;
+  }
+
+  .headline {
+    font-size: 20px;
+    line-height: 30px;
+  }
+
+  .thumbDock {
+    padding: 12px 16px 14px;
+  }
+
+  .thumbCard {
+    flex: 0 0 215px;
+    padding: 7px 9px;
+  }
+
+  .thumbMedia {
+    width: 68px;
+    height: 48px;
+  }
+
+  .thumbTitle {
+    font-size: 12px;
+    line-height: 16.5px;
   }
 }
 
-/* Desktop hero: the headline, summary and meta sit on a dark gradient over the image (fits 1280×720). */
 @media (min-width: 1024px) {
-  .root {
-    --media-h: clamp(320px, 70vh, 600px);
+  .mediaLink img {
+    aspect-ratio: auto;
+    height: clamp(320px, 46vh, 430px);
   }
 
-  .root .slide article > div:last-child {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 64px 28px 22px;
-    border-radius: 0 0 var(--radius-card) var(--radius-card);
-    background: linear-gradient(to top, rgb(22 24 29 / 0.94) 0%, rgb(22 24 29 / 0.62) 60%, rgb(22 24 29 / 0) 100%);
-  }
-
-  .root .slide article h2 {
-    color: #fff;
-    font-size: 30px;
-    line-height: 38px;
-  }
-
-  .root .slide article p {
-    color: rgb(255 255 255 / 0.92);
-  }
-
-  .root .slide article time {
-    color: rgb(255 255 255 / 0.85);
-  }
-
-  .root .slide article > div:last-child > div:first-child a {
-    padding: 3px 12px;
-    border-radius: 6px;
-    background: var(--color-logo-red, #c41d17);
-    color: #fff;
-    font-size: 13.5px;
-    line-height: 20px;
-    font-weight: 600;
+  .headline {
+    font-size: 20px;
+    line-height: 30px;
   }
 }

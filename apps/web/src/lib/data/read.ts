@@ -334,7 +334,7 @@ export const getHome = cache(async (): Promise<Home> =>
 
     const breaking = await cards({ and: [PUBLISHED, activeBreaking(ctx.now)] }, 5)
     const featured = await cards({ and: [PUBLISHED, { isFeatured: { equals: true } }] }, 6)
-    const latest = await cards(PUBLISHED, 12)
+    const latest = await cards(PUBLISHED, 16)
 
     const navCategories = await db.find({
       collection: 'categories',

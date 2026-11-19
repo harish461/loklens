@@ -23,7 +23,9 @@ export function Header({ settings, categories, ticker }: Props) {
   ]
   const menuLinks = [
     ...siteInfoLinks,
-    ...settings.navigation.footer.flatMap((g) => g.items).filter((i) => i.url !== '/about' && i.url !== '/contact'),
+    ...settings.navigation.footer
+      .flatMap((g) => g.items)
+      .filter((i) => i.url !== '/about' && i.url !== '/contact' && !i.url.startsWith('/e-paper')),
   ]
   return (
     <>
