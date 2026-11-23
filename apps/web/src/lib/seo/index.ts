@@ -5,6 +5,15 @@ import { DEFAULT_CATEGORY_SEO, getGlobalSeoSettings, type GlobalSeoSettings } fr
 
 const FALLBACK_PROD_ORIGIN = 'https://loklensnews.com'
 
+/** Google AdSense publisher ID (public). Rendered as <meta name="google-adsense-account"> for site review. */
+export const ADSENSE_ACCOUNT = 'ca-pub-9239295127209472'
+
+/**
+ * Site-wide `other` meta tags. Next.js replaces (does not merge) a parent's `other` when a page sets its
+ * own, so pages that add `other` tags must spread this in to keep the AdSense tag.
+ */
+export const SITE_OTHER_META = { 'google-adsense-account': ADSENSE_ACCOUNT } as const
+
 export function getSiteOrigin(): string {
   const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, '')
   return raw || FALLBACK_PROD_ORIGIN
@@ -128,6 +137,7 @@ export async function buildRootMetadata(settings: SiteSettings): Promise<Metadat
       images: [defaultOg.url],
     },
     robots: resolveRobots(false),
+    other: { ...SITE_OTHER_META },
     ...(seo.googleSiteVerification
       ? {
           verification: {
@@ -277,6 +287,7 @@ export async function buildArticleMetadata(
     },
     robots: resolveRobots(article.seo.noindex),
     other: {
+      ...SITE_OTHER_META,
       'article:published_time': article.publishedAt,
       'article:modified_time': article.updatedAt,
       'article:section': article.category.name,
