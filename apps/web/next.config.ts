@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
   // Allow LAN IP and localhost origins during development so /_next/static/* and /_next/webpack-hmr
   // are not blocked with 403 Forbidden when accessing http://192.168.1.15:3000/admin.
   allowedDevOrigins: ['192.168.1.15', '192.168.1.*', '127.0.0.1', 'localhost'],
+  experimental: {
+    // Next.js starts (CPU cores - 1) build workers. Hostinger's build host reports 62 cores, and 61 workers that
+    // each load Payload + sharp exhaust the account's memory ("build worker exited ... SIGABRT"). Cap it.
+    cpus: 4,
+  },
   // Image delivery (custom loader over pre-generated sizes, architecture §5) is set up with the frontend.
   images: {
     localPatterns: [{ pathname: '/api/media/file/**' }],
