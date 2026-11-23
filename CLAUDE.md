@@ -53,8 +53,9 @@ docs/            Audit, architecture, API contract, decisions
 
 ## Priority
 
-**Website first.** Do not build mobile-app features (`/api/v1` HTTP routes, push notifications, Expo) until
-Phase 6. Keep the web data helpers contract-shaped so the app can reuse them later.
+**Website first.** Phase 6 started 2026-11-23 (user-approved) with the read-only `/api/v1` HTTP routes.
+Push notifications and the Expo app still need the user's approval before they are built. Keep the web
+data helpers contract-shaped so the app and website share them.
 
 ## Phases
 

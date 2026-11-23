@@ -11,7 +11,8 @@ mobile (see `CLAUDE.md`). Change this file first, then the code. Breaking change
 - **Public consumers use the v1 shapes below:**
   - **Web** calls the typed helpers in `apps/web/src/lib/data/*` (server-side, Payload local API, no HTTP).
   - **Mobile** calls `GET /api/v1/*`, which returns exactly the same shapes from the same helpers.
-    **Deferred to Phase 6** (decision 2026-11-09: website first) — until then only the web helpers are built.
+    **Implemented 2026-11-23 (Phase 6 start)** in `apps/web/src/app/api/v1/*` as thin GET wrappers around the
+    web helpers.
 - Helpers always query with `overrideAccess: false, draft: false` → **published content only**.
   Draft preview uses separate helpers that are only reachable in Next `draftMode`.
 - Dates: stored UTC, **serialised as ISO 8601 with IST offset** (`2026-11-09T15:30:00+05:30`) by one shared
@@ -183,6 +184,14 @@ interface NavItem { label: string; url: string }
 `Cache-Control: public, s-maxage=60, stale-while-revalidate=300` on v1 GETs; search `s-maxage=30`.
 Publishing purges affected URLs (architecture §4). CORS: v1 GETs allow any origin (read-only, public data).
 
+HTTP details (v1 draft 6):
+- Only `GET` and `OPTIONS` (CORS preflight, 204) are served; any other method → 405. v1 never writes.
+- CORS headers on every v1 response: `Access-Control-Allow-Origin: *`, `Access-Control-Allow-Methods: GET, OPTIONS`.
+- Error responses (400/404/500) are `Cache-Control: no-store`; a 500 never includes internal details.
+- Unknown `/api/v1/*` paths and article ids that are not positive integers → 404 `NOT_FOUND`.
+- Numeric query values (`page`, `pageSize`) that are not integers in range → 400. Unknown query parameters are ignored.
+- The `cursor` parameter switches `GET /api/v1/articles` to cursor mode even when empty (`?cursor=`).
+
 ## 4. Article URL resolution (web)
 
 `/{category}/{slug}-{id}` → parse trailing `-{id}` → `getArticle(id)`:
@@ -218,4 +227,5 @@ skipped, never crash the renderer.
 | v1 draft 2 | 2026-11-09 | QA fixes: published-only enforcement, IST serializer, fallback images, cursor pagination, byline rule, sanitising, extra web helpers, Cloudflare rate limits, deferred locations/devices |
 | v1 draft 3 | 2026-11-09 | No content migration: legacy URLs return 410 unless an editor adds a Redirect |
 | v1 draft 4 | 2026-11-09 | Backend implementation (`apps/web/src/lib/data`), decisions made while implementing: invalid query values (page, pageSize, cursor, flag, q, hours, slugs) throw `BadRequestError` (map with `toApiError` → 400); an unknown category/tag/author filter returns an empty list, while single-item helpers return `null`; `search` is not cached (architecture §4); other helpers use `unstable_cache` with the architecture tags plus `settings` on article reads and a 300 s safety net; `sections` lists every `showInNav` category, empty ones included; `latest` is not filtered by `featured`; `listSitemapEntries` URLs, `EPaper.pdfUrl` and `Image.url` are absolute when `NEXT_PUBLIC_SITE_URL` is set; a video without its own thumbnail gets the YouTube `hqdefault` image with `isFallback: false`; raw REST `GET /api/users` never returns `email`, `role`, or session data to anonymous clients |
+| v1 draft 6 | 2026-11-23 | Phase 6 start: the §2 mobile HTTP endpoints are implemented in `apps/web/src/app/api/v1/*` with the §3 status codes and Cache-Control values, plus the §3 "HTTP details" (GET/OPTIONS only, CORS for any origin, `no-store` errors, 404 for unknown v1 paths). No shape changes. Push/devices still deferred. |
 | v1 draft 5 | 2026-11-12 | Reporter workspace (architecture §8): new internal fields that the v1 shapes and public helpers do **not** expose — articles `workflowStatus`, `reviewNote`, `submittedAt`, `reviewedAt`, `reviewedBy`, `featureRequested`, `everPublished`, `articleType`, `language` (stored only; the site stays Hindi), `seo.focusKeyword`; users `isActive`, `canPublish`, `assignedCategories`, `mobile`, `designation`; media `caption`. Raw REST never returns the user admin fields or article review fields to anonymous clients. `/reporter` uses server-side helpers in `src/lib/reporter` (session-checked, never cached) — not part of the public contract. |
