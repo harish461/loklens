@@ -14,6 +14,8 @@ import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
 import { ScreenBackground } from '@/components/ScreenBackground'
 import { SITE_URL } from '@/lib/api/client'
 import { useSettings } from '@/lib/api/queries'
+import { logout } from '@/lib/auth/client'
+import { useSession } from '@/lib/auth/session'
 import { persister, queryClient } from '@/lib/queryClient'
 import { colors, fonts, radius, spacing, type, useTheme } from '@/theme'
 
@@ -74,6 +76,35 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   )
 }
 
+/** Account block: sign in / register when signed out; name, email and sign-out when signed in. */
+function AccountCard() {
+  const t = useTheme()
+  const { user, token } = useSession()
+  if (!token || !user) {
+    return (
+      <View style={[styles.group, { backgroundColor: t.surface, padding: spacing.lg, marginBottom: spacing.lg }]}>
+        <Text style={[type.title, { color: t.text }]}>अपना खाता</Text>
+        <Text style={[type.meta, { color: t.muted, marginTop: spacing.xs, marginBottom: spacing.lg }]}>बुकमार्क और पसंद अपने खाते में रखें।</Text>
+        <Pressable onPress={() => router.push('/sign-in')} style={[styles.accountBtn, { backgroundColor: t.pill }]} accessibilityRole="button">
+          <Text style={[styles.accountBtnText, { color: t.pillText }]}>साइन इन करें</Text>
+        </Pressable>
+        <Pressable onPress={() => router.push('/register')} style={styles.accountLink} accessibilityRole="link">
+          <Text style={styles.accountLinkText}>नया खाता बनाएं</Text>
+        </Pressable>
+      </View>
+    )
+  }
+  return (
+    <View style={[styles.group, { backgroundColor: t.surface, padding: spacing.lg, marginBottom: spacing.lg }]}>
+      <Text style={[type.title, { color: t.text }]}>{user.name}</Text>
+      <Text style={[type.meta, { color: t.muted, marginTop: spacing.xs, marginBottom: spacing.lg }]}>{user.email}</Text>
+      <Pressable onPress={() => logout()} style={[styles.accountBtn, { backgroundColor: t.raised }]} accessibilityRole="button">
+        <Text style={[styles.accountBtnText, { color: t.text }]}>लॉग आउट</Text>
+      </Pressable>
+    </View>
+  )
+}
+
 export default function ProfileScreen() {
   const t = useTheme()
   const { data: settings } = useSettings()
@@ -96,6 +127,7 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.screen} edges={['top']}>
       <ScreenBackground />
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: TAB_BAR_SPACE }}>
+        <AccountCard />
         <View style={styles.card}>
           <Image source={LOGO} style={styles.logo} contentFit="cover" />
           <Text style={[type.display, { textAlign: 'center' }]}>{settings?.name ?? 'लोक Lens न्यूज़'}</Text>
@@ -135,6 +167,10 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+  accountBtn: { borderRadius: radius.pill, paddingVertical: 12, alignItems: 'center' },
+  accountBtnText: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 23 },
+  accountLink: { alignItems: 'center', paddingVertical: spacing.md },
+  accountLinkText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 22, color: colors.primary },
   screen: { flex: 1 },
   card: { alignItems: 'center', gap: spacing.xs, backgroundColor: '#FFF1C1', borderRadius: radius.xl, padding: spacing.xl },
   logo: { width: 72, height: 72, borderRadius: 36, marginBottom: spacing.sm },

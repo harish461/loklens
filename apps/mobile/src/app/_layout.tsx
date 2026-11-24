@@ -12,6 +12,8 @@ import { useEffect, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { PERSIST_MAX_AGE, persister, queryClient } from '@/lib/queryClient'
+import { refreshMe } from '@/lib/auth/client'
+import { loadSession, useSession } from '@/lib/auth/session'
 import { loadThemeMode, useTheme } from '@/theme'
 
 SplashScreen.preventAutoHideAsync().catch(() => {})
@@ -24,6 +26,7 @@ export default function RootLayout() {
     Poppins_700Bold_Italic,
   })
   const [themeLoaded, setThemeLoaded] = useState(false)
+  const session = useSession()
   const t = useTheme()
 
   // Read the saved light/dark choice before the first frame, so the app never flashes the wrong theme.
@@ -31,7 +34,12 @@ export default function RootLayout() {
     loadThemeMode().finally(() => setThemeLoaded(true))
   }, [])
 
-  const ready = (fontsLoaded || Boolean(fontError)) && themeLoaded
+  // Restore the saved customer session, then refresh the user in the background (offline keeps the cache).
+  useEffect(() => {
+    loadSession().then(() => refreshMe())
+  }, [])
+
+  const ready = (fontsLoaded || Boolean(fontError)) && themeLoaded && session.loaded
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync().catch(() => {})
