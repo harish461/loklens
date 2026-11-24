@@ -100,29 +100,4 @@ export function randomPassword(): string {
   return randomBytes(32).toString('base64url')
 }
 
-export interface GoogleClaims {
-  sub: string
-  email: string
-  name: string
-}
-
-/**
- * Verifies a Google ID token with Google's tokeninfo endpoint and checks the audience against the
- * configured client IDs (GOOGLE_CLIENT_IDS, comma-separated: Android, iOS and web clients).
- */
-export async function verifyGoogleIdToken(idToken: string): Promise<GoogleClaims> {
-  const allowed = (process.env.GOOGLE_CLIENT_IDS ?? '').split(',').map((s) => s.trim()).filter(Boolean)
-  if (allowed.length === 0) throw new AuthApiError(500, 'SERVER_ERROR', 'Google sign-in is not configured.')
-  const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`, {
-    signal: AbortSignal.timeout(8000),
-  }).catch(() => null)
-  if (!res || !res.ok) throw new AuthApiError(401, 'UNAUTHORIZED', 'Google sign-in could not be verified.')
-  const claims = (await res.json()) as { aud?: string; sub?: string; email?: string; email_verified?: string | boolean; name?: string }
-  if (!claims.aud || !allowed.includes(claims.aud)) throw new AuthApiError(401, 'UNAUTHORIZED', 'Google sign-in could not be verified.')
-  if (!claims.sub || !claims.email || String(claims.email_verified) !== 'true') {
-    throw new AuthApiError(401, 'UNAUTHORIZED', 'Google sign-in needs a verified Google email.')
-  }
-  return { sub: claims.sub, email: claims.email.toLowerCase(), name: claims.name?.trim() || claims.email.split('@')[0] }
-}
-
 export { type Payload }
