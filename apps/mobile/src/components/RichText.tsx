@@ -7,6 +7,7 @@
  * linebreak, tab, link/autolink.
  * Unknown nodes never crash: unknown inline nodes render their children's text; unknown blocks render
  * their children or are skipped, and each block sits behind an error boundary.
+ * Text and surface colours follow the light/dark theme (article pages are black or white).
  */
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image as ExpoImage } from 'expo-image'
@@ -15,7 +16,7 @@ import { Pressable, StyleSheet, Text, View, type TextStyle } from 'react-native'
 
 import type { ArticleCard, Image, RichTextNode } from '@/lib/api/types'
 import { openLink } from '@/lib/links'
-import { colors, fonts, radius, spacing, type } from '@/theme'
+import { colors, fonts, radius, spacing, type, useTheme } from '@/theme'
 
 import { StoryRow } from './ArticleCards'
 import { NewsImage } from './NewsImage'
@@ -99,11 +100,12 @@ function Inline({ nodes }: { nodes: RichTextNode[] }) {
   )
 }
 
-function Paragraph({ node, style }: { node: RichTextNode; style?: TextStyle }) {
+function Paragraph({ node, style, heading = false }: { node: RichTextNode; style?: TextStyle; heading?: boolean }) {
+  const t = useTheme()
   const kids = children(node)
   if (kids.length === 0) return null // empty paragraph = spacing only
   return (
-    <Text style={[type.body, styles.block, { textAlign: alignOf(node) }, style]} selectable>
+    <Text style={[type.body, styles.block, { textAlign: alignOf(node), color: t.body }, style, heading && { color: t.text }]} selectable>
       <Inline nodes={kids} />
     </Text>
   )
@@ -119,6 +121,7 @@ const HEADING: Record<string, TextStyle> = {
 }
 
 function List({ node, depth }: { node: RichTextNode; depth: number }) {
+  const t = useTheme()
   const listType = node.listType ?? (node.tag === 'ol' ? 'number' : 'bullet')
   const start = typeof node.start === 'number' ? node.start : 1
   let n = start - 1
@@ -137,7 +140,7 @@ function List({ node, depth }: { node: RichTextNode; depth: number }) {
           <View key={i}>
             <View style={styles.listRow}>
               <Text style={[type.body, styles.marker]}>{marker}</Text>
-              <Text style={[type.body, { flex: 1 }]} selectable>
+              <Text style={[type.body, { flex: 1, color: t.body }]} selectable>
                 <Inline nodes={content.filter(isInline)} />
               </Text>
             </View>
@@ -152,12 +155,13 @@ function List({ node, depth }: { node: RichTextNode; depth: number }) {
 }
 
 function Upload({ image }: { image: Image }) {
+  const t = useTheme()
   const ratio = image.width > 0 && image.height > 0 ? image.width / image.height : 16 / 9
   return (
     <View style={styles.block}>
       <NewsImage image={image} size="article" style={[styles.upload, { aspectRatio: ratio }]} />
       {(image.caption || image.credit) && (
-        <Text style={[type.meta, styles.caption]}>
+        <Text style={[type.meta, styles.caption, { color: t.muted }]}>
           {image.caption}
           {image.caption && image.credit ? ' · ' : ''}
           {image.credit ? `फ़ोटो: ${image.credit}` : ''}
@@ -186,10 +190,11 @@ function youtubeId(url: string): string | null {
 
 /** Social/video embed as a tap-to-open card (no third-party scripts, no WebView). */
 function Embed({ provider, url }: { provider: string; url: string }) {
+  const t = useTheme()
   const p = PROVIDERS[provider] ?? { label: 'लिंक खोलें', icon: 'open-outline' as const, color: colors.ink }
   const yt = provider === 'youtube' ? youtubeId(url) : null
   return (
-    <Pressable onPress={() => openLink(url)} style={[styles.block, styles.embed]} accessibilityRole="link" accessibilityLabel={p.label}>
+    <Pressable onPress={() => openLink(url)} style={[styles.block, styles.embed, { borderColor: t.border, backgroundColor: t.surface }]} accessibilityRole="link" accessibilityLabel={p.label}>
       {yt ? (
         <View>
           <ExpoImage source={{ uri: `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` }} style={styles.embedThumb} contentFit="cover" />
@@ -200,29 +205,30 @@ function Embed({ provider, url }: { provider: string; url: string }) {
       ) : null}
       <View style={styles.embedBar}>
         <Ionicons name={p.icon} size={20} color={p.color} />
-        <Text style={[type.label, { flex: 1 }]} numberOfLines={1}>
+        <Text style={[type.label, { flex: 1, color: t.text }]} numberOfLines={1}>
           {p.label}
         </Text>
-        <Ionicons name="open-outline" size={16} color={colors.muted} />
+        <Ionicons name="open-outline" size={16} color={t.muted} />
       </View>
     </Pressable>
   )
 }
 
 function Block({ node, depth = 0 }: { node: RichTextNode; depth?: number }) {
+  const t = useTheme()
   switch (node.type) {
     case 'paragraph':
       return <Paragraph node={node} />
     case 'heading': {
       const tag = typeof node.tag === 'string' ? node.tag : 'h2'
-      return <Paragraph node={node} style={{ ...(HEADING[tag] ?? HEADING.h2), marginTop: spacing.sm }} />
+      return <Paragraph heading node={node} style={{ ...(HEADING[tag] ?? HEADING.h2), marginTop: spacing.sm }} />
     }
     case 'list':
       return <List node={node} depth={depth} />
     case 'quote':
       return (
-        <View style={[styles.block, styles.quote]}>
-          <Text style={[type.body, styles.quoteText]} selectable>
+        <View style={[styles.block, styles.quote, { backgroundColor: t.surface }]}>
+          <Text style={[type.body, styles.quoteText, { color: t.text }]} selectable>
             <Inline nodes={children(node).filter(isInline)} />
           </Text>
         </View>
@@ -232,14 +238,14 @@ function Block({ node, depth = 0 }: { node: RichTextNode; depth?: number }) {
       return image && typeof image.url === 'string' ? <Upload image={image} /> : null
     }
     case 'horizontalrule':
-      return <View style={[styles.block, styles.rule]} />
+      return <View style={[styles.block, styles.rule, { backgroundColor: t.border }]} />
     case 'block': {
       const fields = (node.fields ?? {}) as { blockType?: string; provider?: string; url?: string; article?: ArticleCard }
       if (fields.blockType === 'embed' && typeof fields.url === 'string') return <Embed provider={fields.provider ?? ''} url={fields.url} />
       if (fields.blockType === 'relatedArticle' && fields.article?.id) {
         return (
           <View style={styles.block}>
-            <Text style={[type.meta, { marginBottom: spacing.xs }]}>यह भी पढ़ें</Text>
+            <Text style={[type.meta, { marginBottom: spacing.xs, color: t.muted }]}>यह भी पढ़ें</Text>
             <StoryRow article={fields.article} />
           </View>
         )

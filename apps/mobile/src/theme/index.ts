@@ -74,3 +74,5 @@ export const shadow = Platform.select({
   android: { elevation: 4 },
   default: { boxShadow: '0 4px 14px rgba(15,23,32,0.12)' } as object,
 })
+
+export { palettes, setThemeMode, toggleThemeMode, useTheme, useThemeMode, loadThemeMode, type Palette, type ThemeMode } from './mode'

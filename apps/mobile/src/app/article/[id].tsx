@@ -1,58 +1,35 @@
 /**
- * Article details: category, headline, byline + date, featured image, summary, full body (native
- * Lexical renderer), tags, related stories; bookmark and share in the top bar; pull-to-refresh.
+ * Article details: black page in the dark theme, white in the light theme (story cards stay pastel). Round back button,
+ * big headline, "अपडेट" time, publisher row with dark category pill, summary, rounded featured image with
+ * round bookmark/share buttons on it, then the full body (native Lexical renderer), tags and related
+ * stories. Pull-to-refresh.
  */
-import { Image } from 'expo-image'
-import { router, useLocalSearchParams } from 'expo-router'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { router, useIsFocused, useLocalSearchParams } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 import { useState } from 'react'
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { StoryRow } from '@/components/ArticleCards'
+import { PublisherRow, RoundAction, StoryBadge, StoryRow } from '@/components/ArticleCards'
 import { NewsImage } from '@/components/NewsImage'
 import { RichText } from '@/components/RichText'
 import { EmptyState, ErrorState, HomeSkeleton } from '@/components/States'
-import { IconButton, TopBar } from '@/components/TopBar'
+import { goBack, TopBar } from '@/components/TopBar'
 import { ApiError } from '@/lib/api/client'
 import { useArticle } from '@/lib/api/queries'
 import type { Article } from '@/lib/api/types'
 import { toggleBookmark, useIsBookmarked } from '@/lib/bookmarks'
-import { formatDateTime } from '@/lib/format'
+import { formatDateTime, timeAgo } from '@/lib/format'
 import { shareArticle } from '@/lib/share'
-import { colors, fonts, pastelFor, radius, spacing, type } from '@/theme'
+import { colors, fonts, radius, spacing, type, useTheme } from '@/theme'
 
-const LOGO = require('../../../assets/brand/logo-144.webp')
-
-function Actions({ article }: { article: Article }) {
+function ImageActions({ article }: { article: Article }) {
   const saved = useIsBookmarked(article.id)
   return (
-    <>
-      <IconButton icon={saved ? 'bookmark' : 'bookmark-outline'} label={saved ? 'बुकमार्क हटाएं' : 'बुकमार्क करें'} active={saved} onPress={() => toggleBookmark(article)} />
-      <IconButton icon="share-social-outline" label="शेयर करें" onPress={() => shareArticle(article)} />
-    </>
-  )
-}
-
-function Byline({ article }: { article: Article }) {
-  const first = article.authors[0]
-  const names = article.authors.map((a) => a.name).join(', ')
-  const updated = article.updatedAt && article.updatedAt !== article.publishedAt
-  return (
-    <View style={styles.byline}>
-      {first?.photo ? (
-        <Image source={{ uri: first.photo.sizes.thumb?.url ?? first.photo.url }} style={styles.avatar} contentFit="cover" />
-      ) : (
-        <Image source={LOGO} style={styles.avatar} contentFit="cover" />
-      )}
-      <View style={{ flex: 1 }}>
-        <Text style={styles.author} numberOfLines={1}>
-          {names || 'LokLens News Team'}
-        </Text>
-        <Text style={type.meta}>
-          {formatDateTime(article.publishedAt)}
-          {updated ? ` · अपडेट ${formatDateTime(article.updatedAt)}` : ''}
-        </Text>
-      </View>
+    <View style={styles.imageActions}>
+      <RoundAction icon={saved ? 'bookmark' : 'bookmark-outline'} label={saved ? 'बुकमार्क हटाएं' : 'बुकमार्क करें'} active={saved} onPress={() => toggleBookmark(article)} />
+      <RoundAction icon="arrow-redo-outline" label="शेयर करें" onPress={() => shareArticle(article)} />
     </View>
   )
 }
@@ -60,6 +37,8 @@ function Byline({ article }: { article: Article }) {
 export default function ArticleScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const query = useArticle(Number(id))
+  const focused = useIsFocused()
+  const t = useTheme()
   const [refreshing, setRefreshing] = useState(false)
   const article = query.data
 
@@ -72,7 +51,8 @@ export default function ArticleScreen() {
   if (!article) {
     const notFound = query.error instanceof ApiError && query.error.isNotFound
     return (
-      <SafeAreaView style={styles.screen} edges={['top']}>
+      <SafeAreaView style={[styles.screen, { backgroundColor: t.page }]} edges={['top']}>
+        {focused && <StatusBar style={t.statusBar} />}
         <TopBar />
         {query.isPending ? (
           <HomeSkeleton />
@@ -85,62 +65,68 @@ export default function ArticleScreen() {
     )
   }
 
+  const authorName = article.authors.map((a) => a.name).join(', ') || 'LokLens News Team'
+
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
-      <TopBar right={<Actions article={article} />} />
+    <SafeAreaView style={[styles.screen, { backgroundColor: t.page }]} edges={['top']}>
+      {focused && <StatusBar style={t.statusBar} />}
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} colors={[colors.primary]} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={t.text} colors={[colors.primary]} />}
       >
-        <View style={styles.badges}>
-          {article.isBreaking && (
-            <View style={[styles.badge, { backgroundColor: colors.live }]}>
-              <Text style={[styles.badgeText, { color: colors.white }]}>LIVE</Text>
-            </View>
-          )}
-          <Pressable
-            onPress={() => router.push({ pathname: '/category/[slug]', params: { slug: article.category.slug } })}
-            style={[styles.badge, { backgroundColor: pastelFor(article.category.id) }]}
-            accessibilityRole="link"
-          >
-            <Text style={styles.badgeText}>{article.category.name}</Text>
-          </Pressable>
-          {article.location && <Text style={type.meta}>{article.location.name}</Text>}
-        </View>
+        <Pressable onPress={goBack} hitSlop={10} style={[styles.back, { backgroundColor: t.surface }]} accessibilityRole="button" accessibilityLabel="वापस">
+          <Ionicons name="arrow-back" size={22} color={t.text} />
+        </Pressable>
 
-        <Text style={[type.display, styles.headline]} selectable>
+        {(article.isBreaking || article.location) && (
+          <View style={styles.badges}>
+            {article.isBreaking && <StoryBadge article={article} />}
+            {article.location && <Text style={[type.meta, { color: t.muted }]}>{article.location.name}</Text>}
+          </View>
+        )}
+
+        <Text style={[styles.headline, { color: t.text }]} selectable>
           {article.title}
         </Text>
-        <Byline article={article} />
+        <Text style={[type.meta, { marginTop: spacing.sm, color: t.muted }]}>
+          अपडेट {timeAgo(article.updatedAt || article.publishedAt)} · {formatDateTime(article.publishedAt)}
+        </Text>
 
-        <NewsImage image={article.image} size="article" style={styles.hero} priority="high" />
+        <PublisherRow article={article} name={authorName} onPage />
+
+        <Text style={[styles.summary, { color: t.body }]} selectable>
+          {article.summary}
+        </Text>
+
+        <View style={styles.imageWrap}>
+          <NewsImage image={article.image} size="article" style={styles.image} priority="high" />
+          <ImageActions article={article} />
+        </View>
         {(article.image.caption || article.image.credit) && (
-          <Text style={[type.meta, styles.caption]}>
+          <Text style={[type.meta, { marginTop: spacing.xs, color: t.muted }]}>
             {article.image.caption}
             {article.image.caption && article.image.credit ? ' · ' : ''}
             {article.image.credit ? `फ़ोटो: ${article.image.credit}` : ''}
           </Text>
         )}
 
-        <Text style={styles.summary} selectable>
-          {article.summary}
-        </Text>
-
-        <RichText nodes={article.body} />
+        <View style={{ marginTop: spacing.xl }}>
+          <RichText nodes={article.body} />
+        </View>
 
         {article.tags.length > 0 && (
           <View style={styles.tags}>
-            {article.tags.map((t) => (
-              <Pressable key={t.id} onPress={() => router.push({ pathname: '/tag/[slug]', params: { slug: t.slug } })} style={styles.tag} accessibilityRole="link">
-                <Text style={styles.tagText}>#{t.name}</Text>
+            {article.tags.map((tag) => (
+              <Pressable key={tag.id} onPress={() => router.push({ pathname: '/tag/[slug]', params: { slug: tag.slug } })} style={[styles.tag, { backgroundColor: t.surface }]} accessibilityRole="link">
+                <Text style={[styles.tagText, { color: t.body }]}>#{tag.name}</Text>
               </Pressable>
             ))}
           </View>
         )}
 
         {article.related.length > 0 && (
-          <View style={styles.related}>
-            <Text style={[type.section, { marginBottom: spacing.md }]}>संबंधित खबरें</Text>
+          <View style={[styles.related, { borderTopColor: t.border }]}>
+            <Text style={[type.section, { color: t.text, marginBottom: spacing.md }]}>संबंधित खबरें</Text>
             <View style={{ gap: spacing.md }}>
               {article.related.map((r) => (
                 <StoryRow key={r.id} article={r} />
@@ -154,20 +140,17 @@ export default function ArticleScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
-  content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxxl * 2 },
-  badges: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
-  badge: { borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: 3 },
-  badgeText: { fontFamily: fonts.bold, fontSize: 12, lineHeight: 18, color: colors.ink },
-  headline: { marginTop: spacing.md },
-  byline: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.md },
-  avatar: { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.surface },
-  author: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 21, color: colors.ink },
-  hero: { width: '100%', aspectRatio: 16 / 9, borderRadius: radius.lg, marginTop: spacing.lg },
-  caption: { marginTop: spacing.xs },
-  summary: { fontFamily: fonts.semibold, fontSize: 17, lineHeight: 29, color: colors.ink, marginTop: spacing.lg, marginBottom: spacing.lg },
+  screen: { flex: 1 },
+  content: { paddingHorizontal: spacing.xl, paddingTop: spacing.sm, paddingBottom: spacing.xxxl * 2 },
+  back: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.lg },
+  badges: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm },
+  headline: { fontFamily: fonts.bold, fontSize: 28, lineHeight: 42 },
+  summary: { fontFamily: fonts.regular, fontSize: 16, lineHeight: 27, marginTop: spacing.lg },
+  imageWrap: { marginTop: spacing.xl, borderRadius: radius.lg, overflow: 'hidden' },
+  image: { width: '100%', aspectRatio: 4 / 3, borderRadius: radius.lg },
+  imageActions: { position: 'absolute', right: spacing.md, bottom: spacing.md, flexDirection: 'row', gap: spacing.sm },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.sm },
-  tag: { borderRadius: radius.pill, backgroundColor: colors.surface, paddingHorizontal: spacing.md, paddingVertical: 5 },
-  tagText: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 20, color: colors.text },
-  related: { marginTop: spacing.xxl, paddingTop: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border },
+  tag: { borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: 5 },
+  tagText: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 20 },
+  related: { marginTop: spacing.xxl, paddingTop: spacing.xl, borderTopWidth: 1 },
 })

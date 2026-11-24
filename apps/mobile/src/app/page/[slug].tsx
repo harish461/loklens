@@ -9,19 +9,20 @@ import { TopBar } from '@/components/TopBar'
 import { ApiError } from '@/lib/api/client'
 import { usePage } from '@/lib/api/queries'
 import { formatDate } from '@/lib/format'
-import { colors, spacing, type } from '@/theme'
+import { spacing, type, useTheme } from '@/theme'
 
 export default function PageScreen() {
+  const t = useTheme()
   const { slug } = useLocalSearchParams<{ slug: string }>()
   const page = usePage(slug)
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
       <TopBar />
       {page.data ? (
         <ScrollView contentContainerStyle={styles.content}>
-          <Text style={type.display}>{page.data.title}</Text>
-          <Text style={[type.meta, { marginTop: spacing.xs, marginBottom: spacing.xl }]}>अंतिम अपडेट: {formatDate(page.data.updatedAt)}</Text>
+          <Text style={[type.display, { color: t.text }]}>{page.data.title}</Text>
+          <Text style={[type.meta, { marginTop: spacing.xs, marginBottom: spacing.xl, color: t.muted }]}>अंतिम अपडेट: {formatDate(page.data.updatedAt)}</Text>
           <RichText nodes={page.data.body} />
         </ScrollView>
       ) : page.isPending ? (
@@ -36,6 +37,6 @@ export default function PageScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1 },
   content: { padding: spacing.lg, paddingBottom: spacing.xxxl * 2 },
 })

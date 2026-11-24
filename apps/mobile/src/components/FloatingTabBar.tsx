@@ -43,7 +43,7 @@ export function FloatingTabBar({ state, descriptors, navigateToTab }: TabBarProp
               accessibilityState={{ selected: focused }}
               accessibilityLabel={typeof options.title === 'string' ? options.title : route.name}
             >
-              <Ionicons name={focused ? icons.active : icons.icon} size={20} color={focused ? (route.name === 'shorts' ? '#FF0000' : colors.ink) : '#9A9DA6'} />
+              <Ionicons name={focused ? icons.active : icons.icon} size={20} color={focused ? (route.name === 'shorts' ? '#FF0000' : colors.ink) : colors.white} />
             </Pressable>
           )
         })}
@@ -52,16 +52,17 @@ export function FloatingTabBar({ state, descriptors, navigateToTab }: TabBarProp
   )
 }
 
+// Reference design: dark capsule; every tab is its own round button (dark grey), the active one white.
 const styles = StyleSheet.create({
   wrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center' },
   bar: {
     flexDirection: 'row',
-    gap: spacing.xs,
+    gap: spacing.sm,
     padding: 6,
     borderRadius: 999,
-    backgroundColor: colors.ink, // dark capsule on the light shell
+    backgroundColor: '#141416',
     ...shadow,
   },
-  button: { width: 50, height: 50, borderRadius: 25, alignItems: 'center', justifyContent: 'center' },
+  button: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: '#2C2C30' },
   buttonActive: { backgroundColor: colors.white },
 })

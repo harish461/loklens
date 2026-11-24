@@ -1,26 +1,29 @@
 /**
- * Home (dark shell, pastel story cards):
- * header → text category tabs → LIVE/ताज़ा strip → swipeable story deck → ताज़ा खबरें rows →
- * ट्रेंडिंग → category rails → infinite "सभी खबरें" feed (cursor pagination), pull-to-refresh.
- * Stories already shown above the feed are not repeated in it.
+ * Home (reference design; follows the light/dark theme): header → text category tabs → LIVE strip (only when there is
+ * breaking/ticker news) → stacked swipe deck of pastel story cards → ताज़ा खबरें → ट्रेंडिंग → category
+ * rails → infinite "सभी खबरें" feed (cursor pagination), pull-to-refresh. Stories shown above the feed
+ * are not repeated in it.
  */
-import { router } from 'expo-router'
+import { router, useIsFocused } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 import { useCallback, useMemo, useState } from 'react'
 import { FlatList, RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { DeckCard, MiniCard, RankedRow, StoryRow } from '@/components/ArticleCards'
+import { MiniCard, RankedRow, StoryRow } from '@/components/ArticleCards'
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
 import { AppHeader, CategoryTabs, NewsTicker, SectionHeader, type TickerItem } from '@/components/HomeParts'
 import { EmptyState, ErrorState, FooterLoader, HomeSkeleton, OfflineBanner } from '@/components/States'
+import { SwipeDeck } from '@/components/SwipeDeck'
 import { useArticleFeed, useCategories, useHome, useTrending } from '@/lib/api/queries'
 import type { ArticleCard, Home } from '@/lib/api/types'
-import { colors, spacing } from '@/theme'
+import { colors, spacing, useTheme } from '@/theme'
 
 const openArticleId = (id: number) => router.push({ pathname: '/article/[id]', params: { id: String(id) } })
 const idFromPath = (url: string) => Number(/-(\d+)\/?$/.exec(url)?.[1])
 
-function tickerFor(home: Home): { label: string; live: boolean; items: TickerItem[] } {
+/** Only real breaking news or editor ticker items get a strip (the reference design has none otherwise). */
+function tickerFor(home: Home): { label: string; live: boolean; items: TickerItem[] } | null {
   if (home.breaking.length) {
     return { label: 'LIVE', live: true, items: home.breaking.map((a) => ({ key: `b${a.id}`, title: a.title, onPress: () => openArticleId(a.id) })) }
   }
@@ -34,43 +37,17 @@ function tickerFor(home: Home): { label: string; live: boolean; items: TickerIte
       }),
     }
   }
-  return { label: 'ताज़ा', live: false, items: home.latest.slice(0, 5).map((a) => ({ key: `l${a.id}`, title: a.title, onPress: () => openArticleId(a.id) })) }
+  return null
 }
 
-/** Swipeable deck: one big pastel card with the next one peeking on the right, plus progress dots. */
-function StoryDeck({ articles }: { articles: ArticleCard[] }) {
-  const { width } = useWindowDimensions()
-  const cardWidth = Math.min(width, 560) - spacing.lg * 2 - 28
-  const [active, setActive] = useState(0)
-  const onViewable = useCallback(({ viewableItems }: { viewableItems: { index?: number | null }[] }) => {
-    if (viewableItems[0]?.index != null) setActive(viewableItems[0].index)
-  }, [])
-  if (!articles.length) return null
+/** Deck sized to the phone: wide as the screen (max 560), tall enough to read but leaving the next section visible. */
+function DeckArea({ articles }: { articles: ArticleCard[] }) {
+  const { width, height } = useWindowDimensions()
+  const deckWidth = Math.min(width, 560) - spacing.lg * 2
+  const cardHeight = Math.round(Math.max(380, Math.min(520, height * 0.58)))
   return (
-    <View>
-      <FlatList
-        data={articles}
-        keyExtractor={(a) => String(a.id)}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={cardWidth + spacing.md}
-        decelerationRate="fast"
-        contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: spacing.md, paddingBottom: spacing.sm }}
-        renderItem={({ item, index }) => (
-          <View style={index !== active && { transform: [{ scale: 0.96 }], opacity: 0.85 }}>
-            <DeckCard article={item} width={cardWidth} />
-          </View>
-        )}
-        onViewableItemsChanged={onViewable}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
-      />
-      {articles.length > 1 && (
-        <View style={styles.dots}>
-          {articles.map((a, i) => (
-            <View key={a.id} style={[styles.dot, i === active && styles.dotActive]} />
-          ))}
-        </View>
-      )}
+    <View style={{ paddingHorizontal: spacing.lg }}>
+      <SwipeDeck articles={articles} width={deckWidth} height={cardHeight} />
     </View>
   )
 }
@@ -81,6 +58,8 @@ export default function HomeScreen() {
   const trending = useTrending()
   const feed = useArticleFeed()
   const [refreshing, setRefreshing] = useState(false)
+  const focused = useIsFocused()
+  const t = useTheme()
 
   const layout = useMemo(() => {
     if (!home.data) return null
@@ -114,8 +93,9 @@ export default function HomeScreen() {
 
   if (home.isPending || !home.data || !layout) {
     return (
-      <SafeAreaView style={styles.screen} edges={['top']}>
+      <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
         <AppHeader />
+        {focused && <StatusBar style={t.statusBar} />}
         {home.isPending ? <HomeSkeleton /> : <ErrorState error={home.error} onRetry={() => home.refetch()} />}
       </SafeAreaView>
     )
@@ -127,8 +107,8 @@ export default function HomeScreen() {
     <View>
       <CategoryTabs categories={tabs} />
       {home.error && <OfflineBanner />}
-      <NewsTicker label={layout.ticker.label} live={layout.ticker.live} items={layout.ticker.items} />
-      <StoryDeck articles={layout.deck} />
+      {layout.ticker && <NewsTicker label={layout.ticker.label} live={layout.ticker.live} items={layout.ticker.items} />}
+      <DeckArea articles={layout.deck} />
 
       {layout.latest.length > 0 && (
         <>
@@ -144,7 +124,7 @@ export default function HomeScreen() {
       {layout.trendingItems.length > 0 && (
         <>
           <SectionHeader title="ट्रेंडिंग" />
-          <View style={styles.trending}>
+          <View style={[styles.trending, { backgroundColor: t.surface }]}>
             {layout.trendingItems.map((a, i) => (
               <RankedRow key={a.id} article={a} rank={i + 1} />
             ))}
@@ -171,7 +151,8 @@ export default function HomeScreen() {
   )
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
+      {focused && <StatusBar style={t.statusBar} />}
       <AppHeader />
       <FlatList
         data={feedItems}
@@ -191,7 +172,7 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingBottom: TAB_BAR_SPACE }}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.6}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} colors={[colors.primary]} progressBackgroundColor={colors.surface} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={t.text} colors={[colors.primary]} progressBackgroundColor={t.surface} />}
         initialNumToRender={6}
         windowSize={9}
       />
@@ -200,11 +181,8 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1 },
   stack: { paddingHorizontal: spacing.lg, gap: spacing.md },
-  trending: { marginHorizontal: spacing.lg, paddingHorizontal: spacing.md, borderRadius: 20, backgroundColor: colors.surface },
+  trending: { marginHorizontal: spacing.lg, paddingHorizontal: spacing.md, borderRadius: 20 },
   feedItem: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md },
-  dots: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: spacing.md },
-  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.border },
-  dotActive: { width: 20, backgroundColor: colors.shellText },
 })

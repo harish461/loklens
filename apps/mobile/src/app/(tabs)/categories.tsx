@@ -7,16 +7,17 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
 import { EmptyState, ErrorState, HomeSkeleton } from '@/components/States'
 import { useCategories } from '@/lib/api/queries'
-import { colors, fonts, pastelFor, radius, spacing, type } from '@/theme'
+import { colors, fonts, pastelFor, radius, spacing, type, useTheme } from '@/theme'
 
 export default function CategoriesScreen() {
+  const t = useTheme()
   const { data, error, isPending, isRefetching, refetch } = useCategories()
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
       <View style={styles.header}>
-        <Text style={type.display}>श्रेणियाँ</Text>
-        <Text style={[type.bodySmall, { color: colors.shellMuted }]}>अपनी पसंद के विषय की खबरें पढ़ें</Text>
+        <Text style={[type.display, { color: t.text }]}>श्रेणियाँ</Text>
+        <Text style={[type.bodySmall, { color: t.muted }]}>अपनी पसंद के विषय की खबरें पढ़ें</Text>
       </View>
       {isPending ? (
         <HomeSkeleton />
@@ -29,7 +30,7 @@ export default function CategoriesScreen() {
           numColumns={2}
           columnWrapperStyle={{ gap: spacing.md }}
           contentContainerStyle={{ padding: spacing.lg, gap: spacing.md, paddingBottom: TAB_BAR_SPACE }}
-          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => void refetch()} tintColor={colors.primary} colors={[colors.primary]} />}
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => void refetch()} tintColor={t.text} colors={[colors.primary]} />}
           ListEmptyComponent={<EmptyState icon="grid-outline" title="कोई श्रेणी नहीं मिली" />}
           renderItem={({ item }) => (
             <Pressable
@@ -57,7 +58,7 @@ export default function CategoriesScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1 },
   header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
   tile: { flex: 1, minHeight: 128, borderRadius: radius.xl, padding: spacing.lg },
   tileName: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 30, color: colors.ink },

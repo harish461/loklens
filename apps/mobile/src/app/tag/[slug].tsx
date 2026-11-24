@@ -8,15 +8,16 @@ import { EmptyState } from '@/components/States'
 import { TopBar } from '@/components/TopBar'
 import { ApiError } from '@/lib/api/client'
 import { useTag } from '@/lib/api/queries'
-import { colors, spacing, type } from '@/theme'
+import { spacing, type, useTheme } from '@/theme'
 
 export default function TagScreen() {
+  const t = useTheme()
   const { slug } = useLocalSearchParams<{ slug: string }>()
   const tag = useTag(slug)
 
   if (tag.error instanceof ApiError && tag.error.isNotFound) {
     return (
-      <SafeAreaView style={styles.screen} edges={['top']}>
+      <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
         <TopBar />
         <EmptyState icon="pricetag-outline" title="टैग नहीं मिला" />
       </SafeAreaView>
@@ -24,14 +25,14 @@ export default function TagScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
       <TopBar />
       <ArticleFeed
         params={{ tag: slug }}
         header={
           <View style={styles.header}>
-            <Text style={type.meta}>टैग</Text>
-            <Text style={type.display}>#{tag.data?.name ?? ''}</Text>
+            <Text style={[type.meta, { color: t.muted }]}>टैग</Text>
+            <Text style={[type.display, { color: t.text }]}>#{tag.data?.name ?? ''}</Text>
           </View>
         }
       />
@@ -40,6 +41,6 @@ export default function TagScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1 },
   header: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg },
 })

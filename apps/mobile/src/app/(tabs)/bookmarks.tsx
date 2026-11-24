@@ -6,15 +6,16 @@ import { StoryActions, StoryRow } from '@/components/ArticleCards'
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
 import { EmptyState } from '@/components/States'
 import { useBookmarks } from '@/lib/bookmarks'
-import { colors, spacing, type } from '@/theme'
+import { spacing, type, useTheme } from '@/theme'
 
 export default function BookmarksScreen() {
+  const t = useTheme()
   const bookmarks = useBookmarks()
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
       <View style={styles.header}>
-        <Text style={type.display}>बुकमार्क</Text>
-        <Text style={[type.bodySmall, { color: colors.shellMuted }]}>
+        <Text style={[type.display, { color: t.text }]}>बुकमार्क</Text>
+        <Text style={[type.bodySmall, { color: t.muted }]}>
           {bookmarks.length ? `${bookmarks.length} सहेजी गई खबरें · ऑफ़लाइन भी उपलब्ध` : 'बाद में पढ़ने के लिए खबरें सहेजें'}
         </Text>
       </View>
@@ -36,6 +37,6 @@ export default function BookmarksScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1 },
   header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
 })

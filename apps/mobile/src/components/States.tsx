@@ -1,12 +1,13 @@
-/** Loading, error, empty and offline states on the dark shell (Hindi copy). */
+/** Loading, error, empty and offline states (Hindi copy); follow the light/dark theme. */
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect, useRef } from 'react'
 import { ActivityIndicator, Animated, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native'
 
 import { ApiError } from '@/lib/api/client'
-import { colors, fonts, radius, spacing, type } from '@/theme'
+import { colors, fonts, radius, spacing, type, useTheme } from '@/theme'
 
 function Pulse({ style }: { style: ViewStyle }) {
+  const t = useTheme()
   const opacity = useRef(new Animated.Value(0.5)).current
   useEffect(() => {
     const loop = Animated.loop(
@@ -18,7 +19,7 @@ function Pulse({ style }: { style: ViewStyle }) {
     loop.start()
     return () => loop.stop()
   }, [opacity])
-  return <Animated.View style={[{ backgroundColor: colors.skeleton, borderRadius: radius.md }, style, { opacity }]} />
+  return <Animated.View style={[{ backgroundColor: t.skeleton, borderRadius: radius.md }, style, { opacity }]} />
 }
 
 /** Skeleton for the home deck and rows. */
@@ -34,39 +35,46 @@ export function HomeSkeleton() {
   )
 }
 
-export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
-  const offline = error instanceof ApiError && error.code === 'NETWORK'
+function Message({ icon, title, text, children }: { icon: keyof typeof Ionicons.glyphMap; title: string; text?: string; children?: React.ReactNode }) {
+  const t = useTheme()
   return (
     <View style={styles.center}>
-      <View style={styles.iconWrap}>
-        <Ionicons name={offline ? 'cloud-offline-outline' : 'alert-circle-outline'} size={30} color={colors.shellMuted} />
+      <View style={[styles.iconWrap, { backgroundColor: t.raised }]}>
+        <Ionicons name={icon} size={30} color={t.muted} />
       </View>
-      <Text style={styles.title}>{offline ? 'इंटरनेट कनेक्शन नहीं है' : 'खबरें लोड नहीं हो सकीं'}</Text>
-      <Text style={styles.text}>{offline ? 'कनेक्शन जांचें और फिर से प्रयास करें।' : 'कृपया थोड़ी देर बाद फिर से प्रयास करें।'}</Text>
+      <Text style={[styles.title, { color: t.text }]}>{title}</Text>
+      {text ? <Text style={[styles.text, { color: t.muted }]}>{text}</Text> : null}
+      {children}
+    </View>
+  )
+}
+
+export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
+  const t = useTheme()
+  const offline = error instanceof ApiError && error.code === 'NETWORK'
+  return (
+    <Message
+      icon={offline ? 'cloud-offline-outline' : 'alert-circle-outline'}
+      title={offline ? 'इंटरनेट कनेक्शन नहीं है' : 'खबरें लोड नहीं हो सकीं'}
+      text={offline ? 'कनेक्शन जांचें और फिर से प्रयास करें।' : 'कृपया थोड़ी देर बाद फिर से प्रयास करें।'}
+    >
       {onRetry && (
-        <Pressable style={styles.button} onPress={onRetry} accessibilityRole="button">
-          <Text style={styles.buttonText}>फिर से प्रयास करें</Text>
+        <Pressable style={[styles.button, { backgroundColor: t.pill }]} onPress={onRetry} accessibilityRole="button">
+          <Text style={[styles.buttonText, { color: t.pillText }]}>फिर से प्रयास करें</Text>
         </Pressable>
       )}
-    </View>
+    </Message>
   )
 }
 
 export function EmptyState({ icon = 'newspaper-outline', title, text }: { icon?: keyof typeof Ionicons.glyphMap; title: string; text?: string }) {
-  return (
-    <View style={styles.center}>
-      <View style={styles.iconWrap}>
-        <Ionicons name={icon} size={30} color={colors.shellMuted} />
-      </View>
-      <Text style={styles.title}>{title}</Text>
-      {text ? <Text style={styles.text}>{text}</Text> : null}
-    </View>
-  )
+  return <Message icon={icon} title={title} text={text} />
 }
 
 export function FooterLoader({ loading, done }: { loading: boolean; done: boolean }) {
+  const t = useTheme()
   if (loading) return <ActivityIndicator color={colors.primary} style={{ marginVertical: spacing.xl }} />
-  if (done) return <Text style={[type.meta, { color: colors.shellSubtle, textAlign: 'center', marginVertical: spacing.xl }]}>आपने सभी खबरें देख लीं</Text>
+  if (done) return <Text style={[type.meta, { color: t.subtle, textAlign: 'center', marginVertical: spacing.xl }]}>आपने सभी खबरें देख लीं</Text>
   return <View style={{ height: spacing.xl }} />
 }
 
@@ -82,11 +90,11 @@ export function OfflineBanner() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xxxl, gap: spacing.sm, minHeight: 320 },
-  iconWrap: { width: 64, height: 64, borderRadius: 32, backgroundColor: colors.surfaceRaised, alignItems: 'center', justifyContent: 'center' },
-  title: { ...type.title, color: colors.shellText, textAlign: 'center', marginTop: spacing.sm },
-  text: { ...type.bodySmall, color: colors.shellMuted, textAlign: 'center' },
-  button: { marginTop: spacing.md, backgroundColor: colors.ink, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: radius.pill },
-  buttonText: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 22, color: colors.white },
+  iconWrap: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center' },
+  title: { ...type.title, textAlign: 'center', marginTop: spacing.sm },
+  text: { ...type.bodySmall, textAlign: 'center' },
+  button: { marginTop: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, borderRadius: radius.pill },
+  buttonText: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 22 },
   offline: {
     flexDirection: 'row',
     alignItems: 'center',

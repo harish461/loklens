@@ -12,11 +12,12 @@ import { TopBar } from '@/components/TopBar'
 import { EmptyState, ErrorState, FooterLoader, HomeSkeleton } from '@/components/States'
 import { useSearch } from '@/lib/api/queries'
 import { addRecentSearch, clearRecentSearches, removeRecentSearch, useRecentSearches } from '@/lib/recentSearches'
-import { colors, fonts, radius, spacing, type } from '@/theme'
+import { colors, fonts, radius, spacing, type, useTheme } from '@/theme'
 
 const DEBOUNCE_MS = 400
 
 export default function SearchScreen() {
+  const t = useTheme()
   const [text, setText] = useState('')
   const [term, setTerm] = useState('')
   const recent = useRecentSearches()
@@ -49,19 +50,19 @@ export default function SearchScreen() {
         {recent.length > 0 ? (
           <>
             <View style={styles.recentHeader}>
-              <Text style={type.title}>हाल की खोजें</Text>
+              <Text style={[type.title, { color: t.text }]}>हाल की खोजें</Text>
               <Pressable onPress={clearRecentSearches} hitSlop={8} accessibilityRole="button">
                 <Text style={styles.clear}>सभी हटाएं</Text>
               </Pressable>
             </View>
             <View style={styles.chips}>
               {recent.map((r) => (
-                <View key={r} style={styles.chip}>
+                <View key={r} style={[styles.chip, { backgroundColor: t.surface }]}>
                   <Pressable onPress={() => runSearch(r)} accessibilityRole="button">
-                    <Text style={styles.chipText}>{r}</Text>
+                    <Text style={[styles.chipText, { color: t.body }]}>{r}</Text>
                   </Pressable>
                   <Pressable onPress={() => removeRecentSearch(r)} hitSlop={8} accessibilityLabel={`${r} हटाएं`}>
-                    <Ionicons name="close" size={14} color={colors.muted} />
+                    <Ionicons name="close" size={14} color={t.muted} />
                   </Pressable>
                 </View>
               ))}
@@ -85,7 +86,7 @@ export default function SearchScreen() {
         keyExtractor={(a) => String(a.id)}
         keyboardShouldPersistTaps="handled"
         onScrollBeginDrag={Keyboard.dismiss}
-        ListHeaderComponent={items.length ? <Text style={[type.meta, styles.count]}>“{term}” के लिए {total} परिणाम</Text> : undefined}
+        ListHeaderComponent={items.length ? <Text style={[type.meta, styles.count, { color: t.muted }]}>“{term}” के लिए {total} परिणाम</Text> : undefined}
         ListEmptyComponent={<EmptyState icon="search-outline" title="कोई परिणाम नहीं मिला" text={`“${term}” से जुड़ी कोई खबर नहीं मिली। दूसरे शब्द आज़माएं।`} />}
         renderItem={({ item }) => (
           <View style={styles.item}>
@@ -101,18 +102,18 @@ export default function SearchScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
       <TopBar title="खोजें" />
       <View style={styles.header}>
-        <View style={styles.inputWrap}>
-          <Ionicons name="search" size={18} color={colors.muted} />
+        <View style={[styles.inputWrap, { backgroundColor: t.surface }]}>
+          <Ionicons name="search" size={18} color={t.muted} />
           <TextInput
             value={text}
             onChangeText={setText}
             onSubmitEditing={() => runSearch(text)}
             placeholder="खबरें खोजें…"
-            placeholderTextColor={colors.shellSubtle}
-            style={styles.input}
+            placeholderTextColor={t.subtle}
+            style={[styles.input, { color: t.text }]}
             returnKeyType="search"
             maxLength={100}
             autoCorrect={false}
@@ -121,7 +122,7 @@ export default function SearchScreen() {
           />
           {text.length > 0 && (
             <Pressable onPress={() => runSearch('')} hitSlop={8} accessibilityLabel="खोज साफ़ करें">
-              <Ionicons name="close-circle" size={18} color={colors.muted} />
+              <Ionicons name="close-circle" size={18} color={t.muted} />
             </Pressable>
           )}
         </View>
@@ -132,16 +133,16 @@ export default function SearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1 },
   header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: spacing.md, paddingBottom: spacing.md },
-  inputWrap: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.pill, paddingHorizontal: spacing.lg, minHeight: 48 },
-  input: { flex: 1, fontFamily: fonts.regular, fontSize: 16, color: colors.ink, paddingVertical: spacing.sm },
+  inputWrap: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, borderRadius: radius.pill, paddingHorizontal: spacing.lg, minHeight: 48 },
+  input: { flex: 1, fontFamily: fonts.regular, fontSize: 16, paddingVertical: spacing.sm },
   recent: { flex: 1, paddingHorizontal: spacing.lg },
   recentHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
   clear: { fontFamily: fonts.semibold, fontSize: 13, lineHeight: 20, color: colors.primary },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  chip: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: 6 },
-  chipText: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 21, color: colors.text },
+  chip: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: 6 },
+  chipText: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 21 },
   count: { paddingHorizontal: spacing.lg, paddingBottom: spacing.sm },
   item: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md },
 })

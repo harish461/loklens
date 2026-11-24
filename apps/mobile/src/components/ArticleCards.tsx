@@ -8,7 +8,7 @@ import type { ArticleCard } from '@/lib/api/types'
 import { toggleBookmark, useIsBookmarked } from '@/lib/bookmarks'
 import { timeAgo } from '@/lib/format'
 import { shareArticle } from '@/lib/share'
-import { colors, fonts, pastelFor, radius, shadow, spacing, type } from '@/theme'
+import { colors, fonts, pastelFor, radius, shadow, spacing, type, useTheme } from '@/theme'
 
 import { NewsImage } from './NewsImage'
 
@@ -60,54 +60,80 @@ export function StoryActions({ article }: { article: ArticleCard }) {
 }
 
 /** "प्रकाशक · LokLens News Team" row with the category as a dark pill on the right. */
-export function PublisherRow({ article, name = 'LokLens News Team' }: { article: ArticleCard; name?: string }) {
+export function PublisherRow({ article, name = 'LokLens News Team', onPage = false }: { article: ArticleCard; name?: string; onPage?: boolean }) {
+  // On a pastel card the colours are fixed; on a page (article screen) they follow the light/dark theme.
+  const t = useTheme()
   return (
     <View style={styles.publisher}>
       <Image source={LOGO} style={styles.avatar} contentFit="cover" />
       <View style={{ flex: 1 }}>
-        <Text style={type.tiny}>प्रकाशक</Text>
-        <Text style={styles.publisherName} numberOfLines={1}>
+        <Text style={[type.tiny, onPage && { color: t.muted }]}>प्रकाशक</Text>
+        <Text style={[styles.publisherName, onPage && { color: t.text }]} numberOfLines={1}>
           {name}
         </Text>
       </View>
-      <Pressable onPress={() => openCategory(article.category.slug)} style={styles.pill} accessibilityRole="link">
-        <Text style={styles.pillText}>{article.category.name}</Text>
+      <Pressable onPress={() => openCategory(article.category.slug)} style={[styles.pill, onPage && { backgroundColor: t.pill }]} accessibilityRole="link">
+        <Text style={[styles.pillText, onPage && { color: t.pillText }]}>{article.category.name}</Text>
       </Pressable>
     </View>
   )
 }
 
-/** Big pastel card for the home deck: badge, headline, time, publisher, summary, image with actions. */
-export function DeckCard({ article, width }: { article: ArticleCard; width: number }) {
+/** Outlined round action on a pastel surface (reference: like / save / share circles on the deck card). */
+export function OutlineAction({ icon, label, onPress, active = false }: { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void; active?: boolean }) {
   return (
     <Pressable
-      onPress={() => openArticle(article)}
-      style={[styles.deck, { width, backgroundColor: pastelFor(article.category.id) }]}
+      onPress={onPress}
+      hitSlop={6}
+      style={({ pressed }) => [styles.outline, active && { backgroundColor: colors.ink, borderColor: colors.ink }, pressed && { opacity: 0.6 }]}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: active }}
+    >
+      <Ionicons name={icon} size={17} color={active ? colors.white : colors.ink} />
+    </Pressable>
+  )
+}
+
+/**
+ * Text-only pastel card for the home swipe deck (reference design): LIVE/category badge, big headline,
+ * updated time, publisher row with dark category pill, summary, outlined actions bottom-right.
+ * Fills the height it is given; the summary takes the remaining space.
+ */
+export function DeckCard({ article, width, height, onPress }: { article: ArticleCard; width: number; height: number; onPress?: () => void }) {
+  const saved = useIsBookmarked(article.id)
+  // Fixed parts (badge, 3-line headline, time, publisher, actions, padding) take ~330 px; the summary gets the rest.
+  const summaryLines = Math.max(2, Math.floor((height - 330) / 25))
+  return (
+    <Pressable
+      onPress={onPress ?? (() => openArticle(article))}
+      style={[styles.deck, { width, height, backgroundColor: pastelFor(article.category.id) }]}
       accessibilityRole="link"
     >
       <StoryBadge article={article} />
-      <Text style={[type.hero, { marginTop: spacing.sm }]} numberOfLines={3}>
+      <Text style={[styles.deckTitle, { marginTop: spacing.md }]} numberOfLines={3}>
         {article.title}
       </Text>
-      <Text style={[type.meta, { marginTop: spacing.xs }]}>अपडेट: {timeAgo(article.updatedAt || article.publishedAt)}</Text>
+      <Text style={[type.meta, { marginTop: spacing.sm }]}>अपडेट: {timeAgo(article.updatedAt || article.publishedAt)}</Text>
       <PublisherRow article={article} />
-      <Text style={[type.bodySmall, { marginTop: spacing.md }]} numberOfLines={3}>
+      <Text style={styles.deckSummary} numberOfLines={summaryLines}>
         {article.summary}
       </Text>
-      <View style={styles.deckImageWrap}>
-        <NewsImage image={article.image} size="card" style={styles.deckImage} priority="high" />
-        <StoryActions article={article} />
+      <View style={styles.deckActions}>
+        <OutlineAction icon={saved ? 'bookmark' : 'bookmark-outline'} label={saved ? 'बुकमार्क हटाएं' : 'बुकमार्क करें'} active={saved} onPress={() => toggleBookmark(article)} />
+        <OutlineAction icon="arrow-redo-outline" label="शेयर करें" onPress={() => shareArticle(article)} />
+        <OutlineAction icon="arrow-forward" label="पूरी खबर पढ़ें" onPress={() => openArticle(article)} />
       </View>
     </Pressable>
   )
 }
 
 /** Compact pastel row: text left, rounded thumbnail right. */
-export function StoryRow({ article, showCategory = true }: { article: ArticleCard; showCategory?: boolean }) {
+export function StoryRow({ article, showCategory = true, background }: { article: ArticleCard; showCategory?: boolean; background?: string }) {
   return (
     <Pressable
       onPress={() => openArticle(article)}
-      style={({ pressed }) => [styles.row, { backgroundColor: pastelFor(article.category.id) }, pressed && { opacity: 0.85 }]}
+      style={({ pressed }) => [styles.row, { backgroundColor: background ?? pastelFor(article.category.id) }, pressed && { opacity: 0.85 }]}
       accessibilityRole="link"
     >
       <View style={{ flex: 1 }}>
@@ -141,14 +167,15 @@ export function MiniCard({ article, width = 232 }: { article: ArticleCard; width
 
 /** Numbered headline on the dark shell (trending). */
 export function RankedRow({ article, rank }: { article: ArticleCard; rank: number }) {
+  const t = useTheme()
   return (
     <Pressable onPress={() => openArticle(article)} style={styles.ranked} accessibilityRole="link">
       <Text style={styles.rank}>{String(rank).padStart(2, '0')}</Text>
       <View style={{ flex: 1 }}>
-        <Text style={[type.cardTitle, { color: colors.shellText }]} numberOfLines={2}>
+        <Text style={[type.cardTitle, { color: t.text }]} numberOfLines={2}>
           {article.title}
         </Text>
-        <Text style={[type.meta, { color: colors.shellMuted, marginTop: 2 }]}>
+        <Text style={[type.meta, { color: t.muted, marginTop: 2 }]}>
           {article.category.name} • {timeAgo(article.publishedAt)}
         </Text>
       </View>
@@ -166,9 +193,11 @@ const styles = StyleSheet.create({
   publisherName: { fontFamily: fonts.semibold, fontSize: 13, lineHeight: 19, color: colors.ink },
   pill: { backgroundColor: colors.pill, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: 5 },
   pillText: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 18, color: colors.white },
-  deck: { borderRadius: radius.xl, padding: spacing.xl, ...shadow },
-  deckImageWrap: { marginTop: spacing.md },
-  deckImage: { width: '100%', aspectRatio: 16 / 9, borderRadius: radius.lg },
+  deck: { borderRadius: 30, padding: spacing.xl, overflow: 'hidden', ...shadow },
+  deckTitle: { fontFamily: fonts.bold, fontSize: 25, lineHeight: 38, color: colors.ink },
+  deckSummary: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 25, color: colors.text, marginTop: spacing.lg, flexShrink: 1 },
+  deckActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: spacing.sm, marginTop: 'auto', paddingTop: spacing.md },
+  outline: { width: 38, height: 38, borderRadius: 19, borderWidth: 1.5, borderColor: 'rgba(17,18,20,0.14)', alignItems: 'center', justifyContent: 'center' },
   row: { flexDirection: 'row', gap: spacing.md, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center' },
   rowThumb: { width: 92, height: 92, borderRadius: radius.md },
   mini: { borderRadius: radius.lg, padding: spacing.sm, paddingBottom: spacing.md, minHeight: 250 },

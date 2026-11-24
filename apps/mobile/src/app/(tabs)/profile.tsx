@@ -14,7 +14,7 @@ import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
 import { SITE_URL } from '@/lib/api/client'
 import { useSettings } from '@/lib/api/queries'
 import { persister, queryClient } from '@/lib/queryClient'
-import { colors, fonts, radius, spacing, type } from '@/theme'
+import { colors, fonts, radius, spacing, type, useTheme } from '@/theme'
 
 const LOGO = require('../../../assets/brand/logo-144.webp')
 
@@ -50,28 +50,31 @@ const DEFAULT_POLICIES = {
 }
 
 function Row({ icon, label, onPress, value }: { icon: IconName; label: string; onPress?: () => void; value?: string }) {
+  const t = useTheme()
   return (
-    <Pressable onPress={onPress} disabled={!onPress} style={({ pressed }) => [styles.row, pressed && { backgroundColor: colors.surfaceRaised }]} accessibilityRole={onPress ? 'button' : undefined}>
-      <View style={styles.rowIcon}>
-        <Ionicons name={icon} size={18} color={colors.ink} />
+    <Pressable onPress={onPress} disabled={!onPress} style={({ pressed }) => [styles.row, pressed && { backgroundColor: t.raised }]} accessibilityRole={onPress ? 'button' : undefined}>
+      <View style={[styles.rowIcon, { backgroundColor: t.bg }]}>
+        <Ionicons name={icon} size={18} color={t.text} />
       </View>
-      <Text style={styles.rowLabel}>{label}</Text>
-      {value ? <Text style={type.meta}>{value}</Text> : null}
-      {onPress ? <Ionicons name="chevron-forward" size={16} color={colors.muted} /> : null}
+      <Text style={[styles.rowLabel, { color: t.text }]}>{label}</Text>
+      {value ? <Text style={[type.meta, { color: t.muted }]}>{value}</Text> : null}
+      {onPress ? <Ionicons name="chevron-forward" size={16} color={t.muted} /> : null}
     </Pressable>
   )
 }
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
+  const t = useTheme()
   return (
     <View style={{ marginTop: spacing.xl }}>
-      <Text style={[type.label, { color: colors.shellMuted, marginBottom: spacing.sm, paddingHorizontal: spacing.xs }]}>{title}</Text>
-      <View style={styles.group}>{children}</View>
+      <Text style={[type.label, { color: t.muted, marginBottom: spacing.sm, paddingHorizontal: spacing.xs }]}>{title}</Text>
+      <View style={[styles.group, { backgroundColor: t.surface }]}>{children}</View>
     </View>
   )
 }
 
 export default function ProfileScreen() {
+  const t = useTheme()
   const { data: settings } = useSettings()
   const [cleared, setCleared] = useState(false)
   const policies = settings?.policies ?? DEFAULT_POLICIES
@@ -89,7 +92,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: TAB_BAR_SPACE }}>
         <View style={styles.card}>
           <Image source={LOGO} style={styles.logo} contentFit="cover" />
@@ -130,13 +133,13 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1 },
   card: { alignItems: 'center', gap: spacing.xs, backgroundColor: '#FFF1C1', borderRadius: radius.xl, padding: spacing.xl },
   logo: { width: 72, height: 72, borderRadius: 36, marginBottom: spacing.sm },
   social: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: spacing.sm, marginTop: spacing.md },
   socialButton: { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.pill, alignItems: 'center', justifyContent: 'center' },
-  group: { backgroundColor: colors.surface, borderRadius: radius.lg, overflow: 'hidden' },
+  group: { borderRadius: radius.lg, overflow: 'hidden' },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  rowIcon: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' },
-  rowLabel: { flex: 1, fontFamily: fonts.medium, fontSize: 15, lineHeight: 23, color: colors.ink },
+  rowIcon: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  rowLabel: { flex: 1, fontFamily: fonts.medium, fontSize: 15, lineHeight: 23 },
 })
