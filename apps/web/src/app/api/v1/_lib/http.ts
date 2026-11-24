@@ -13,6 +13,8 @@ export const CACHE_CONTROL = {
   default: 'public, s-maxage=60, stale-while-revalidate=300',
   /** Contract §3: search is cached for a shorter time at the edge. */
   search: 'public, s-maxage=30, stale-while-revalidate=60',
+  /** YouTube Shorts list (the upstream feed itself refreshes every few minutes). */
+  shorts: 'public, s-maxage=300, stale-while-revalidate=600',
   /** Errors are never cached. */
   none: 'no-store',
 } as const
@@ -41,6 +43,12 @@ export function ok(body: unknown, cache: CacheProfile = 'default'): Response {
 export function notFound(message = 'Not found.'): Response {
   const body: ApiError = { error: { code: 'NOT_FOUND', message } }
   return json(404, body, CACHE_CONTROL.none)
+}
+
+/** An upstream dependency (e.g. the YouTube feed) is unavailable → 503 SERVER_ERROR, never cached. */
+export function unavailable(message: string): Response {
+  const body: ApiError = { error: { code: 'SERVER_ERROR', message } }
+  return json(503, body, CACHE_CONTROL.none)
 }
 
 /** Maps a thrown error to the contract's ApiError (BadRequestError → 400, anything else → generic 500). */

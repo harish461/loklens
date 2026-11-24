@@ -21,6 +21,9 @@ const data = vi.hoisted(() => ({
   getSiteSettings: vi.fn(),
 }))
 
+const social = vi.hoisted(() => ({ getYouTubeShorts: vi.fn() }))
+vi.mock('@/lib/social', () => social)
+
 // The real helpers need the Payload config; only the error helpers are real here.
 vi.mock('@/lib/data', async () => ({ ...(await import('../../src/lib/data/errors')), ...data }))
 
@@ -41,6 +44,7 @@ import * as page from '../../src/app/api/v1/pages/[slug]/route'
 import * as searchRoute from '../../src/app/api/v1/search/route'
 import * as settings from '../../src/app/api/v1/settings/route'
 import * as rest from '../../src/app/api/v1/[...rest]/route'
+import * as shorts from '../../src/app/api/v1/shorts/route'
 
 const BASE = 'https://loklensnews.com/api/v1'
 const DEFAULT_CACHE = 'public, s-maxage=60, stale-while-revalidate=300'
@@ -61,6 +65,7 @@ async function expectJson(res: Response, status: number, cache: string) {
 
 beforeEach(() => {
   for (const fn of Object.values(data)) fn.mockReset()
+  social.getYouTubeShorts.mockReset()
   vi.spyOn(console, 'error').mockImplementation(() => {})
 })
 
@@ -212,8 +217,42 @@ describe('protocol rules', () => {
   })
 
   it('routes export only GET and OPTIONS (other methods → 405 from Next.js)', () => {
-    for (const mod of [home, articles, article, categories, category, tag, author, videos, video, epapers, epaper, page, searchRoute, settings, rest]) {
+    for (const mod of [home, articles, article, categories, category, tag, author, videos, video, epapers, epaper, page, searchRoute, settings, rest, shorts]) {
       expect(Object.keys(mod).filter((k) => /^[A-Z]+$/.test(k)).sort()).toEqual(['GET', 'OPTIONS'])
     }
+  })
+})
+
+describe('GET /api/v1/shorts', () => {
+  const post = {
+    platform: 'youtube',
+    id: 'abcdefghijk',
+    title: 'शॉर्ट',
+    url: 'https://www.youtube.com/shorts/abcdefghijk',
+    isShort: true,
+    thumbnail: { url: 'https://i.ytimg.com/vi/abcdefghijk/hqdefault.jpg', width: 480, height: 360 },
+    publishedAt: '2026-11-24T10:00:00+05:30',
+  }
+
+  it('returns { items } without internal fields, with the shorts cache profile', async () => {
+    social.getYouTubeShorts.mockResolvedValue({ status: 'ok', posts: [post] })
+    const body = await expectJson(await call(shorts.GET as Handler, '/shorts'), 200, 'public, s-maxage=300, stale-while-revalidate=600')
+    expect(body).toEqual({ items: [{ id: post.id, title: post.title, url: post.url, thumbnail: post.thumbnail, publishedAt: post.publishedAt }] })
+    expect(social.getYouTubeShorts).toHaveBeenCalledWith(20)
+  })
+
+  it('passes limit and rejects out-of-range limits with 400', async () => {
+    social.getYouTubeShorts.mockResolvedValue({ status: 'ok', posts: [] })
+    await call(shorts.GET as Handler, '/shorts?limit=5')
+    expect(social.getYouTubeShorts).toHaveBeenCalledWith(5)
+    for (const bad of ['0', '51', 'abc', '']) {
+      expect((await call(shorts.GET as Handler, `/shorts?limit=${bad}`)).status).toBe(400)
+    }
+  })
+
+  it('feed unavailable → 503 SERVER_ERROR, not cached', async () => {
+    social.getYouTubeShorts.mockResolvedValue({ status: 'error', posts: [] })
+    const body = await expectJson(await call(shorts.GET as Handler, '/shorts'), 503, 'no-store')
+    expect(body.error.code).toBe('SERVER_ERROR')
   })
 })

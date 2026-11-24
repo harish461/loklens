@@ -104,6 +104,7 @@ interface ApiError { error: { code: 'NOT_FOUND' | 'BAD_REQUEST' | 'SERVER_ERROR'
 | `GET /api/v1/pages/{slug}` | `getPage(slug)` | `Page` |
 | `GET /api/v1/search?q=` | `search(params)` | `Paginated<ArticleCard>` |
 | `GET /api/v1/settings` | `getSiteSettings()` | `SiteSettings` |
+| `GET /api/v1/shorts?limit=` | `getYouTubeShorts(limit)` (`src/lib/social`) | `{ items: Short[] }` — newest YouTube Shorts of the LokLens channel |
 | — (web only) | `listSitemapEntries()` | `{ url: string; updatedAt: string; type: 'article' \| 'category' \| 'tag' \| 'author' \| 'page' \| 'video' \| 'epaper' }[]` |
 | — (web only) | `listRecentForNews(hours = 48)` | `ArticleCard[]` (news sitemap) |
 | — (web only) | `listForFeed(category?)` | `ArticleCard[]` (RSS, latest 50) |
@@ -162,6 +163,15 @@ interface EPaper {
 
 interface Page { title: string; slug: string; body: RichTextNode[]; updatedAt: string }
 
+// YouTube Short from the channel's public Shorts feed (no API key). Played in YouTube's official player.
+interface Short {
+  id: string                    // 11-character YouTube video id
+  title: string                 // trimmed to ~120 characters
+  url: string                   // https://www.youtube.com/shorts/{id}
+  thumbnail: { url: string; width: number; height: number } | null  // hqdefault; crop to 9:16
+  publishedAt: string           // ISO 8601 with IST offset
+}
+
 interface SiteSettings {
   name: string; tagline: string; logo: Image; defaultImage: Image
   social: { platform: string; url: string }[]
@@ -190,6 +200,8 @@ HTTP details (v1 draft 6):
 - Error responses (400/404/500) are `Cache-Control: no-store`; a 500 never includes internal details.
 - Unknown `/api/v1/*` paths and article ids that are not positive integers → 404 `NOT_FOUND`.
 - Numeric query values (`page`, `pageSize`) that are not integers in range → 400. Unknown query parameters are ignored.
+- `GET /api/v1/shorts`: `limit` 1–50 (default 20; the feed holds the newest ~15). If YouTube's feed is
+  unreachable → 503 `SERVER_ERROR` (no-store). Cache: `public, s-maxage=300, stale-while-revalidate=600`.
 - The `cursor` parameter switches `GET /api/v1/articles` to cursor mode even when empty (`?cursor=`).
 
 ## 4. Article URL resolution (web)
@@ -227,5 +239,6 @@ skipped, never crash the renderer.
 | v1 draft 2 | 2026-11-09 | QA fixes: published-only enforcement, IST serializer, fallback images, cursor pagination, byline rule, sanitising, extra web helpers, Cloudflare rate limits, deferred locations/devices |
 | v1 draft 3 | 2026-11-09 | No content migration: legacy URLs return 410 unless an editor adds a Redirect |
 | v1 draft 4 | 2026-11-09 | Backend implementation (`apps/web/src/lib/data`), decisions made while implementing: invalid query values (page, pageSize, cursor, flag, q, hours, slugs) throw `BadRequestError` (map with `toApiError` → 400); an unknown category/tag/author filter returns an empty list, while single-item helpers return `null`; `search` is not cached (architecture §4); other helpers use `unstable_cache` with the architecture tags plus `settings` on article reads and a 300 s safety net; `sections` lists every `showInNav` category, empty ones included; `latest` is not filtered by `featured`; `listSitemapEntries` URLs, `EPaper.pdfUrl` and `Image.url` are absolute when `NEXT_PUBLIC_SITE_URL` is set; a video without its own thumbnail gets the YouTube `hqdefault` image with `isFallback: false`; raw REST `GET /api/users` never returns `email`, `role`, or session data to anonymous clients |
+| v1 draft 7 | 2026-11-24 | Added `GET /api/v1/shorts` (YouTube Shorts list for the app's Shorts tab) and the `Short` shape. Additive, no other changes. |
 | v1 draft 6 | 2026-11-23 | Phase 6 start: the §2 mobile HTTP endpoints are implemented in `apps/web/src/app/api/v1/*` with the §3 status codes and Cache-Control values, plus the §3 "HTTP details" (GET/OPTIONS only, CORS for any origin, `no-store` errors, 404 for unknown v1 paths). No shape changes. Push/devices still deferred. |
 | v1 draft 5 | 2026-11-12 | Reporter workspace (architecture §8): new internal fields that the v1 shapes and public helpers do **not** expose — articles `workflowStatus`, `reviewNote`, `submittedAt`, `reviewedAt`, `reviewedBy`, `featureRequested`, `everPublished`, `articleType`, `language` (stored only; the site stays Hindi), `seo.focusKeyword`; users `isActive`, `canPublish`, `assignedCategories`, `mobile`, `designation`; media `caption`. Raw REST never returns the user admin fields or article review fields to anonymous clients. `/reporter` uses server-side helpers in `src/lib/reporter` (session-checked, never cached) — not part of the public contract. |
