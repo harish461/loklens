@@ -272,8 +272,9 @@ password hash, Google subject ID, reset tokens, session list.
 account is locked for 15 minutes). Auth responses are `Cache-Control: no-store`. Only GET, POST and OPTIONS
 are served.
 
-**Google rules (v1 draft 8):** the server verifies the ID token with Google and accepts only the configured client IDs
-(`GOOGLE_CLIENT_IDS`) and verified Google emails. A Google sign-in never links to an existing password account
+**Google rules (v1 draft 8):** the server verifies the ID token locally against Google's published signing keys
+(JWKS): signature (RS256), issuer (accounts.google.com), audience (the Web client ID, from `GOOGLE_CLIENT_IDS`),
+expiry, and a verified Google email. A Google sign-in never links to an existing password account
 (`409 CONFLICT`); that customer signs in with the password instead. Google accounts have no usable password: a new random
 password is set on each Google sign-in, so the only way in is Google. `/api/v1/auth/reset` returns only `{ ok: true }`;
 the app then signs in again with the new password.
