@@ -1,6 +1,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { en } from '@payloadcms/translations/languages/en'
@@ -16,6 +17,7 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Redirects } from './collections/Redirects'
 import { Tags } from './collections/Tags'
+import { AppUsers } from './collections/AppUsers'
 import { Users } from './collections/Users'
 import { Videos } from './collections/Videos'
 import { newsEditor } from './fields/richText'
@@ -106,6 +108,24 @@ function resolveS3Env(): { enabled: boolean; env: Record<S3EnvName, string> } {
 
 const s3 = resolveS3Env()
 
+/** Nodemailer adapter from the existing SMTP_* settings; undefined (dev logging) when not configured. */
+function smtpEmailAdapter() {
+  const pass = (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || '').trim()
+  const user = (process.env.SMTP_USER || 'newsloklens@gmail.com').trim()
+  if (!pass) return undefined
+  const port = Number(process.env.SMTP_PORT || 465)
+  return nodemailerAdapter({
+    defaultFromAddress: user,
+    defaultFromName: 'लोक Lens न्यूज़',
+    transportOptions: {
+      host: (process.env.SMTP_HOST || 'smtp.gmail.com').trim(),
+      port,
+      secure: port === 465,
+      auth: { user, pass },
+    },
+  })
+}
+
 const editorsCanQueue = ({ req }: { req: { user?: unknown } }) => isEditorOrAdmin(req.user as MaybeUser)
 
 export default buildConfig({
@@ -113,6 +133,9 @@ export default buildConfig({
   // seamlessly on both http://localhost:3000 and LAN IPs (http://192.168.1.15:3000) without cross-origin CSRF issues.
   serverURL: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_SITE_URL || undefined : undefined,
   secret: process.env.PAYLOAD_SECRET || '',
+  // Password-reset emails for app customers. Uses the same SMTP account as the contact form; without SMTP
+  // settings Payload falls back to logging the message (development).
+  email: smtpEmailAdapter(),
   admin: {
     user: Users.slug,
     meta: { titleSuffix: ' – LokLens News Admin' },
@@ -176,7 +199,7 @@ export default buildConfig({
       Nav: '@/components/admin/AdminNav#AdminNav',
     },
   },
-  collections: [Articles, Categories, Tags, Locations, Media, Videos, EPapers, Pages, Redirects, Users],
+  collections: [Articles, Categories, Tags, Locations, Media, Videos, EPapers, Pages, Redirects, Users, AppUsers],
   globals: [SiteSettings, Navigation, Ticker],
   plugins: [
     s3Storage({
