@@ -10,7 +10,9 @@ import { useCallback, useMemo, useState } from 'react'
 import { FlatList, RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { MiniCard, RankedRow, StoryRow } from '@/components/ArticleCards'
+import { RankedRow, StoryRow } from '@/components/ArticleCards'
+import { CategoryMasonry } from '@/components/CategoryMasonry'
+import { ScreenBackground } from '@/components/ScreenBackground'
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
 import { AppHeader, CategoryTabs, NewsTicker, SectionHeader, type TickerItem } from '@/components/HomeParts'
 import { EmptyState, ErrorState, FooterLoader, HomeSkeleton, OfflineBanner } from '@/components/States'
@@ -93,7 +95,8 @@ export default function HomeScreen() {
 
   if (home.isPending || !home.data || !layout) {
     return (
-      <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
+      <SafeAreaView style={styles.screen} edges={['top']}>
+        <ScreenBackground />
         <AppHeader />
         {focused && <StatusBar style={t.statusBar} />}
         {home.isPending ? <HomeSkeleton /> : <ErrorState error={home.error} onRetry={() => home.refetch()} />}
@@ -108,6 +111,7 @@ export default function HomeScreen() {
       <CategoryTabs categories={tabs} />
       {home.error && <OfflineBanner />}
       {layout.ticker && <NewsTicker label={layout.ticker.label} live={layout.ticker.live} items={layout.ticker.items} />}
+      <SectionHeader first title="प्रमुख खबरें" onSeeAll={() => router.push('/latest')} />
       <DeckArea articles={layout.deck} />
 
       {layout.latest.length > 0 && (
@@ -135,14 +139,7 @@ export default function HomeScreen() {
       {layout.sections.map((s) => (
         <View key={s.category.id}>
           <SectionHeader title={s.category.name} onSeeAll={() => router.push({ pathname: '/category/[slug]', params: { slug: s.category.slug } })} />
-          <FlatList
-            data={s.articles}
-            keyExtractor={(a) => String(a.id)}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: spacing.md }}
-            renderItem={({ item }) => <MiniCard article={item} />}
-          />
+          <CategoryMasonry articles={s.articles} />
         </View>
       ))}
 
@@ -151,7 +148,8 @@ export default function HomeScreen() {
   )
 
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+        <ScreenBackground />
       {focused && <StatusBar style={t.statusBar} />}
       <AppHeader />
       <FlatList

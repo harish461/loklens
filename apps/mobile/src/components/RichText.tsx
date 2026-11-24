@@ -49,8 +49,10 @@ function alignOf(node: RichTextNode): TextStyle['textAlign'] | undefined {
 
 function textStyle(bits: number): TextStyle {
   const s: { -readonly [K in keyof TextStyle]?: TextStyle[K] } = {}
-  if (bits & FORMAT.bold) s.fontFamily = fonts.bold
-  if (bits & FORMAT.italic) s.fontStyle = 'italic'
+  // Real Poppins faces for bold/italic (never fontWeight/fontStyle, which the OS fakes and blurs).
+  const bold = Boolean(bits & FORMAT.bold)
+  const italic = Boolean(bits & FORMAT.italic)
+  if (bold || italic) s.fontFamily = bold && italic ? fonts.boldItalic : bold ? fonts.bold : fonts.italic
   const deco: string[] = []
   if (bits & FORMAT.underline) deco.push('underline')
   if (bits & FORMAT.strikethrough) deco.push('line-through')

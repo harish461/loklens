@@ -11,6 +11,7 @@ import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
+import { ScreenBackground } from '@/components/ScreenBackground'
 import { SITE_URL } from '@/lib/api/client'
 import { useSettings } from '@/lib/api/queries'
 import { persister, queryClient } from '@/lib/queryClient'
@@ -92,7 +93,8 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <ScreenBackground />
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: TAB_BAR_SPACE }}>
         <View style={styles.card}>
           <Image source={LOGO} style={styles.logo} contentFit="cover" />

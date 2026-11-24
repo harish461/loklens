@@ -24,6 +24,11 @@ export const palettes = {
     pill: '#FFFFFF', // high-contrast pill (category, buttons)
     pillText: '#111214',
     statusBar: 'light' as 'light' | 'dark',
+    // Soft top-to-bottom wash behind the main screens (reference: mint-tinted news app background).
+    gradient: ['#0B0B0C', '#0D1411', '#12251B'] as readonly [string, string, string],
+    chip: 'rgba(255,255,255,0.08)', // inactive category pill
+    chipBorder: 'rgba(255,255,255,0.10)',
+    button: '#1B1B1E', // round header buttons
   },
   light: {
     mode: 'light' as ThemeMode,
@@ -41,6 +46,10 @@ export const palettes = {
     pill: '#141517',
     pillText: '#FFFFFF',
     statusBar: 'dark' as 'light' | 'dark',
+    gradient: ['#FFFFFF', '#F4F8F5', '#DDEFE3'] as readonly [string, string, string],
+    chip: 'rgba(255,255,255,0.75)',
+    chipBorder: 'rgba(17,18,20,0.06)',
+    button: '#FFFFFF',
   },
 }
 

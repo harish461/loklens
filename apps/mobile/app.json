@@ -43,7 +43,16 @@
     },
     "extra": {
       "apiBaseUrl": "https://loklensnews.com/api/v1",
-      "siteUrl": "https://loklensnews.com"
-    }
+      "siteUrl": "https://loklensnews.com",
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "4c3042f7-108e-4441-a6cc-f28eecd7cac8"
+      }
+    },
+    "owner": "loklensnews"
   }
 }

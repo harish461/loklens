@@ -5,7 +5,7 @@
  * floating dark capsule tab bar (layout reference: Dribbble "News App" by MindInventory; approach only).
  * Visual polish is deferred; colours live here so the shell can be re-themed in one place.
  * Brand accent stays the LokLens logo red (#C41D17) for LIVE/breaking badges and active states.
- * Font: Noto Sans Devanagari throughout.
+ * Font: Poppins (Medium text, Bold headings), which covers both Hindi and English.
  */
 import { Platform, type TextStyle } from 'react-native'
 
@@ -48,10 +48,14 @@ export const spacing = { xxs: 2, xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24, 
 export const radius = { sm: 8, md: 14, lg: 20, xl: 28, pill: 999 } as const
 
 export const fonts = {
-  regular: 'NotoSansDevanagari_400Regular',
-  medium: 'NotoSansDevanagari_500Medium',
-  semibold: 'NotoSansDevanagari_600SemiBold',
-  bold: 'NotoSansDevanagari_700Bold',
+  // Poppins (Latin + Devanagari in one family). Two real weights only, never synthesized, so text stays
+  // crisp: Medium for all running text and labels, Bold for headings, titles and emphasis.
+  regular: 'Poppins_500Medium',
+  medium: 'Poppins_500Medium',
+  semibold: 'Poppins_700Bold',
+  bold: 'Poppins_700Bold',
+  italic: 'Poppins_500Medium_Italic',
+  boldItalic: 'Poppins_700Bold_Italic',
 } as const
 
 /** Devanagari needs tall line heights (matras above, conjuncts below): ~1.4–1.65 × size. */

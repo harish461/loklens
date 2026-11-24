@@ -5,6 +5,7 @@ import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
+import { ScreenBackground } from '@/components/ScreenBackground'
 import { EmptyState, ErrorState, HomeSkeleton } from '@/components/States'
 import { useCategories } from '@/lib/api/queries'
 import { colors, fonts, pastelFor, radius, spacing, type, useTheme } from '@/theme'
@@ -14,7 +15,8 @@ export default function CategoriesScreen() {
   const { data, error, isPending, isRefetching, refetch } = useCategories()
 
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <ScreenBackground />
       <View style={styles.header}>
         <Text style={[type.display, { color: t.text }]}>श्रेणियाँ</Text>
         <Text style={[type.bodySmall, { color: t.muted }]}>अपनी पसंद के विषय की खबरें पढ़ें</Text>

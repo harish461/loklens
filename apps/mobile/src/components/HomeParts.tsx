@@ -1,6 +1,5 @@
-/** Home-screen building blocks (follow the light/dark theme): header, text category tabs, LIVE strip, section header. */
+/** Home-screen building blocks (follow the light/dark theme): header, category pills, LIVE strip, section header. */
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
 import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
@@ -9,15 +8,13 @@ import type { CategoryRef } from '@/lib/api/types'
 import { formatToday } from '@/lib/format'
 import { colors, fonts, radius, spacing, toggleThemeMode, type, useTheme } from '@/theme'
 
-const LOGO = require('../../assets/brand/logo-144.webp')
-
 export function CircleButton({ icon, label, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void }) {
   const t = useTheme()
   return (
     <Pressable
       onPress={onPress}
       hitSlop={8}
-      style={({ pressed }) => [styles.circle, { borderColor: t.border, backgroundColor: t.surface }, pressed && { opacity: 0.7 }]}
+      style={({ pressed }) => [styles.circle, { backgroundColor: t.button, borderColor: t.chipBorder }, pressed && { opacity: 0.7 }]}
       accessibilityRole="button"
       accessibilityLabel={label}
     >
@@ -26,20 +23,20 @@ export function CircleButton({ icon, label, onPress }: { icon: keyof typeof Ioni
   )
 }
 
+/** Reference header: small date line above a large title; two large round buttons (search, theme) on the right. */
 export function AppHeader() {
   const t = useTheme()
   return (
     <View style={styles.header}>
-      <Image source={LOGO} style={styles.logo} contentFit="cover" />
       <View style={{ flex: 1 }}>
-        <Text style={[styles.brand, { color: t.text }]} numberOfLines={1}>
-          लोक Lens न्यूज़
-        </Text>
         <Text style={[styles.date, { color: t.muted }]} numberOfLines={1}>
           {formatToday()}
         </Text>
+        <Text style={[styles.brand, { color: t.text }]} numberOfLines={1}>
+          लोक Lens न्यूज़
+        </Text>
       </View>
-      <CircleButton icon="search" label="खोजें" onPress={() => router.push('/search')} />
+      <CircleButton icon="search-outline" label="खोजें" onPress={() => router.push('/search')} />
       <CircleButton
         icon={t.isDark ? 'sunny-outline' : 'moon-outline'}
         label={t.isDark ? 'लाइट थीम' : 'डार्क थीम'}
@@ -49,18 +46,22 @@ export function AppHeader() {
   )
 }
 
-/** Text tabs like "Trending  Health  Sports": the active one large and white, the rest small and grey. */
+/** Pill chips: "सभी खबरें" is the active (filled) pill; each category pill opens that category. */
 export function CategoryTabs({ categories }: { categories: CategoryRef[] }) {
   const t = useTheme()
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
-      <View style={styles.tabActiveWrap}>
-        <Text style={[styles.tabActive, { color: t.text }]}>ट्रेंडिंग</Text>
-        <View style={styles.tabDot} />
+      <View style={[styles.chip, { backgroundColor: t.pill, borderColor: t.pill }]}>
+        <Text style={[styles.chipText, { color: t.pillText }]}>सभी खबरें</Text>
       </View>
       {categories.map((c) => (
-        <Pressable key={c.id} onPress={() => router.push({ pathname: '/category/[slug]', params: { slug: c.slug } })} hitSlop={6} accessibilityRole="link">
-          <Text style={[styles.tab, { color: t.muted }]}>{c.name}</Text>
+        <Pressable
+          key={c.id}
+          onPress={() => router.push({ pathname: '/category/[slug]', params: { slug: c.slug } })}
+          style={({ pressed }) => [styles.chip, { backgroundColor: t.chip, borderColor: t.chipBorder }, pressed && { opacity: 0.7 }]}
+          accessibilityRole="link"
+        >
+          <Text style={[styles.chipText, { color: t.text }]}>{c.name}</Text>
         </Pressable>
       ))}
     </ScrollView>
@@ -105,15 +106,15 @@ export function NewsTicker({ label, live = false, items }: { label: string; live
   )
 }
 
-export function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => void }) {
+/** Reference section header: bold title left, plain "सभी देखें" link right. `first` trims the top margin. */
+export function SectionHeader({ title, onSeeAll, first = false }: { title: string; onSeeAll?: () => void; first?: boolean }) {
   const t = useTheme()
   return (
-    <View style={styles.sectionHeader}>
+    <View style={[styles.sectionHeader, first && { marginTop: spacing.xs }]}>
       <Text style={[type.section, { flex: 1, color: t.text }]}>{title}</Text>
       {onSeeAll && (
-        <Pressable onPress={onSeeAll} hitSlop={8} style={[styles.seeAll, { backgroundColor: t.raised }]} accessibilityRole="link">
-          <Text style={[styles.seeAllText, { color: t.text }]}>सभी देखें</Text>
-          <Ionicons name="arrow-forward" size={14} color={t.text} />
+        <Pressable onPress={onSeeAll} hitSlop={10} style={styles.seeAll} accessibilityRole="link">
+          <Text style={[styles.seeAllText, { color: t.muted }]}>सभी देखें</Text>
         </Pressable>
       )}
     </View>
@@ -121,16 +122,13 @@ export function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: (
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.xs },
-  logo: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.white },
-  brand: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 30 },
-  date: { ...type.meta, marginTop: -3 },
-  circle: { width: 42, height: 42, borderRadius: 21, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  tabs: { alignItems: 'flex-end', gap: spacing.xl, paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.md },
-  tabActiveWrap: { alignItems: 'flex-start' },
-  tabActive: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 30 },
-  tabDot: { width: 18, height: 3, borderRadius: 2, backgroundColor: colors.primary, marginTop: 1 },
-  tab: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 22, paddingBottom: 4 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm },
+  date: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 20 },
+  brand: { fontFamily: fonts.bold, fontSize: 26, lineHeight: 38 },
+  circle: { width: 52, height: 52, borderRadius: 26, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  tabs: { gap: spacing.sm, paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md },
+  chip: { borderRadius: radius.pill, borderWidth: 1, paddingHorizontal: spacing.xl, paddingVertical: 10 },
+  chipText: { fontFamily: fonts.medium, fontSize: 15, lineHeight: 22 },
   ticker: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -147,6 +145,6 @@ const styles = StyleSheet.create({
   tickerLabelText: { fontFamily: fonts.bold, fontSize: 12, lineHeight: 19, color: colors.white },
   tickerText: { flex: 1, fontFamily: fonts.medium, fontSize: 13, lineHeight: 21 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.xxl, marginBottom: spacing.md, paddingHorizontal: spacing.lg },
-  seeAll: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.md, paddingVertical: 4, borderRadius: radius.pill },
-  seeAllText: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 18 },
+  seeAll: { paddingVertical: 4 },
+  seeAllText: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 21 },
 })

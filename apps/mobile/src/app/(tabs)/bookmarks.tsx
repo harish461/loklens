@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { StoryActions, StoryRow } from '@/components/ArticleCards'
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
+import { ScreenBackground } from '@/components/ScreenBackground'
 import { EmptyState } from '@/components/States'
 import { useBookmarks } from '@/lib/bookmarks'
 import { spacing, type, useTheme } from '@/theme'
@@ -12,7 +13,8 @@ export default function BookmarksScreen() {
   const t = useTheme()
   const bookmarks = useBookmarks()
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: t.bg }]} edges={['top']}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <ScreenBackground />
       <View style={styles.header}>
         <Text style={[type.display, { color: t.text }]}>बुकमार्क</Text>
         <Text style={[type.bodySmall, { color: t.muted }]}>
