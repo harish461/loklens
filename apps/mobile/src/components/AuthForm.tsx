@@ -1,4 +1,5 @@
 /** Shared pieces for the sign-in, register and reset screens. */
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native'
 
 import { colors, fonts, radius, spacing, useTheme } from '@/theme'
@@ -29,6 +30,35 @@ export function PrimaryButton({ label, onPress, busy = false, disabled = false }
       accessibilityRole="button"
     >
       {busy ? <ActivityIndicator color={t.pillText} /> : <Text style={[styles.buttonText, { color: t.pillText }]}>{label}</Text>}
+    </Pressable>
+  )
+}
+
+/** Divider with the word "या" between the password form and the Google button. */
+export function OrDivider() {
+  const t = useTheme()
+  return (
+    <View style={styles.or}>
+      <View style={[styles.orLine, { backgroundColor: t.border }]} />
+      <Text style={[styles.orText, { color: t.muted }]}>या</Text>
+      <View style={[styles.orLine, { backgroundColor: t.border }]} />
+    </View>
+  )
+}
+
+/** Google sign-in button (white, Google icon). The server verifies the ID token; no secret is in the app. */
+export function GoogleButton({ onPress, busy = false }: { onPress: () => void; busy?: boolean }) {
+  const t = useTheme()
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={busy}
+      style={({ pressed }) => [styles.google, { backgroundColor: t.surface, borderColor: t.border }, (pressed || busy) && { opacity: 0.7 }]}
+      accessibilityRole="button"
+      accessibilityLabel="Google से जारी रखें"
+    >
+      {busy ? <ActivityIndicator color={t.text} /> : <Ionicons name="logo-google" size={18} color={t.text} />}
+      <Text style={[styles.googleText, { color: t.text }]}>Google से जारी रखें</Text>
     </Pressable>
   )
 }
@@ -68,6 +98,11 @@ const styles = StyleSheet.create({
   error: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 22, color: colors.primary, marginBottom: spacing.md },
   link: { alignSelf: 'center', paddingVertical: spacing.sm },
   linkText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 22, color: colors.primary },
+  or: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginVertical: spacing.lg },
+  orLine: { flex: 1, height: 1 },
+  orText: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 20 },
+  google: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, borderRadius: radius.pill, borderWidth: 1, paddingVertical: 14 },
+  googleText: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 23 },
   notice: { borderRadius: radius.md, padding: spacing.lg, marginBottom: spacing.lg },
   noticeText: { fontFamily: fonts.medium, fontSize: 15, lineHeight: 24 },
 })

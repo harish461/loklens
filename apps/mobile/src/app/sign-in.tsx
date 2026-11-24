@@ -4,10 +4,11 @@ import { useState } from 'react'
 import { ScrollView, StyleSheet, Text } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { Field, FormError, PrimaryButton, TextLink } from '@/components/AuthForm'
+import { Field, FormError, GoogleButton, OrDivider, PrimaryButton, TextLink } from '@/components/AuthForm'
 import { ScreenBackground } from '@/components/ScreenBackground'
 import { TopBar } from '@/components/TopBar'
 import { AuthError, login } from '@/lib/auth/client'
+import { googleErrorMessage, googleSignInFlow } from '@/lib/auth/googleFlow'
 import { spacing, type, useTheme } from '@/theme'
 
 export default function SignInScreen() {
@@ -16,6 +17,19 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+
+  const google = async () => {
+    setError('')
+    setBusy(true)
+    try {
+      const result = await googleSignInFlow()
+      if (result === 'ok') router.replace('/(tabs)/profile')
+    } catch (err) {
+      setError(googleErrorMessage(err))
+    } finally {
+      setBusy(false)
+    }
+  }
 
   const submit = async () => {
     if (!email.trim() || !password) return setError('ईमेल और पासवर्ड लिखें।')
@@ -46,6 +60,8 @@ export default function SignInScreen() {
 
         <FormError message={error} />
         <PrimaryButton label="साइन इन करें" onPress={submit} busy={busy} />
+        <OrDivider />
+        <GoogleButton onPress={google} busy={busy} />
 
         <TextLink label="पासवर्ड भूल गए?" onPress={() => router.push('/forgot')} />
         <TextLink label="नया खाता बनाएं" onPress={() => router.replace('/register')} />

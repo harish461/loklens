@@ -4,10 +4,11 @@ import { useState } from 'react'
 import { ScrollView, StyleSheet, Text } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { Field, FormError, PrimaryButton, TextLink } from '@/components/AuthForm'
+import { Field, FormError, GoogleButton, OrDivider, PrimaryButton, TextLink } from '@/components/AuthForm'
 import { ScreenBackground } from '@/components/ScreenBackground'
 import { TopBar } from '@/components/TopBar'
 import { AuthError, register } from '@/lib/auth/client'
+import { googleErrorMessage, googleSignInFlow } from '@/lib/auth/googleFlow'
 import { spacing, type, useTheme } from '@/theme'
 
 export default function RegisterScreen() {
@@ -17,6 +18,19 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+
+  const google = async () => {
+    setError('')
+    setBusy(true)
+    try {
+      const result = await googleSignInFlow()
+      if (result === 'ok') router.replace('/(tabs)/profile')
+    } catch (err) {
+      setError(googleErrorMessage(err))
+    } finally {
+      setBusy(false)
+    }
+  }
 
   const submit = async () => {
     if (!name.trim()) return setError('कृपया अपना नाम लिखें।')
@@ -50,6 +64,8 @@ export default function RegisterScreen() {
 
         <FormError message={error} />
         <PrimaryButton label="खाता बनाएं" onPress={submit} busy={busy} />
+        <OrDivider />
+        <GoogleButton onPress={google} busy={busy} />
 
         <TextLink label="पहले से खाता है? साइन इन करें" onPress={() => router.replace('/sign-in')} />
       </ScrollView>

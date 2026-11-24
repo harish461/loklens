@@ -47,6 +47,12 @@ interface SessionResponse {
   user: AppUser
 }
 
+/** Signs in (or creates) the account for a Google ID token; the server verifies the token. */
+export async function googleLogin(idToken: string): Promise<void> {
+  const res = await call<SessionResponse>('/auth/google', { body: { idToken } })
+  await saveSession(res.token, res.user)
+}
+
 export async function register(name: string, email: string, password: string): Promise<void> {
   const res = await call<SessionResponse>('/auth/register', { body: { name, email, password } })
   await saveSession(res.token, res.user)

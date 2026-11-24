@@ -56,7 +56,9 @@
       },
       "eas": {
         "projectId": "4c3042f7-108e-4441-a6cc-f28eecd7cac8"
-      }
+      },
+      "googleAndroidClientId": "484114320365-k5tt09am9so8mldercr650upth27656p.apps.googleusercontent.com",
+      "googleWebClientId": "484114320365-2f3aqeqa2shf5c36jnk6cvltv2ev5vh3.apps.googleusercontent.com"
     },
     "owner": "loklensnews",
     "updates": {
