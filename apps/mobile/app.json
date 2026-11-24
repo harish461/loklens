@@ -2,7 +2,7 @@
   "expo": {
     "name": "LokLens News",
     "slug": "loklens-news",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,11 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.loklensnews.app"
+      "package": "com.loklensnews.app",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      },
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -53,6 +57,12 @@
         "projectId": "4c3042f7-108e-4441-a6cc-f28eecd7cac8"
       }
     },
-    "owner": "loklensnews"
+    "owner": "loklensnews",
+    "updates": {
+      "url": "https://u.expo.dev/4c3042f7-108e-4441-a6cc-f28eecd7cac8"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }
