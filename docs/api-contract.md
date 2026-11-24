@@ -239,6 +239,38 @@ skipped, never crash the renderer.
 | v1 draft 2 | 2026-11-09 | QA fixes: published-only enforcement, IST serializer, fallback images, cursor pagination, byline rule, sanitising, extra web helpers, Cloudflare rate limits, deferred locations/devices |
 | v1 draft 3 | 2026-11-09 | No content migration: legacy URLs return 410 unless an editor adds a Redirect |
 | v1 draft 4 | 2026-11-09 | Backend implementation (`apps/web/src/lib/data`), decisions made while implementing: invalid query values (page, pageSize, cursor, flag, q, hours, slugs) throw `BadRequestError` (map with `toApiError` → 400); an unknown category/tag/author filter returns an empty list, while single-item helpers return `null`; `search` is not cached (architecture §4); other helpers use `unstable_cache` with the architecture tags plus `settings` on article reads and a 300 s safety net; `sections` lists every `showInNav` category, empty ones included; `latest` is not filtered by `featured`; `listSitemapEntries` URLs, `EPaper.pdfUrl` and `Image.url` are absolute when `NEXT_PUBLIC_SITE_URL` is set; a video without its own thumbnail gets the YouTube `hqdefault` image with `isFallback: false`; raw REST `GET /api/users` never returns `email`, `role`, or session data to anonymous clients |
+| v1 draft 8 | 2026-11-24 | Customer accounts (§7): register, login, Google sign-in, password reset, /me and logout on the new app-users collection. Staff users are not used. |
 | v1 draft 7 | 2026-11-24 | Added `GET /api/v1/shorts` (YouTube Shorts list for the app's Shorts tab) and the `Short` shape. Additive, no other changes. |
 | v1 draft 6 | 2026-11-23 | Phase 6 start: the §2 mobile HTTP endpoints are implemented in `apps/web/src/app/api/v1/*` with the §3 status codes and Cache-Control values, plus the §3 "HTTP details" (GET/OPTIONS only, CORS for any origin, `no-store` errors, 404 for unknown v1 paths). No shape changes. Push/devices still deferred. |
 | v1 draft 5 | 2026-11-12 | Reporter workspace (architecture §8): new internal fields that the v1 shapes and public helpers do **not** expose — articles `workflowStatus`, `reviewNote`, `submittedAt`, `reviewedAt`, `reviewedBy`, `featureRequested`, `everPublished`, `articleType`, `language` (stored only; the site stays Hindi), `seo.focusKeyword`; users `isActive`, `canPublish`, `assignedCategories`, `mobile`, `designation`; media `caption`. Raw REST never returns the user admin fields or article review fields to anonymous clients. `/reporter` uses server-side helpers in `src/lib/reporter` (session-checked, never cached) — not part of the public contract. |
+
+---
+
+## 7. Customer accounts (app-users) — draft v8
+
+Mobile readers can sign in. Customer accounts live in the `app-users` collection, never in `users` (staff).
+Public news stays anonymous; these routes add personal features only.
+
+Authentication: the app stores the token returned by `/auth/login`, `/auth/register` or `/auth/google` in
+secure device storage and sends `Authorization: JWT <token>` on authenticated requests. Tokens last 30 days.
+
+| HTTP | Purpose | Auth | Body → Response |
+|---|---|---|---|
+| `POST /api/v1/auth/register` | Create an account | none | `{ name, email, password }` → `{ token, user }` (201) |
+| `POST /api/v1/auth/login` | Email and password sign-in | none | `{ email, password }` → `{ token, user }` |
+| `POST /api/v1/auth/google` | Sign in or create with Google | none | `{ idToken }` → `{ token, user }` |
+| `POST /api/v1/auth/forgot` | Send a reset email | none | `{ email }` → `{ ok: true }` (always, so accounts are not revealed) |
+| `POST /api/v1/auth/reset` | Set a new password | reset token | `{ token, password }` → `{ ok: true }` |
+| `GET /api/v1/me` | Current user | JWT | → `{ user }` |
+| `POST /api/v1/auth/logout` | End the session | JWT | → `{ ok: true }` |
+
+**User shape (`AppUser`):** `{ id, name, email, provider: 'password' | 'google', createdAt }`. Never returned:
+password hash, Google subject ID, reset tokens, session list.
+
+**Errors:** `401 UNAUTHORIZED` (missing, invalid or expired token); `409 CONFLICT` (email already registered);
+`422 VALIDATION` (bad email, or password under 8 characters); `429` (too many attempts; after 5 failures the
+account is locked for 15 minutes). Auth responses are `Cache-Control: no-store`. Only GET, POST and OPTIONS
+are served.
+
+**Not part of v1 auth:** email verification, profile editing, and server-side bookmarks (bookmarks stay on the
+device).
