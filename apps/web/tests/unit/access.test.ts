@@ -174,3 +174,21 @@ describe('publish defaults', () => {
     expect(out.breakingUntil).toBe('2026-11-09T16:00:00.000Z')
   })
 })
+
+describe('private user fields: collection boundary', () => {
+  it('a staff user may read their own private fields', () => {
+    expect(canReadUserPrivateField({ id: 7, role: 'reporter', collection: 'users' }, 7)).toBe(true)
+  })
+
+  it('an app customer with the same numeric ID cannot read a staff record', () => {
+    expect(canReadUserPrivateField({ id: 7, collection: 'app-users' }, 7)).toBe(false)
+  })
+
+  it('an app customer is never treated as an admin', () => {
+    expect(canReadUserPrivateField({ id: 1, role: 'admin', collection: 'app-users' }, 99)).toBe(false)
+  })
+
+  it('anonymous visitors read nothing private', () => {
+    expect(canReadUserPrivateField(null, 7)).toBe(false)
+  })
+})

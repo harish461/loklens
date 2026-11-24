@@ -72,7 +72,18 @@ export function canReadInternal(user: MaybeUser): boolean {
 }
 
 /** Users.email (and role): admins, or the user reading their own record. */
+/**
+ * Only accounts from the staff `users` collection may read these fields. Account IDs are per-collection
+ * counters, so an app customer (`app-users`) with the same numeric ID must never match a staff record.
+ */
+export function fromStaffCollection(user: MaybeUser): boolean {
+  if (!user) return false
+  // Payload sets `collection` on authenticated users; a missing value means a trusted internal call.
+  return user.collection === undefined || user.collection === 'users'
+}
+
 export function canReadUserPrivateField(user: MaybeUser, docId: unknown): boolean {
+  if (!fromStaffCollection(user)) return false
   if (isAdmin(user)) return true
   return Boolean(user && sameId(user.id, docId))
 }
