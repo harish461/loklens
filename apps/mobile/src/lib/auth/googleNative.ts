@@ -4,6 +4,7 @@
  * crash on import (the native module is missing there and sign-in reports it cleanly).
  */
 import Constants from 'expo-constants'
+import { TurboModuleRegistry } from 'react-native'
 
 const extra = (Constants.expoConfig?.extra ?? {}) as { googleWebClientId?: string }
 
@@ -23,6 +24,10 @@ let configured = false
 export async function signInWithGoogleNative(): Promise<string | null> {
   const webClientId = extra.googleWebClientId
   if (!webClientId) throw new Error('Google sign-in is not configured in this app.')
+
+  // Check for the native module first: in Expo Go it is missing, and requiring the library there raises a
+  // fatal red-box error before any try/catch around require() can handle it.
+  if (!TurboModuleRegistry.get('RNGoogleSignin')) throw new GoogleSignInUnavailable()
 
   let lib: typeof import('@react-native-google-signin/google-signin')
   try {
