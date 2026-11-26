@@ -81,6 +81,25 @@ describe('verifyGoogleIdentityToken', () => {
     await expect(verify('not-a-jwt')).rejects.toBeInstanceOf(GoogleTokenError)
   })
 
+  it('explains a rejection for the server log without leaking the token or email', async () => {
+    const token = await sign(good, { aud: ANDROID_CLIENT })
+    const err = (await verify(token).catch((e: unknown) => e)) as GoogleTokenError
+    expect(err.message).toBe('Google token failed verification.')
+    expect(err.reason).toContain('(claim: aud)')
+    expect(err.reason).toContain(`token aud=${ANDROID_CLIENT}`)
+    expect(err.reason).toContain(`accepted=${WEB_CLIENT}`)
+    expect(err.reason).not.toContain(token)
+    expect(err.reason.toLowerCase()).not.toContain('reader@example.com')
+
+    const expired = (await verify(await sign(good, { exp: Math.floor(Date.now() / 1000) - 3600 })).catch(
+      (e: unknown) => e,
+    )) as GoogleTokenError
+    expect(expired.reason).toMatch(/ERR_JWT_EXPIRED/)
+
+    const forged = (await verify(await sign(good, { key: otherKey })).catch((e: unknown) => e)) as GoogleTokenError
+    expect(forged.reason).toMatch(/ERR_JWS_SIGNATURE_VERIFICATION_FAILED/)
+  })
+
   it('refuses to run without any configured audience', async () => {
     await expect(verifyGoogleIdentityToken(await sign(good), { audiences: [], keys })).rejects.toThrow(/not configured/)
   })
