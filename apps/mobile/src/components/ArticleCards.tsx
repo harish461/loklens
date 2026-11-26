@@ -2,7 +2,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image } from 'expo-image'
 import { router } from 'expo-router'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
+import { Text } from '@/components/AppText'
 
 import type { ArticleCard } from '@/lib/api/types'
 import { toggleBookmark, useIsBookmarked } from '@/lib/bookmarks'
@@ -96,14 +97,12 @@ export function OutlineAction({ icon, label, onPress, active = false }: { icon: 
 }
 
 /**
- * Text-only pastel card for the home swipe deck (reference design): LIVE/category badge, big headline,
- * updated time, publisher row with dark category pill, summary, outlined actions bottom-right.
- * Fills the height it is given; the summary takes the remaining space.
+ * Pastel card for the home swipe deck: LIVE/category badge, headline, updated time, publisher row with dark
+ * category pill, a two-line summary, the article photo, and outlined actions bottom-right.
+ * Fills the height it is given; the photo takes whatever space is left, so the card never has an empty gap.
  */
 export function DeckCard({ article, width, height, onPress }: { article: ArticleCard; width: number; height: number; onPress?: () => void }) {
   const saved = useIsBookmarked(article.id)
-  // Fixed parts (badge, 3-line headline, time, publisher, actions, padding) take ~330 px; the summary gets the rest.
-  const summaryLines = Math.max(2, Math.floor((height - 330) / 25))
   return (
     <Pressable
       onPress={onPress ?? (() => openArticle(article))}
@@ -116,9 +115,12 @@ export function DeckCard({ article, width, height, onPress }: { article: Article
       </Text>
       <Text style={[type.meta, { marginTop: spacing.sm }]}>अपडेट: {timeAgo(article.updatedAt || article.publishedAt)}</Text>
       <PublisherRow article={article} />
-      <Text style={styles.deckSummary} numberOfLines={summaryLines}>
+      <Text style={styles.deckSummary} numberOfLines={2}>
         {article.summary}
       </Text>
+      <View style={styles.deckPhoto}>
+        <NewsImage image={article.image} size="standard" style={StyleSheet.absoluteFill} />
+      </View>
       <View style={styles.deckActions}>
         <OutlineAction icon={saved ? 'bookmark' : 'bookmark-outline'} label={saved ? 'बुकमार्क हटाएं' : 'बुकमार्क करें'} active={saved} onPress={() => toggleBookmark(article)} />
         <OutlineAction icon="arrow-redo-outline" label="शेयर करें" onPress={() => shareArticle(article)} />
@@ -194,14 +196,16 @@ const styles = StyleSheet.create({
   pill: { backgroundColor: colors.pill, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: 5 },
   pillText: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 18, color: colors.white },
   deck: { borderRadius: 30, padding: spacing.xl, overflow: 'hidden', ...shadow },
-  deckTitle: { fontFamily: fonts.bold, fontSize: 25, lineHeight: 38, color: colors.ink },
-  deckSummary: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 25, color: colors.text, marginTop: spacing.lg, flexShrink: 1 },
-  deckActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: spacing.sm, marginTop: 'auto', paddingTop: spacing.md },
+  deckTitle: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, color: colors.ink },
+  deckSummary: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 25, color: colors.text, marginTop: spacing.md },
+  // Takes the card's leftover height (at least 90 px), so short headlines never leave an empty gap.
+  deckPhoto: { flex: 1, minHeight: 90, marginTop: spacing.md, borderRadius: radius.lg, overflow: 'hidden', backgroundColor: colors.skeleton },
+  deckActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: spacing.sm, paddingTop: spacing.md },
   outline: { width: 38, height: 38, borderRadius: 19, borderWidth: 1.5, borderColor: 'rgba(17,18,20,0.14)', alignItems: 'center', justifyContent: 'center' },
   row: { flexDirection: 'row', gap: spacing.md, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center' },
   rowThumb: { width: 92, height: 92, borderRadius: radius.md },
   mini: { borderRadius: radius.lg, padding: spacing.sm, paddingBottom: spacing.md, minHeight: 250 },
   miniImage: { width: '100%', aspectRatio: 16 / 10, borderRadius: radius.md },
   ranked: { flexDirection: 'row', gap: spacing.md, paddingVertical: spacing.md, alignItems: 'flex-start' },
-  rank: { fontFamily: fonts.bold, fontSize: 22, lineHeight: 32, color: colors.primary, width: 34 },
+  rank: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, color: colors.primary, width: 34 },
 })
