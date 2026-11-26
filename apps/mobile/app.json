@@ -2,7 +2,7 @@
   "expo": {
     "name": "LokLens News",
     "slug": "loklens-news",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,7 +22,7 @@
       "runtimeVersion": {
         "policy": "appVersion"
       },
-      "versionCode": 4
+      "versionCode": 5
     },
     "web": {
       "favicon": "./assets/favicon.png"
