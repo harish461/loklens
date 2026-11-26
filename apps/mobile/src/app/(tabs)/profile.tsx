@@ -1,5 +1,5 @@
 /**
- * Profile (no login yet): app identity from /settings, social links, contact, policy pages (rendered
+ * Profile: account card, app identity from /settings, social links, contact, policy pages (rendered
  * in-app from /pages), offline-cache control and app version.
  */
 import Ionicons from '@expo/vector-icons/Ionicons'
@@ -15,6 +15,7 @@ import { ScreenBackground } from '@/components/ScreenBackground'
 import { SITE_URL } from '@/lib/api/client'
 import { useSettings } from '@/lib/api/queries'
 import { logout } from '@/lib/auth/client'
+import type { InfoSlug } from '@/lib/content/infoPages'
 import { useSession } from '@/lib/auth/session'
 import { persister, queryClient } from '@/lib/queryClient'
 import { colors, fonts, radius, spacing, type, useTheme } from '@/theme'
@@ -32,25 +33,13 @@ const SOCIAL_ICONS: Record<string, IconName> = {
   website: 'globe-outline',
 }
 
-const POLICY_LABELS: { key: 'about' | 'contact' | 'privacy' | 'terms' | 'editorial' | 'corrections' | 'disclaimer'; label: string; icon: IconName }[] = [
-  { key: 'about', label: 'हमारे बारे में', icon: 'information-circle-outline' },
-  { key: 'contact', label: 'संपर्क करें', icon: 'call-outline' },
-  { key: 'editorial', label: 'संपादकीय नीति', icon: 'newspaper-outline' },
-  { key: 'corrections', label: 'सुधार नीति', icon: 'create-outline' },
-  { key: 'privacy', label: 'गोपनीयता नीति', icon: 'lock-closed-outline' },
-  { key: 'terms', label: 'नियम व शर्तें', icon: 'document-text-outline' },
-  { key: 'disclaimer', label: 'अस्वीकरण', icon: 'alert-circle-outline' },
+// Text lives in the app (src/lib/content/infoPages.ts). Editorial, corrections and disclaimer are left out for now.
+const INFO_ROWS: { slug: InfoSlug; label: string; icon: IconName }[] = [
+  { slug: 'about', label: 'About us', icon: 'information-circle-outline' },
+  { slug: 'contact', label: 'Contact us', icon: 'call-outline' },
+  { slug: 'privacy', label: 'Privacy policy', icon: 'lock-closed-outline' },
+  { slug: 'terms', label: 'Terms & conditions', icon: 'document-text-outline' },
 ]
-
-const DEFAULT_POLICIES = {
-  about: '/about',
-  contact: '/contact',
-  privacy: '/privacy-policy',
-  terms: '/terms',
-  editorial: '/editorial-policy',
-  corrections: '/corrections-policy',
-  disclaimer: '/disclaimer',
-}
 
 function Row({ icon, label, onPress, value }: { icon: IconName; label: string; onPress?: () => void; value?: string }) {
   const t = useTheme()
@@ -83,13 +72,13 @@ function AccountCard() {
   if (!token || !user) {
     return (
       <View style={[styles.group, { backgroundColor: t.surface, padding: spacing.lg, marginBottom: spacing.lg }]}>
-        <Text style={[type.title, { color: t.text }]}>अपना खाता</Text>
-        <Text style={[type.meta, { color: t.muted, marginTop: spacing.xs, marginBottom: spacing.lg }]}>बुकमार्क और पसंद अपने खाते में रखें।</Text>
+        <Text style={[type.title, { color: t.text }]}>Your account</Text>
+        <Text style={[type.meta, { color: t.muted, marginTop: spacing.xs, marginBottom: spacing.lg }]}>Keep your bookmarks and preferences in your account.</Text>
         <Pressable onPress={() => router.push('/sign-in')} style={[styles.accountBtn, { backgroundColor: t.pill }]} accessibilityRole="button">
-          <Text style={[styles.accountBtnText, { color: t.pillText }]}>साइन इन करें</Text>
+          <Text style={[styles.accountBtnText, { color: t.pillText }]}>Sign in</Text>
         </Pressable>
         <Pressable onPress={() => router.push('/register')} style={styles.accountLink} accessibilityRole="link">
-          <Text style={styles.accountLinkText}>नया खाता बनाएं</Text>
+          <Text style={styles.accountLinkText}>Create an account</Text>
         </Pressable>
       </View>
     )
@@ -99,7 +88,7 @@ function AccountCard() {
       <Text style={[type.title, { color: t.text }]}>{user.name}</Text>
       <Text style={[type.meta, { color: t.muted, marginTop: spacing.xs, marginBottom: spacing.lg }]}>{user.email}</Text>
       <Pressable onPress={() => logout()} style={[styles.accountBtn, { backgroundColor: t.raised }]} accessibilityRole="button">
-        <Text style={[styles.accountBtnText, { color: t.text }]}>लॉग आउट</Text>
+        <Text style={[styles.accountBtnText, { color: t.text }]}>Log out</Text>
       </Pressable>
     </View>
   )
@@ -109,13 +98,6 @@ export default function ProfileScreen() {
   const t = useTheme()
   const { data: settings } = useSettings()
   const [cleared, setCleared] = useState(false)
-  const policies = settings?.policies ?? DEFAULT_POLICIES
-
-  const openPolicy = (path: string) => {
-    const slug = path.replace(/^\/+|\/+$/g, '')
-    if (/^[a-z0-9-]+$/.test(slug)) router.push({ pathname: '/page/[slug]', params: { slug } })
-    else void Linking.openURL(path.startsWith('http') ? path : `${SITE_URL}${path}`)
-  }
 
   const clearCache = async () => {
     queryClient.clear()
@@ -143,23 +125,23 @@ export default function ProfileScreen() {
           ) : null}
         </View>
 
-        <Group title="संपर्क">
+        <Group title="Contact">
           {settings?.contact?.email ? <Row icon="mail-outline" label={settings.contact.email} onPress={() => void Linking.openURL(`mailto:${settings.contact.email}`)} /> : null}
           {settings?.contact?.whatsapp ? (
             <Row icon="logo-whatsapp" label={settings.contact.whatsapp} onPress={() => void Linking.openURL(`https://wa.me/${settings.contact.whatsapp?.replace(/\D/g, '')}`)} />
           ) : null}
-          <Row icon="globe-outline" label="वेबसाइट देखें" value="loklensnews.com" onPress={() => void Linking.openURL(SITE_URL)} />
+          <Row icon="globe-outline" label="Visit website" value="loklensnews.com" onPress={() => void Linking.openURL(SITE_URL)} />
         </Group>
 
-        <Group title="जानकारी">
-          {POLICY_LABELS.map((p) => (
-            <Row key={p.key} icon={p.icon} label={p.label} onPress={() => openPolicy(policies[p.key])} />
+        <Group title="Information">
+          {INFO_ROWS.map((p) => (
+            <Row key={p.slug} icon={p.icon} label={p.label} onPress={() => router.push({ pathname: '/info/[slug]', params: { slug: p.slug } })} />
           ))}
         </Group>
 
-        <Group title="ऐप">
-          <Row icon="trash-outline" label={cleared ? 'सहेजी गई खबरें साफ़ हो गईं' : 'ऑफ़लाइन कैश साफ़ करें'} onPress={cleared ? undefined : clearCache} />
-          <Row icon="phone-portrait-outline" label="संस्करण" value={Constants.expoConfig?.version ?? ''} />
+        <Group title="App">
+          <Row icon="trash-outline" label={cleared ? 'Saved news cleared' : 'Clear offline cache'} onPress={cleared ? undefined : clearCache} />
+          <Row icon="phone-portrait-outline" label="Version" value={Constants.expoConfig?.version ?? ''} />
         </Group>
       </ScrollView>
     </SafeAreaView>
