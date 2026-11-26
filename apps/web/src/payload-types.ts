@@ -136,6 +136,8 @@ export interface Config {
   jobs: {
     tasks: {
       expireBreaking: TaskExpireBreaking;
+      pushSend: TaskPushSend;
+      pushReceipts: TaskPushReceipts;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -822,7 +824,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'expireBreaking' | 'schedulePublish';
+        taskSlug: 'inline' | 'expireBreaking' | 'pushSend' | 'pushReceipts' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -855,7 +857,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'expireBreaking' | 'schedulePublish') | null;
+  taskSlug?: ('inline' | 'expireBreaking' | 'pushSend' | 'pushReceipts' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -1690,6 +1692,29 @@ export interface TaskExpireBreaking {
   input?: unknown;
   output: {
     cleared: number;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskPushSend".
+ */
+export interface TaskPushSend {
+  input: {
+    notificationId: number;
+  };
+  output: {
+    done: boolean;
+    sentTo: number;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskPushReceipts".
+ */
+export interface TaskPushReceipts {
+  input?: unknown;
+  output: {
+    resolved: number;
   };
 }
 /**
