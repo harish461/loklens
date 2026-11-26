@@ -40,7 +40,15 @@
           "imageWidth": 160
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#C41D17",
+          "defaultChannel": "news"
+        }
+      ]
     ],
     "scheme": "loklens",
     "experiments": {

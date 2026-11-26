@@ -16,6 +16,7 @@ import { ScreenBackground } from '@/components/ScreenBackground'
 import { SITE_URL } from '@/lib/api/client'
 import { useSettings } from '@/lib/api/queries'
 import { logout } from '@/lib/auth/client'
+import { unregisterThisDevice } from '@/lib/push/notifications'
 import type { InfoSlug } from '@/lib/content/infoPages'
 import { useSession } from '@/lib/auth/session'
 import { persister, queryClient } from '@/lib/queryClient'
@@ -66,6 +67,12 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   )
 }
 
+/** Sign-out: stop push to this device first (needs the session), then end the session. */
+async function signOut(): Promise<void> {
+  await unregisterThisDevice()
+  await logout()
+}
+
 /** Account block: sign in / register when signed out; name, email and sign-out when signed in. */
 function AccountCard() {
   const t = useTheme()
@@ -88,7 +95,7 @@ function AccountCard() {
     <View style={[styles.group, { backgroundColor: t.surface, padding: spacing.lg, marginBottom: spacing.lg }]}>
       <Text style={[type.title, { color: t.text }]}>{user.name}</Text>
       <Text style={[type.meta, { color: t.muted, marginTop: spacing.xs, marginBottom: spacing.lg }]}>{user.email}</Text>
-      <Pressable onPress={() => logout()} style={[styles.accountBtn, { backgroundColor: t.raised }]} accessibilityRole="button">
+      <Pressable onPress={() => void signOut()} style={[styles.accountBtn, { backgroundColor: t.raised }]} accessibilityRole="button">
         <Text style={[styles.accountBtnText, { color: t.text }]}>Log out</Text>
       </Pressable>
     </View>
@@ -141,6 +148,7 @@ export default function ProfileScreen() {
         </Group>
 
         <Group title="App">
+          <Row icon="notifications-outline" label="Notifications" onPress={() => router.push('/notification-settings')} />
           <Row icon="trash-outline" label={cleared ? 'Saved news cleared' : 'Clear offline cache'} onPress={cleared ? undefined : clearCache} />
           <Row icon="phone-portrait-outline" label="Version" value={Constants.expoConfig?.version ?? ''} />
         </Group>

@@ -18,7 +18,8 @@ export class AuthError extends Error {
   }
 }
 
-async function call<T>(path: string, init: { method?: 'GET' | 'POST'; body?: unknown; auth?: boolean } = {}): Promise<T> {
+/** Calls the LokLens API (api/v1). `auth: true` sends the saved session token. Errors are AuthError, in English. */
+export async function call<T>(path: string, init: { method?: 'GET' | 'POST'; body?: unknown; auth?: boolean } = {}): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (init.body !== undefined) headers['Content-Type'] = 'application/json'
   if (init.auth) {

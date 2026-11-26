@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { BrandSplash } from '@/components/BrandSplash'
+import { PushHandler } from '@/components/PushHandler'
 import { PERSIST_MAX_AGE, persister, queryClient } from '@/lib/queryClient'
 import { refreshMe } from '@/lib/auth/client'
 import { loadSession, useSession } from '@/lib/auth/session'
@@ -66,6 +67,7 @@ export default function RootLayout() {
               <Stack.Screen name="latest" />
               <Stack.Screen name="search" />
               <Stack.Screen name="page/[slug]" />
+              <Stack.Screen name="notification-settings" />
             </Stack.Protected>
             <Stack.Protected guard={!signedIn}>
               <Stack.Screen name="sign-in" />
@@ -75,6 +77,8 @@ export default function RootLayout() {
             {/* About, contact, privacy and terms stay readable whether or not the reader is signed in. */}
             <Stack.Screen name="info/[slug]" />
           </Stack>
+          {/* Push registration and notification taps; re-mounts on every sign-in. */}
+          {signedIn ? <PushHandler key={session.token} /> : null}
         </PersistQueryClientProvider>
       ) : (
         <StatusBar style="dark" />

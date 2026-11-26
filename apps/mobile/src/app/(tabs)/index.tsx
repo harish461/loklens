@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { StoryRow } from '@/components/ArticleCards'
 import { CategorySlider } from '@/components/CategorySlider'
+import { PushOptInCard } from '@/components/PushOptInCard'
 import { ScreenBackground } from '@/components/ScreenBackground'
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
 import { AppHeader, CategoryTabs, NewsTicker, SectionHeader, type TickerItem } from '@/components/HomeParts'
@@ -114,6 +115,7 @@ export default function HomeScreen() {
       <CategoryTabs categories={tabs} />
       {home.error && <OfflineBanner />}
       {layout.ticker && <NewsTicker label={layout.ticker.label} live={layout.ticker.live} items={layout.ticker.items} />}
+      <PushOptInCard />
       {/* Order: hero cards → category sliders → ताज़ा खबरें → सभी खबरें (the list below). */}
       <SectionHeader first title="प्रमुख खबरें" onSeeAll={() => router.push('/latest')} />
       <DeckArea articles={layout.deck} />
