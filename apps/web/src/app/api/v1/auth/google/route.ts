@@ -23,7 +23,11 @@ export async function POST(request: Request): Promise<Response> {
     try {
       identity = await verifyGoogleIdentityToken(body.idToken)
     } catch (err) {
-      if (err instanceof GoogleTokenError) throw new AuthApiError(401, 'UNAUTHORIZED', 'Google sign-in could not be verified.')
+      if (err instanceof GoogleTokenError) {
+        // The client only gets the generic message; the reason (error code, public client IDs) is for the log.
+        console.warn(`[LokLens auth] Google token rejected: ${err.reason}`)
+        throw new AuthApiError(401, 'UNAUTHORIZED', 'Google sign-in could not be verified.')
+      }
       throw err
     }
 
