@@ -102,10 +102,14 @@ export interface InitialArticleDoc {
   isFeatured: boolean
   isBreaking: boolean
   isTrending: boolean
+  /** Push notification on first publish (Articles.pushOnPublish). */
+  pushOnPublish?: PushOnPublishMode
   publishedAt: string
   publishedAtIso?: string
   updatedAtIso?: string
 }
+
+export type PushOnPublishMode = 'auto' | 'send' | 'skip'
 
 export interface ArticleEditorClientProps {
   initialDoc: InitialArticleDoc
@@ -510,6 +514,7 @@ export function ArticleEditorClient({
   const [isFeatured, setIsFeatured] = useState(initialDoc.isFeatured)
   const [isBreaking, setIsBreaking] = useState(initialDoc.isBreaking)
   const [isTrending, setIsTrending] = useState(initialDoc.isTrending)
+  const [pushOnPublish, setPushOnPublish] = useState<PushOnPublishMode>(initialDoc.pushOnPublish || 'auto')
   const [publishedAt, setPublishedAt] = useState(initialDoc.publishedAt)
 
   function showToast(msg: string) {
@@ -868,6 +873,7 @@ export function ArticleEditorClient({
         isFeatured,
         isBreaking: isBreaking || googleNewsStandout,
         isTrending,
+        pushOnPublish,
         publishedAt: effectivePublishedAt,
         seo: {
           metaTitle: resolvedMetaTitle || undefined,
@@ -2353,6 +2359,30 @@ export function ArticleEditorClient({
                   >
                     <span className={styles.switchThumb} />
                   </button>
+                </div>
+
+                {/* Push notification on first publish (sent once; see lib/push/publish.ts). */}
+                <div className={styles.fieldBlock} style={{ marginTop: 8 }}>
+                  <label htmlFor="pub-push" className={styles.fieldLabel}>
+                    Push notification on publish
+                  </label>
+                  <select
+                    id="pub-push"
+                    value={pushOnPublish}
+                    onChange={(e) => setPushOnPublish(e.target.value as PushOnPublishMode)}
+                    className={styles.filterSelect}
+                  >
+                    <option value="auto">Automatic (only if Breaking News is on)</option>
+                    <option value="send">Send to app readers</option>
+                    <option value="skip">Don&apos;t send</option>
+                  </select>
+                  <small style={{ color: '#6E7185', fontSize: 12 }}>
+                    {initialDoc.status === 'published'
+                      ? 'Already published: a notification is only sent the first time an article is published.'
+                      : pushOnPublish === 'send' || (pushOnPublish === 'auto' && (isBreaking || googleNewsStandout))
+                        ? 'App readers will get a notification when you publish.'
+                        : 'No notification will be sent when you publish.'}
+                  </small>
                 </div>
               </div>
             </section>

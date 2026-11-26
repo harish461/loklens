@@ -136,6 +136,7 @@ export interface Config {
   jobs: {
     tasks: {
       expireBreaking: TaskExpireBreaking;
+      pushArticlePublish: TaskPushArticlePublish;
       pushSend: TaskPushSend;
       pushReceipts: TaskPushReceipts;
       schedulePublish: TaskSchedulePublish;
@@ -824,7 +825,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'expireBreaking' | 'pushSend' | 'pushReceipts' | 'schedulePublish';
+        taskSlug: 'inline' | 'expireBreaking' | 'pushArticlePublish' | 'pushSend' | 'pushReceipts' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -857,7 +858,8 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'expireBreaking' | 'pushSend' | 'pushReceipts' | 'schedulePublish') | null;
+  taskSlug?:
+    ('inline' | 'expireBreaking' | 'pushArticlePublish' | 'pushSend' | 'pushReceipts' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -1692,6 +1694,19 @@ export interface TaskExpireBreaking {
   input?: unknown;
   output: {
     cleared: number;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskPushArticlePublish".
+ */
+export interface TaskPushArticlePublish {
+  input: {
+    articleId: number;
+  };
+  output: {
+    notificationId: number;
+    reason: string;
   };
 }
 /**

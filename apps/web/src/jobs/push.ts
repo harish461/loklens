@@ -1,5 +1,6 @@
 import type { TaskConfig } from 'payload'
 
+import { createPublishNotification } from '../lib/push/publish'
 import { checkReceipts, sendNotificationSlice } from '../lib/push/send'
 
 /**
@@ -25,6 +26,23 @@ export const pushSendTask: TaskConfig<{ input: { notificationId: number }; outpu
       await req.payload.jobs.queue({ task: 'pushSend', input: { notificationId: input.notificationId }, req })
     }
     return { output: result }
+  },
+}
+
+/** Creates an article's publish notification once (queued by the article hook) and starts sending it. */
+export const pushArticlePublishTask: TaskConfig<{ input: { articleId: number }; output: { notificationId: number; reason: string } }> = {
+  slug: 'pushArticlePublish',
+  label: 'Push notification for a published article',
+  inputSchema: [{ name: 'articleId', type: 'number', required: true }],
+  outputSchema: [
+    { name: 'notificationId', type: 'number', required: true },
+    { name: 'reason', type: 'text', required: true },
+  ],
+  // Safe to retry: the unique dedupe key means a second run finds the existing notification.
+  retries: 2,
+  handler: async ({ input, req }) => {
+    const result = await createPublishNotification(req.payload, input.articleId, req)
+    return { output: { notificationId: result.notificationId ?? 0, reason: result.reason ?? 'created' } }
   },
 }
 

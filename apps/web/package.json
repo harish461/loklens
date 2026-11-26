@@ -19,6 +19,7 @@
     "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",
     "db:seed": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed.ts",
     "db:verify": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/verify-data.ts",
+    "push:verify": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/verify-push.ts",
     "db:sync-dev": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/sync-dev-articles.ts",
     "media:check": "node scripts/check-media-storage.mjs"
   },

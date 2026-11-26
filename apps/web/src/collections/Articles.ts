@@ -22,6 +22,7 @@ import {
 } from '../hooks/articles'
 import { normalizeCollectionData } from '../hooks/normalize'
 import { revalidateArticleAfterChange, revalidateArticleAfterDelete } from '../hooks/revalidate'
+import { queuePushOnPublish } from '../lib/push/publish'
 
 /** Runs before validation so publishedAt / breakingUntil exist when the document is validated. */
 const publishDefaults: CollectionBeforeValidateHook = ({ data, originalDoc }) =>
@@ -73,7 +74,7 @@ export const Articles: CollectionConfig = {
     beforeValidate: [normalizeCollectionData, publishDefaults],
     // Order matters: the guard sees the client's raw request, then the workflow fields are derived.
     beforeChange: [guardReporterChanges, syncWorkflow, requireFeaturedImageOnPublish],
-    afterChange: [revalidateArticleAfterChange],
+    afterChange: [revalidateArticleAfterChange, queuePushOnPublish],
     afterDelete: [revalidateArticleAfterDelete],
   },
   fields: [

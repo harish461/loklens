@@ -30,7 +30,7 @@ import { SiteSettings } from './globals/SiteSettings'
 import { Ticker } from './globals/Ticker'
 import { hi } from './i18n/hi'
 import { expireBreakingTask } from './jobs/expireBreaking'
-import { pushReceiptsTask, pushSendTask } from './jobs/push'
+import { pushArticlePublishTask, pushReceiptsTask, pushSendTask } from './jobs/push'
 import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
@@ -272,7 +272,7 @@ export default buildConfig({
     supportedLanguages: { en, hi } as unknown as NonNullable<Config['i18n']>['supportedLanguages'],
   },
   jobs: {
-    tasks: [expireBreakingTask, pushSendTask, pushReceiptsTask],
+    tasks: [expireBreakingTask, pushArticlePublishTask, pushSendTask, pushReceiptsTask],
     // Runs queued jobs (scheduled publish + expireBreaking) every minute inside the app process.
     autoRun: [{ cron: '* * * * *', queue: 'default', limit: 50 }],
     // Never auto-run in CLI scripts (migrate, seed, generate:types) — only in the Next server.
