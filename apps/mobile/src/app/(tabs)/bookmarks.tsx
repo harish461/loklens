@@ -1,5 +1,6 @@
 /** Bookmarks saved on this device (available offline). Remove with the bookmark button on each card. */
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, View } from 'react-native'
+import { Text } from '@/components/AppText'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { StoryActions, StoryRow } from '@/components/ArticleCards'

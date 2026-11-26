@@ -3,13 +3,14 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
-import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Animated, Pressable, ScrollView, StyleSheet, View } from 'react-native'
+import { Text } from '@/components/AppText'
 
 import type { CategoryRef } from '@/lib/api/types'
-
-const HEADER_LOGO = require('../../assets/brand/logo-header.webp')
 import { formatToday } from '@/lib/format'
 import { colors, fonts, radius, spacing, toggleThemeMode, type, useTheme } from '@/theme'
+
+const HEADER_LOGO = require('../../assets/brand/logo-header.webp')
 
 export function CircleButton({ icon, label, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void }) {
   const t = useTheme()
@@ -100,7 +101,7 @@ export function NewsTicker({ label, live = false, items }: { label: string; live
         {live && <View style={styles.liveDot} />}
         <Text style={styles.tickerLabelText}>{label}</Text>
       </View>
-      <Animated.Text style={[styles.tickerText, { opacity, color: t.text }]} numberOfLines={1}>
+      <Animated.Text style={[styles.tickerText, { opacity, color: t.text }]} numberOfLines={1} textBreakStrategy="simple">
         {item.title}
       </Animated.Text>
     </Pressable>

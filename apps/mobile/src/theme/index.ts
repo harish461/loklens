@@ -60,14 +60,14 @@ export const fonts = {
 
 /** Devanagari needs tall line heights (matras above, conjuncts below): ~1.4–1.65 × size. */
 export const type = {
-  hero: { fontFamily: fonts.bold, fontSize: 24, lineHeight: 36, color: colors.ink },
-  display: { fontFamily: fonts.bold, fontSize: 22, lineHeight: 34, color: colors.ink },
-  headline: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 28, color: colors.ink },
-  title: { fontFamily: fonts.bold, fontSize: 16, lineHeight: 25, color: colors.ink },
+  hero: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, color: colors.ink },
+  display: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, color: colors.ink },
+  headline: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, color: colors.ink },
+  title: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 23, color: colors.ink },
   cardTitle: { fontFamily: fonts.semibold, fontSize: 15, lineHeight: 23, color: colors.ink },
-  body: { fontFamily: fonts.regular, fontSize: 16, lineHeight: 27, color: colors.text },
+  body: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 25, color: colors.text },
   bodySmall: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 22, color: colors.text },
-  section: { fontFamily: fonts.bold, fontSize: 19, lineHeight: 28, color: colors.shellText },
+  section: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, color: colors.shellText },
   label: { fontFamily: fonts.semibold, fontSize: 13, lineHeight: 20, color: colors.text },
   meta: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 18, color: colors.muted },
   tiny: { fontFamily: fonts.medium, fontSize: 10, lineHeight: 15, color: colors.muted },

@@ -8,7 +8,8 @@
  */
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image } from 'expo-image'
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native'
+import { Text } from '@/components/AppText'
 
 import { useArticleFeed } from '@/lib/api/queries'
 import type { ArticleCard } from '@/lib/api/types'
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
   card: { height: CARD_HEIGHT, borderRadius: radius.xl, overflow: 'hidden' },
   padded: { padding: spacing.lg },
   pressed: { opacity: 0.85 },
-  colourTitle: { marginTop: spacing.lg, fontFamily: fonts.bold, fontSize: 20, lineHeight: 31, color: '#FFFFFF' },
+  colourTitle: { marginTop: spacing.lg, fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, color: '#FFFFFF' },
   publisher: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   avatar: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#FFFFFF' },
   publisherText: { flex: 1, fontFamily: fonts.semibold, fontSize: 13, lineHeight: 19 },

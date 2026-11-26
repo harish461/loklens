@@ -6,7 +6,8 @@
  * Built on PanResponder + Animated, so no extra native dependencies.
  */
 import { useMemo, useRef, useState } from 'react'
-import { Animated, PanResponder, StyleSheet, Text, View } from 'react-native'
+import { Animated, PanResponder, StyleSheet, View } from 'react-native'
+import { Text } from '@/components/AppText'
 
 import type { ArticleCard } from '@/lib/api/types'
 import { fonts, spacing, useTheme } from '@/theme'

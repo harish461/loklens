@@ -10,7 +10,8 @@ import { Image } from 'expo-image'
 import { router, useIsFocused, useLocalSearchParams } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useState } from 'react'
-import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { Pressable, RefreshControl, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native'
+import { Text } from '@/components/AppText'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { StoryBadge, StoryRow } from '@/components/ArticleCards'
@@ -207,23 +208,23 @@ export default function ArticleScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   heroShade: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(0,0,0,0.18)' },
-  heroTitle: { position: 'absolute', left: 80, right: 80, textAlign: 'center', fontFamily: fonts.semibold, fontSize: 17, lineHeight: 26, color: '#FFFFFF', textShadowColor: 'rgba(0,0,0,0.5)', textShadowRadius: 6 },
+  heroTitle: { position: 'absolute', left: 80, right: 80, textAlign: 'center', fontFamily: fonts.semibold, fontSize: 18, lineHeight: 27, color: '#FFFFFF', textShadowColor: 'rgba(0,0,0,0.5)', textShadowRadius: 6 },
   topButtons: { position: 'absolute', left: spacing.lg, right: spacing.lg, flexDirection: 'row', justifyContent: 'space-between' },
   glass: { width: 46, height: 46, borderRadius: 23, backgroundColor: 'rgba(30,30,32,0.45)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
   sheet: { marginTop: -32, borderTopLeftRadius: 32, borderTopRightRadius: 32, paddingHorizontal: spacing.xl, paddingTop: spacing.xl },
   publisher: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   avatar: { width: 52, height: 52, borderRadius: 26, backgroundColor: '#FFFFFF' },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  publisherName: { fontFamily: fonts.semibold, fontSize: 18, lineHeight: 27 },
+  publisherName: { fontFamily: fonts.semibold, fontSize: 15, lineHeight: 23 },
   ago: { fontFamily: fonts.regular, fontSize: 13, lineHeight: 19 },
   share: { width: 50, height: 50, borderRadius: 25, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  headline: { fontFamily: fonts.bold, fontSize: 26, lineHeight: 40, marginTop: spacing.lg },
+  headline: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, marginTop: spacing.lg },
   date: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 21, marginTop: spacing.sm },
   metaRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md, paddingVertical: spacing.lg, borderBottomWidth: 1 },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   metaText: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 21 },
   metaAuthor: { flexShrink: 1 },
-  lead: { fontFamily: fonts.bold, fontSize: 17, lineHeight: 28, marginTop: spacing.lg, marginBottom: spacing.lg },
+  lead: { fontFamily: fonts.semibold, fontSize: 15, lineHeight: 25, marginTop: spacing.lg, marginBottom: spacing.lg },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.sm },
   tag: { borderRadius: 999, paddingHorizontal: spacing.md, paddingVertical: 5 },
   tagText: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 20 },

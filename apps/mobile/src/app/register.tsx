@@ -1,7 +1,8 @@
 /** Create a reader account (name, email, password). */
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { ScrollView, StyleSheet, Text } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
+import { Text } from '@/components/AppText'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Field, FormError, GoogleButton, OrDivider, PrimaryButton, TextLink } from '@/components/AuthForm'

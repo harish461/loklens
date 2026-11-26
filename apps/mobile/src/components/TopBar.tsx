@@ -2,7 +2,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { router } from 'expo-router'
 import type { ReactNode } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
+import { Text } from '@/components/AppText'
 
 import { colors, fonts, spacing, useTheme } from '@/theme'
 
@@ -43,7 +44,7 @@ export function TopBar({ title, right, back = true }: { title?: string; right?: 
 
 const styles = StyleSheet.create({
   bar: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  title: { flex: 1, fontFamily: fonts.bold, fontSize: 17, lineHeight: 26 },
+  title: { flex: 1, fontFamily: fonts.bold, fontSize: 18, lineHeight: 27 },
   right: { flexDirection: 'row', gap: spacing.sm },
   button: { width: 42, height: 42, borderRadius: 21, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
 })

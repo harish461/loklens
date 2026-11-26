@@ -1,6 +1,7 @@
 /** Shared pieces for the sign-in, register and reset screens. */
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, TextInput, View, type TextInputProps } from 'react-native'
+import { Text } from '@/components/AppText'
 
 import { colors, fonts, radius, spacing, useTheme } from '@/theme'
 
@@ -92,9 +93,9 @@ export function Notice({ message }: { message: string }) {
 const styles = StyleSheet.create({
   field: { gap: spacing.xs, marginBottom: spacing.lg },
   label: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 22 },
-  input: { borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: 12, fontFamily: fonts.medium, fontSize: 16 },
+  input: { borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: 12, fontFamily: fonts.medium, fontSize: 15 },
   button: { borderRadius: radius.pill, paddingVertical: 15, alignItems: 'center', justifyContent: 'center', marginTop: spacing.sm },
-  buttonText: { fontFamily: fonts.bold, fontSize: 16, lineHeight: 24 },
+  buttonText: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 23 },
   error: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 22, color: colors.primary, marginBottom: spacing.md },
   link: { alignSelf: 'center', paddingVertical: spacing.sm },
   linkText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 22, color: colors.primary },

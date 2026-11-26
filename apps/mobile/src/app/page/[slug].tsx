@@ -1,6 +1,7 @@
 /** Static page (about, policies…) from /api/v1/pages/{slug}, rendered natively. */
 import { useLocalSearchParams } from 'expo-router'
-import { ScrollView, StyleSheet, Text } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
+import { Text } from '@/components/AppText'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { RichText } from '@/components/RichText'

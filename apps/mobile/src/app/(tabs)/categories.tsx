@@ -1,7 +1,8 @@
 /** Categories tab: two-column grid of pastel tiles; each opens its category feed. */
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { router } from 'expo-router'
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-native'
+import { Text } from '@/components/AppText'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
@@ -63,6 +64,6 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
   tile: { flex: 1, minHeight: 128, borderRadius: radius.xl, padding: spacing.lg },
-  tileName: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 30, color: colors.ink },
+  tileName: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, color: colors.ink },
   arrow: { marginTop: 'auto', alignSelf: 'flex-end', width: 32, height: 32, borderRadius: 16, backgroundColor: colors.pill, alignItems: 'center', justifyContent: 'center' },
 })

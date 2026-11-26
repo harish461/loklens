@@ -12,7 +12,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image as ExpoImage } from 'expo-image'
 import { Component, Fragment, type ReactNode } from 'react'
-import { Pressable, StyleSheet, Text, View, type TextStyle } from 'react-native'
+import { Pressable, StyleSheet, View, type TextStyle } from 'react-native'
+import { Text } from '@/components/AppText'
 
 import type { ArticleCard, Image, RichTextNode } from '@/lib/api/types'
 import { openLink } from '@/lib/links'
@@ -115,9 +116,9 @@ function Paragraph({ node, style, heading = false }: { node: RichTextNode; style
 
 const HEADING: Record<string, TextStyle> = {
   h1: { ...type.display },
-  h2: { ...type.display, fontSize: 21, lineHeight: 32 },
+  h2: { ...type.display, fontSize: 18, lineHeight: 27 },
   h3: { ...type.headline },
-  h4: { ...type.title, fontSize: 17, lineHeight: 26 },
+  h4: { ...type.title, fontSize: 18, lineHeight: 27 },
   h5: { ...type.title },
   h6: { ...type.title, fontSize: 15 },
 }

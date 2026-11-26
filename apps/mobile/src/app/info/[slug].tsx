@@ -1,7 +1,8 @@
 /** About us, Contact us, Privacy policy and Terms & conditions, drawn natively from src/lib/content/infoPages.ts. */
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useLocalSearchParams } from 'expo-router'
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native'
+import { Text } from '@/components/AppText'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { EmptyState } from '@/components/States'

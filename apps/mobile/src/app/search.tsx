@@ -4,7 +4,8 @@
  */
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect, useState } from 'react'
-import { FlatList, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { FlatList, Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native'
+import { Text } from '@/components/AppText'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { StoryRow } from '@/components/ArticleCards'
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: spacing.md, paddingBottom: spacing.md },
   inputWrap: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, borderRadius: radius.pill, paddingHorizontal: spacing.lg, minHeight: 48 },
-  input: { flex: 1, fontFamily: fonts.regular, fontSize: 16, paddingVertical: spacing.sm },
+  input: { flex: 1, fontFamily: fonts.regular, fontSize: 15, paddingVertical: spacing.sm },
   recent: { flex: 1, paddingHorizontal: spacing.lg },
   recentHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
   clear: { fontFamily: fonts.semibold, fontSize: 13, lineHeight: 20, color: colors.primary },

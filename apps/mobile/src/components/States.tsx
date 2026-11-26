@@ -1,7 +1,8 @@
 /** Loading, error, empty and offline states (Hindi copy); follow the light/dark theme. */
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect, useRef } from 'react'
-import { ActivityIndicator, Animated, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native'
+import { ActivityIndicator, Animated, Pressable, StyleSheet, View, type ViewStyle } from 'react-native'
+import { Text } from '@/components/AppText'
 
 import { ApiError } from '@/lib/api/client'
 import { colors, fonts, radius, spacing, type, useTheme } from '@/theme'

@@ -8,7 +8,8 @@ import { Image } from 'expo-image'
 import { useIsFocused } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useCallback, useState } from 'react'
-import { ActivityIndicator, FlatList, Linking, Pressable, Share, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native'
+import { ActivityIndicator, FlatList, Linking, Pressable, Share, StyleSheet, View, type LayoutChangeEvent } from 'react-native'
+import { Text } from '@/components/AppText'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { ShortPlayer } from '@/components/ShortPlayer'
@@ -127,7 +128,7 @@ const shadowText = { textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 6, te
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#000' },
   header: { position: 'absolute', zIndex: 2, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg },
-  headerTitle: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 30, color: '#fff', ...shadowText },
+  headerTitle: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 27, color: '#fff', ...shadowText },
   subscribe: { backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: spacing.md, paddingVertical: 4 },
   subscribeText: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 18, color: '#111' },
   item: { width: '100%', backgroundColor: '#000', overflow: 'hidden' },
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
   sideIcon: { width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center' },
   sideLabel: { fontFamily: fonts.medium, fontSize: 11, lineHeight: 16, color: '#fff', ...shadowText },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, padding: spacing.xxxl },
-  message: { fontFamily: fonts.semibold, fontSize: 16, lineHeight: 25, color: '#fff', textAlign: 'center' },
+  message: { fontFamily: fonts.semibold, fontSize: 15, lineHeight: 23, color: '#fff', textAlign: 'center' },
   retry: { backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm },
   retryText: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 22, color: '#111' },
 })
