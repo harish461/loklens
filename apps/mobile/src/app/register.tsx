@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Field, FormError, GoogleButton, OrDivider, PrimaryButton, TextLink } from '@/components/AuthForm'
 import { ScreenBackground } from '@/components/ScreenBackground'
-import { TopBar } from '@/components/TopBar'
+import { goBack, TopBar } from '@/components/TopBar'
 import { AuthError, register } from '@/lib/auth/client'
 import { googleErrorMessage, googleSignInFlow } from '@/lib/auth/googleFlow'
 import { spacing, type, useTheme } from '@/theme'
@@ -24,7 +24,7 @@ export default function RegisterScreen() {
     setBusy(true)
     try {
       const result = await googleSignInFlow()
-      if (result === 'ok') router.replace('/(tabs)/profile')
+      if (result === 'ok') router.replace('/')
     } catch (err) {
       setError(googleErrorMessage(err))
     } finally {
@@ -33,16 +33,16 @@ export default function RegisterScreen() {
   }
 
   const submit = async () => {
-    if (!name.trim()) return setError('कृपया अपना नाम लिखें।')
-    if (!email.trim()) return setError('कृपया ईमेल लिखें।')
-    if (password.length < 8) return setError('पासवर्ड कम से कम 8 अक्षर का होना चाहिए।')
+    if (!name.trim()) return setError('Please enter your name.')
+    if (!email.trim()) return setError('Please enter your email.')
+    if (password.length < 8) return setError('Password must be at least 8 characters.')
     setError('')
     setBusy(true)
     try {
       await register(name.trim(), email.trim(), password)
-      router.replace('/(tabs)/profile')
+      router.replace('/')
     } catch (err) {
-      setError(err instanceof AuthError ? err.message : 'कुछ गड़बड़ हो गई।')
+      setError(err instanceof AuthError ? err.message : 'Something went wrong. Please try again.')
     } finally {
       setBusy(false)
     }
@@ -51,23 +51,23 @@ export default function RegisterScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['top']}>
       <ScreenBackground />
-      <TopBar title="नया खाता" />
+      <TopBar title="Create account" />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={[type.display, { color: t.text }]}>खाता बनाएं</Text>
+        <Text style={[type.display, { color: t.text }]}>Create an account</Text>
         <Text style={[type.bodySmall, { color: t.muted, marginTop: spacing.xs, marginBottom: spacing.xxl }]}>
-          बुकमार्क और पसंद अपने खाते में सुरक्षित रखें।
+          Keep your bookmarks and preferences safe in your account.
         </Text>
 
-        <Field label="नाम" value={name} onChangeText={setName} autoCapitalize="words" textContentType="name" />
-        <Field label="ईमेल" value={email} onChangeText={setEmail} keyboardType="email-address" textContentType="emailAddress" />
-        <Field label="पासवर्ड (कम से कम 8 अक्षर)" value={password} onChangeText={setPassword} secureTextEntry textContentType="newPassword" />
+        <Field label="Name" value={name} onChangeText={setName} autoCapitalize="words" textContentType="name" />
+        <Field label="Email" value={email} onChangeText={setEmail} keyboardType="email-address" textContentType="emailAddress" />
+        <Field label="Password (at least 8 characters)" value={password} onChangeText={setPassword} secureTextEntry textContentType="newPassword" />
 
         <FormError message={error} />
-        <PrimaryButton label="खाता बनाएं" onPress={submit} busy={busy} />
+        <PrimaryButton label="Create account" onPress={submit} busy={busy} />
         <OrDivider />
         <GoogleButton onPress={google} busy={busy} />
 
-        <TextLink label="पहले से खाता है? साइन इन करें" onPress={() => router.replace('/sign-in')} />
+        <TextLink label="Already have an account? Sign in" onPress={goBack} />
       </ScrollView>
     </SafeAreaView>
   )

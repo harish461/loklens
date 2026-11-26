@@ -27,11 +27,12 @@ export function IconButton({ icon, label, onPress, active = false }: { icon: key
   )
 }
 
-export function TopBar({ title, right }: { title?: string; right?: ReactNode }) {
+/** `back={false}` hides the back button (e.g. on the sign-in screen, which is the first screen when signed out). */
+export function TopBar({ title, right, back = true }: { title?: string; right?: ReactNode; back?: boolean }) {
   const t = useTheme()
   return (
     <View style={[styles.bar, { backgroundColor: t.bg }]}>
-      <IconButton icon="arrow-back" label="वापस" onPress={goBack} />
+      {back ? <IconButton icon="arrow-back" label="वापस" onPress={goBack} /> : null}
       <Text style={[styles.title, { color: t.text }]} numberOfLines={1}>
         {title ?? ''}
       </Text>

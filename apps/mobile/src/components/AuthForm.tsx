@@ -34,13 +34,13 @@ export function PrimaryButton({ label, onPress, busy = false, disabled = false }
   )
 }
 
-/** Divider with the word "या" between the password form and the Google button. */
+/** Divider with the word "or" between the password form and the Google button. */
 export function OrDivider() {
   const t = useTheme()
   return (
     <View style={styles.or}>
       <View style={[styles.orLine, { backgroundColor: t.border }]} />
-      <Text style={[styles.orText, { color: t.muted }]}>या</Text>
+      <Text style={[styles.orText, { color: t.muted }]}>or</Text>
       <View style={[styles.orLine, { backgroundColor: t.border }]} />
     </View>
   )
@@ -55,10 +55,10 @@ export function GoogleButton({ onPress, busy = false }: { onPress: () => void; b
       disabled={busy}
       style={({ pressed }) => [styles.google, { backgroundColor: t.surface, borderColor: t.border }, (pressed || busy) && { opacity: 0.7 }]}
       accessibilityRole="button"
-      accessibilityLabel="Google से जारी रखें"
+      accessibilityLabel="Continue with Google"
     >
       {busy ? <ActivityIndicator color={t.text} /> : <Ionicons name="logo-google" size={18} color={t.text} />}
-      <Text style={[styles.googleText, { color: t.text }]}>Google से जारी रखें</Text>
+      <Text style={[styles.googleText, { color: t.text }]}>Continue with Google</Text>
     </Pressable>
   )
 }

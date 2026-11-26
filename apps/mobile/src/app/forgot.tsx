@@ -21,14 +21,14 @@ export default function ForgotScreen() {
   const [error, setError] = useState('')
 
   const submit = async () => {
-    if (!email.trim()) return setError('कृपया ईमेल लिखें।')
+    if (!email.trim()) return setError('Please enter your email.')
     setError('')
     setBusy(true)
     try {
       await requestPasswordReset(email.trim())
       setSent(true)
     } catch (err) {
-      setError(err instanceof AuthError ? err.message : 'कुछ गड़बड़ हो गई।')
+      setError(err instanceof AuthError ? err.message : 'Something went wrong. Please try again.')
     } finally {
       setBusy(false)
     }
@@ -37,24 +37,24 @@ export default function ForgotScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['top']}>
       <ScreenBackground />
-      <TopBar title="पासवर्ड भूल गए" />
+      <TopBar title="Forgot password" />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={[type.display, { color: t.text }]}>पासवर्ड रीसेट</Text>
+        <Text style={[type.display, { color: t.text }]}>Reset password</Text>
         <Text style={[type.bodySmall, { color: t.muted, marginTop: spacing.xs, marginBottom: spacing.xxl }]}>
-          अपना ईमेल लिखें। हम आपको पासवर्ड बदलने का लिंक भेजेंगे।
+          Enter your email and we will send you a link to reset your password.
         </Text>
 
         {sent ? (
           <>
-            <Notice message="अगर यह ईमेल हमारे पास है, तो रीसेट लिंक भेज दिया गया है। अपना ईमेल (और स्पैम फ़ोल्डर) देखें।" />
-            <PrimaryButton label="साइन इन पर वापस जाएं" onPress={() => router.replace('/sign-in')} />
+            <Notice message="If this email is registered with us, a reset link has been sent. Check your inbox (and spam folder)." />
+            <PrimaryButton label="Back to sign in" onPress={() => router.replace('/sign-in')} />
           </>
         ) : (
           <>
-            <Field label="ईमेल" value={email} onChangeText={setEmail} keyboardType="email-address" textContentType="emailAddress" />
+            <Field label="Email" value={email} onChangeText={setEmail} keyboardType="email-address" textContentType="emailAddress" />
             <FormError message={error} />
-            <PrimaryButton label="लिंक भेजें" onPress={submit} busy={busy} />
-            <TextLink label="साइन इन पर वापस जाएं" onPress={() => router.replace('/sign-in')} />
+            <PrimaryButton label="Send link" onPress={submit} busy={busy} />
+            <TextLink label="Back to sign in" onPress={() => router.replace('/sign-in')} />
           </>
         )}
       </ScrollView>

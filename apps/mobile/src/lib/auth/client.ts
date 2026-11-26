@@ -33,13 +33,50 @@ async function call<T>(path: string, init: { method?: 'GET' | 'POST'; body?: unk
       body: init.body === undefined ? undefined : JSON.stringify(init.body),
     })
   } catch {
-    throw new AuthError(0, 'NETWORK', 'इंटरनेट कनेक्शन जांचें और फिर कोशिश करें।')
+    throw new AuthError(0, 'NETWORK', 'Check your internet connection and try again.')
   }
   const json = (await res.json().catch(() => ({}))) as { error?: { code?: string; message?: string } } & Record<string, unknown>
   if (!res.ok) {
-    throw new AuthError(res.status, json.error?.code ?? 'SERVER_ERROR', json.error?.message ?? 'कुछ गड़बड़ हो गई। कृपया फिर कोशिश करें।')
+    const code = json.error?.code ?? 'SERVER_ERROR'
+    throw new AuthError(res.status, code, englishMessage(code, json.error?.message))
   }
   return json as T
+}
+
+/**
+ * The account screens are in English, but the server's auth messages are mostly Hindi (the website shares
+ * them). Known messages are translated here; anything unknown falls back to a generic English line per code.
+ */
+const SERVER_MESSAGES: Record<string, string> = {
+  'ईमेल या पासवर्ड गलत है।': 'Incorrect email or password.',
+  'कृपया फिर से साइन इन करें।': 'Please sign in again.',
+  'यह ईमेल पहले से पंजीकृत है।': 'This email is already registered.',
+  'यह ईमेल पासवर्ड से पंजीकृत है। कृपया पासवर्ड से साइन इन करें।':
+    'This email is registered with a password. Please sign in with your password.',
+  'कृपया अपना नाम लिखें।': 'Please enter your name.',
+  'कृपया सही ईमेल पता लिखें।': 'Please enter a valid email address.',
+  'कृपया सही जानकारी भरें।': 'Please check the details you entered.',
+  'पासवर्ड कम से कम 8 अक्षर का होना चाहिए।': 'Password must be at least 8 characters.',
+  'पासवर्ड लिखें।': 'Please enter your password.',
+  'यह रीसेट लिंक अमान्य है या समाप्त हो चुका है।': 'This reset link is invalid or has expired.',
+  'रीसेट लिंक अधूरा है।': 'This reset link is incomplete.',
+  'बहुत अधिक प्रयास। 15 मिनट बाद फिर कोशिश करें।': 'Too many attempts. Please try again in 15 minutes.',
+  'कुछ गड़बड़ हो गई। कृपया फिर कोशिश करें।': 'Something went wrong. Please try again.',
+}
+
+const CODE_FALLBACKS: Record<string, string> = {
+  UNAUTHORIZED: 'Please sign in again.',
+  CONFLICT: 'This email is already registered.',
+  VALIDATION: 'Please check the details you entered.',
+  TOO_MANY_REQUESTS: 'Too many attempts. Please try again later.',
+}
+
+/** Exported for tests. */
+export function englishMessage(code: string, serverMessage: string | undefined): string {
+  if (serverMessage && SERVER_MESSAGES[serverMessage]) return SERVER_MESSAGES[serverMessage]
+  // Messages already in English (no Devanagari) are shown as they are.
+  if (serverMessage && !/[ऀ-ॿ]/.test(serverMessage)) return serverMessage
+  return CODE_FALLBACKS[code] ?? 'Something went wrong. Please try again.'
 }
 
 interface SessionResponse {
