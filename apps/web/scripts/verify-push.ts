@@ -9,6 +9,8 @@
  */
 import { getPayload, type Payload } from 'payload'
 
+import { validateManualNotification } from '../src/lib/push/manual'
+import { cancelManualNotification, createManualNotification } from '../src/lib/push/manualSend'
 import config from '../src/payload.config'
 
 let failures = 0
@@ -38,6 +40,9 @@ async function main(): Promise<void> {
     ).docs[0]
     if (category.length < 2 || !image) throw new Error('Needs 2 categories and one image ≥ 1200 px (run db:seed first)')
     const [catA, catB] = category
+    const adminUser = (await payload.find({ collection: 'users', where: { role: { equals: 'admin' } }, limit: 1, depth: 0, overrideAccess: true })).docs[0]
+    if (!adminUser) throw new Error('Needs one admin user in the local database')
+    const adminId = adminUser.id
 
     const user = await payload.create({
       collection: 'app-users',
@@ -134,6 +139,34 @@ async function main(): Promise<void> {
     const n4 = await notificationsFor(a4.id)
     n4.forEach((x) => created.push({ collection: 'push-notifications', id: x.id }))
     check('"auto" on breaking news sends a breaking notification', n4.length === 1 && n4[0].type === 'breaking' && n4[0].title.startsWith('बड़ी खबर: '), n4[0]?.title)
+
+    // 5. Manual notifications (the admin "Create notification" path, lib/push/manualSend.ts).
+    const breakingOn = await device(5, { enabled: true, breaking: true, general: true, mutedCategories: [] })
+    const breakingOff = await device(6, { enabled: true, breaking: false, general: true, mutedCategories: [] })
+    const form = (over: Record<string, unknown>) => {
+      const r = validateManualNotification({ title: `मैनुअल ${run}`, body: 'संदेश', type: 'general', audience: 'breaking', idempotencyKey: `verify-${run}-1`, ...over })
+      if (!r.ok) throw new Error(r.errors.join(' '))
+      return r.value
+    }
+    const sent = await createManualNotification(payload, adminId, form({}))
+    if (sent.ok) created.push({ collection: 'push-notifications', id: sent.id })
+    const manual = sent.ok ? await payload.findByID({ collection: 'push-notifications', id: sent.id, depth: 0, overrideAccess: true }) : null
+    const manualDeliveries = manual
+      ? (await payload.find({ collection: 'push-deliveries', where: { notification: { equals: manual.id } }, depth: 0, limit: 100, overrideAccess: true })).docs.map((d) => Number(d.device))
+      : []
+    check('"send now" runs immediately (status sent)', manual?.status === 'sent', String(manual?.status))
+    check('audience "breaking subscribers" skips readers with breaking off', manualDeliveries.includes(breakingOn.id) && !manualDeliveries.includes(breakingOff.id), `devices ${manualDeliveries.join(',')}`)
+    const again = await createManualNotification(payload, adminId, form({}))
+    check('a double submit with the same form key does not send twice', again.ok && again.reused && again.id === (sent.ok ? sent.id : -1))
+
+    const later = await createManualNotification(payload, adminId, form({ idempotencyKey: `verify-${run}-2`, scheduledAt: new Date(Date.now() + 2 * 3600_000).toISOString() }))
+    if (later.ok) created.push({ collection: 'push-notifications', id: later.id })
+    await runJobs(payload)
+    const laterDoc = later.ok ? await payload.findByID({ collection: 'push-notifications', id: later.id, depth: 0, overrideAccess: true }) : null
+    check('a scheduled notification waits for its time', laterDoc?.status === 'scheduled', String(laterDoc?.status))
+    const cancelled = later.ok ? await cancelManualNotification(payload, later.id) : { ok: false as const, error: 'not created' }
+    const cancelledDoc = later.ok ? await payload.findByID({ collection: 'push-notifications', id: later.id, depth: 0, overrideAccess: true }) : null
+    check('a scheduled notification can be cancelled', cancelled.ok && cancelledDoc?.status === 'cancelled', String(cancelledDoc?.status))
   } finally {
     // Clean up in dependency order (deliveries/events reference notifications and devices).
     const notificationIds = created.filter((c) => c.collection === 'push-notifications').map((c) => c.id)

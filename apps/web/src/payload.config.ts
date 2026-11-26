@@ -199,6 +199,12 @@ export default buildConfig({
           path: '/review',
           exact: true,
         },
+        // Push notifications (api-contract §8): admins only, checked inside the view and in its actions.
+        notifications: {
+          Component: '@/components/admin/NotificationsView#NotificationsView',
+          path: '/notifications',
+          exact: true,
+        },
         reporters: {
           Component: '@/components/admin/ReviewViews#ReportersView',
           path: '/reporters',

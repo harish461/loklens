@@ -16,7 +16,8 @@ import type { User } from '@/payload-types'
 import { ReportersClient } from './ReportersClient'
 import { ReviewQueueClient } from './ReviewQueueClient'
 
-function shell(props: AdminViewServerProps, children: ReactNode) {
+/** Payload admin template with the LokLens sidebar around a custom view (shared by the custom admin views). */
+export function adminShell(props: AdminViewServerProps, children: ReactNode) {
   const { initPageResult, params, searchParams } = props
   return (
     <DefaultTemplate
@@ -55,12 +56,12 @@ export async function ReviewQueueView(props: AdminViewServerProps) {
   const user = viewer(props, '/admin/review')
   if (!isEditorOrAdmin(user as unknown as MaybeUser)) redirect('/admin')
   const data = await reviewQueue(props.initPageResult.req.payload, { user, overrideAccess: false })
-  return shell(props, <ReviewQueueClient pending={data.pending} rejected={data.rejected} />)
+  return adminShell(props, <ReviewQueueClient pending={data.pending} rejected={data.rejected} />)
 }
 
 export async function ReportersView(props: AdminViewServerProps) {
   const user = viewer(props, '/admin/reporters')
   if (!isAdmin(user as unknown as MaybeUser)) redirect('/admin')
   const data = await reportersOverview(props.initPageResult.req.payload, { user, overrideAccess: false })
-  return shell(props, <ReportersClient reporters={data.rows} categories={data.categories} />)
+  return adminShell(props, <ReportersClient reporters={data.rows} categories={data.categories} />)
 }

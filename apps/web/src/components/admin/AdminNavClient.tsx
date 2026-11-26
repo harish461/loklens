@@ -3,6 +3,7 @@
 import {
   ArrowUpRight,
   BarChart3,
+  Bell,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -56,7 +57,7 @@ export interface AdminNavClientProps {
   userEmail: string
   userInitials: string
   extraEntities: ExtraEntityItem[]
-  /** Admin-only items (Reporters) are hidden from editors. */
+  /** Admin-only items (Reporters, Notifications) are hidden from editors. */
   isAdmin?: boolean
 }
 
@@ -66,6 +67,7 @@ type NavKey =
   | 'create-article'
   | 'review'
   | 'reporters'
+  | 'notifications'
   | 'categories'
   | 'subcategories'
   | 'media'
@@ -100,6 +102,8 @@ function renderNavIcon(key: NavKey, className?: string) {
       return <ClipboardCheck size={size} className={className} />
     case 'reporters':
       return <Users size={size} className={className} />
+    case 'notifications':
+      return <Bell size={size} className={className} />
     case 'categories':
       return <FolderTree size={size} className={className} />
     case 'subcategories':
@@ -185,6 +189,12 @@ export function AdminNavClient({
             label: 'Reporters',
             href: '/admin/reporters',
             isActive: (p: string) => p.startsWith('/admin/reporters'),
+          },
+          {
+            key: 'notifications' as const,
+            label: 'Notifications',
+            href: '/admin/notifications',
+            isActive: (p: string) => p.startsWith('/admin/notifications'),
           },
         ]
       : []),

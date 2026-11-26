@@ -29,6 +29,7 @@ import { AdvertisementsView as AdvertisementsView_bb8048bcc3ef213a622ea30c4f4582
 import { SeoView as SeoView_bb8048bcc3ef213a622ea30c4f458226 } from '@/components/admin/AdminSectionView'
 import { AnalyticsView as AnalyticsView_bb8048bcc3ef213a622ea30c4f458226 } from '@/components/admin/AdminSectionView'
 import { ReviewQueueView as ReviewQueueView_bb0549fb6b8c9025aa441efc4125d647 } from '@/components/admin/ReviewViews'
+import { NotificationsView as NotificationsView_57618480303e1031e216734938dc4d85 } from '@/components/admin/NotificationsView'
 import { ReportersView as ReportersView_bb0549fb6b8c9025aa441efc4125d647 } from '@/components/admin/ReviewViews'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
@@ -66,6 +67,7 @@ export const importMap = {
   "@/components/admin/AdminSectionView#SeoView": SeoView_bb8048bcc3ef213a622ea30c4f458226,
   "@/components/admin/AdminSectionView#AnalyticsView": AnalyticsView_bb8048bcc3ef213a622ea30c4f458226,
   "@/components/admin/ReviewViews#ReviewQueueView": ReviewQueueView_bb0549fb6b8c9025aa441efc4125d647,
+  "@/components/admin/NotificationsView#NotificationsView": NotificationsView_57618480303e1031e216734938dc4d85,
   "@/components/admin/ReviewViews#ReportersView": ReportersView_bb0549fb6b8c9025aa441efc4125d647,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
