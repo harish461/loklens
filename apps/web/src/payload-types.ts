@@ -79,6 +79,10 @@ export interface Config {
     redirects: Redirect;
     users: User;
     'app-users': AppUser;
+    'push-devices': PushDevice;
+    'push-notifications': PushNotification;
+    'push-deliveries': PushDelivery;
+    'push-events': PushEvent;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -98,6 +102,10 @@ export interface Config {
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'app-users': AppUsersSelect<false> | AppUsersSelect<true>;
+    'push-devices': PushDevicesSelect<false> | PushDevicesSelect<true>;
+    'push-notifications': PushNotificationsSelect<false> | PushNotificationsSelect<true>;
+    'push-deliveries': PushDeliveriesSelect<false> | PushDeliveriesSelect<true>;
+    'push-events': PushEventsSelect<false> | PushEventsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -228,6 +236,10 @@ export interface Article {
   breakingUntil?: string | null;
   isTrending?: boolean | null;
   isFeatured?: boolean | null;
+  /**
+   * Sent once, the first time the article is published.
+   */
+  pushOnPublish?: ('auto' | 'send' | 'skip') | null;
   seo?: {
     /**
      * Defaults to the title.
@@ -652,6 +664,97 @@ export interface AppUser {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-devices".
+ */
+export interface PushDevice {
+  id: number;
+  token: string;
+  appUser?: (number | null) | AppUser;
+  platform: 'android' | 'ios';
+  deviceId?: string | null;
+  appVersion?: string | null;
+  active?: boolean | null;
+  deactivatedReason?: string | null;
+  lastSeenAt?: string | null;
+  preferences?: {
+    enabled?: boolean | null;
+    breaking?: boolean | null;
+    general?: boolean | null;
+    mutedCategories?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-notifications".
+ */
+export interface PushNotification {
+  id: number;
+  title: string;
+  body: string;
+  imageUrl?: string | null;
+  type: 'article' | 'breaking' | 'general';
+  audience: 'all' | 'breaking' | 'category';
+  category?: (number | null) | Category;
+  article?: (number | null) | Article;
+  source: 'manual' | 'publish';
+  dedupeKey?: string | null;
+  status: 'scheduled' | 'queued' | 'sending' | 'sent' | 'failed' | 'cancelled';
+  scheduledAt?: string | null;
+  sentAt?: string | null;
+  createdBy?: (number | null) | User;
+  cursor?: number | null;
+  error?: string | null;
+  targeted?: number | null;
+  accepted?: number | null;
+  failed?: number | null;
+  handedOver?: number | null;
+  receiptFailed?: number | null;
+  opened?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-deliveries".
+ */
+export interface PushDelivery {
+  id: number;
+  notification: number | PushNotification;
+  device: number | PushDevice;
+  ticketId?: string | null;
+  status: 'accepted' | 'ticket_error' | 'receipt_ok' | 'receipt_error';
+  errorCode?: string | null;
+  errorMessage?: string | null;
+  receiptCheckedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-events".
+ */
+export interface PushEvent {
+  id: number;
+  notification: number | PushNotification;
+  device?: (number | null) | PushDevice;
+  appUser?: (number | null) | AppUser;
+  type: 'opened';
+  dedupeKey?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -818,6 +921,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'app-users';
         value: number | AppUser;
+      } | null)
+    | ({
+        relationTo: 'push-devices';
+        value: number | PushDevice;
+      } | null)
+    | ({
+        relationTo: 'push-notifications';
+        value: number | PushNotification;
+      } | null)
+    | ({
+        relationTo: 'push-deliveries';
+        value: number | PushDelivery;
+      } | null)
+    | ({
+        relationTo: 'push-events';
+        value: number | PushEvent;
       } | null);
   globalSlug?: string | null;
   user:
@@ -890,6 +1009,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   breakingUntil?: T;
   isTrending?: T;
   isFeatured?: T;
+  pushOnPublish?: T;
   seo?:
     | T
     | {
@@ -1185,6 +1305,87 @@ export interface AppUsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-devices_select".
+ */
+export interface PushDevicesSelect<T extends boolean = true> {
+  token?: T;
+  appUser?: T;
+  platform?: T;
+  deviceId?: T;
+  appVersion?: T;
+  active?: T;
+  deactivatedReason?: T;
+  lastSeenAt?: T;
+  preferences?:
+    | T
+    | {
+        enabled?: T;
+        breaking?: T;
+        general?: T;
+        mutedCategories?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-notifications_select".
+ */
+export interface PushNotificationsSelect<T extends boolean = true> {
+  title?: T;
+  body?: T;
+  imageUrl?: T;
+  type?: T;
+  audience?: T;
+  category?: T;
+  article?: T;
+  source?: T;
+  dedupeKey?: T;
+  status?: T;
+  scheduledAt?: T;
+  sentAt?: T;
+  createdBy?: T;
+  cursor?: T;
+  error?: T;
+  targeted?: T;
+  accepted?: T;
+  failed?: T;
+  handedOver?: T;
+  receiptFailed?: T;
+  opened?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-deliveries_select".
+ */
+export interface PushDeliveriesSelect<T extends boolean = true> {
+  notification?: T;
+  device?: T;
+  ticketId?: T;
+  status?: T;
+  errorCode?: T;
+  errorMessage?: T;
+  receiptCheckedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-events_select".
+ */
+export interface PushEventsSelect<T extends boolean = true> {
+  notification?: T;
+  device?: T;
+  appUser?: T;
+  type?: T;
+  dedupeKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -18,6 +18,10 @@ import { Pages } from './collections/Pages'
 import { Redirects } from './collections/Redirects'
 import { Tags } from './collections/Tags'
 import { AppUsers } from './collections/AppUsers'
+import { PushDeliveries } from './collections/PushDeliveries'
+import { PushDevices } from './collections/PushDevices'
+import { PushEvents } from './collections/PushEvents'
+import { PushNotifications } from './collections/PushNotifications'
 import { Users } from './collections/Users'
 import { Videos } from './collections/Videos'
 import { newsEditor } from './fields/richText'
@@ -75,6 +79,11 @@ function resolveDatabasePoolConfig(): {
     // Let pg handle non-URL connection strings if used
   }
   return { connectionString: url }
+}
+
+function databasePoolMax(): number {
+  const value = Number(process.env.DB_POOL_MAX)
+  return Number.isInteger(value) && value > 0 && value <= 50 ? value : 5
 }
 
 const S3_ENV_NAMES = ['S3_BUCKET', 'S3_REGION', 'S3_ENDPOINT', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const
@@ -199,7 +208,23 @@ export default buildConfig({
       Nav: '@/components/admin/AdminNav#AdminNav',
     },
   },
-  collections: [Articles, Categories, Tags, Locations, Media, Videos, EPapers, Pages, Redirects, Users, AppUsers],
+  collections: [
+    Articles,
+    Categories,
+    Tags,
+    Locations,
+    Media,
+    Videos,
+    EPapers,
+    Pages,
+    Redirects,
+    Users,
+    AppUsers,
+    PushDevices,
+    PushNotifications,
+    PushDeliveries,
+    PushEvents,
+  ],
   globals: [SiteSettings, Navigation, Ticker],
   plugins: [
     s3Storage({
@@ -226,7 +251,9 @@ export default buildConfig({
   ],
   editor: newsEditor,
   db: postgresAdapter({
-    pool: resolveDatabasePoolConfig(),
+    // Cap connections per process: Supabase's session pooler allows 15 clients in total and the live site
+    // ran out ("max clients reached"). DB_POOL_MAX overrides the default of 5.
+    pool: { ...resolveDatabasePoolConfig(), max: databasePoolMax() },
     idType: 'serial',
     // Schema changes only through migrations (src/migrations), never dev push.
     push: false,

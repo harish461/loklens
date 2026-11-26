@@ -169,6 +169,20 @@ export const Articles: CollectionConfig = {
           index: true,
           access: { create: editorialFlagField, update: editorialFlagField },
         },
+        {
+          // Push notification when the article is first published (api-contract §8, lib/push/publish.ts).
+          name: 'pushOnPublish',
+          label: 'Push notification on publish',
+          type: 'select',
+          defaultValue: 'auto',
+          options: [
+            { label: 'Automatic (breaking news only)', value: 'auto' },
+            { label: 'Send', value: 'send' },
+            { label: "Don't send", value: 'skip' },
+          ],
+          access: { create: editorialFlagField, update: editorialFlagField },
+          admin: { description: 'Sent once, the first time the article is published.' },
+        },
       ],
     },
     seoGroup({ withImage: true, withNoindex: true, withFocusKeyword: true }),
