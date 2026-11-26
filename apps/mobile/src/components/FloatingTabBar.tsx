@@ -11,12 +11,17 @@ export type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['ta
 
 type IconName = keyof typeof Ionicons.glyphMap
 
-export const TAB_ICONS: Record<string, { icon: IconName; active: IconName }> = {
-  index: { icon: 'home-outline', active: 'home' },
-  categories: { icon: 'grid-outline', active: 'grid' },
-  shorts: { icon: 'logo-youtube', active: 'logo-youtube' },
-  bookmarks: { icon: 'bookmark-outline', active: 'bookmark' },
-  profile: { icon: 'person-outline', active: 'person' },
+/**
+ * Each tab has its own accent colour, so the bar stays lively on the dark theme:
+ * - `tint`: icon colour on the dark idle button (light shade, reads well on #232327)
+ * - `fill`: background of the active button (deeper shade, white icon stays readable on it)
+ */
+export const TAB_ICONS: Record<string, { icon: IconName; active: IconName; tint: string; fill: string }> = {
+  index: { icon: 'home-outline', active: 'home', tint: '#FF6B63', fill: '#C41D17' },
+  categories: { icon: 'grid-outline', active: 'grid', tint: '#6EA0FF', fill: '#2F6BFF' },
+  shorts: { icon: 'logo-youtube', active: 'logo-youtube', tint: '#FF8A3D', fill: '#E4570F' },
+  bookmarks: { icon: 'bookmark-outline', active: 'bookmark', tint: '#FBBF24', fill: '#B45309' },
+  profile: { icon: 'person-outline', active: 'person', tint: '#34D399', fill: '#0E8A55' },
 }
 
 /** Height the bar occupies above the safe area; screens add this as bottom padding. */
@@ -30,7 +35,7 @@ export function FloatingTabBar({ state, descriptors, navigateToTab }: TabBarProp
         {state.routes.map((route, index) => {
           const focused = state.index === index
           const { options } = descriptors[route.key]
-          const icons = TAB_ICONS[route.name] ?? { icon: 'ellipse-outline', active: 'ellipse' }
+          const icons = TAB_ICONS[route.name] ?? { icon: 'ellipse-outline', active: 'ellipse', tint: colors.white, fill: colors.primary }
           const onPress = () => {
             if (!focused) navigateToTab(route.key)
           }
@@ -38,12 +43,12 @@ export function FloatingTabBar({ state, descriptors, navigateToTab }: TabBarProp
             <Pressable
               key={route.key}
               onPress={onPress}
-              style={[styles.button, focused && styles.buttonActive]}
+              style={[styles.button, focused && [styles.buttonActive, { backgroundColor: icons.fill, shadowColor: icons.fill }]]}
               accessibilityRole="tab"
               accessibilityState={{ selected: focused }}
               accessibilityLabel={typeof options.title === 'string' ? options.title : route.name}
             >
-              <Ionicons name={focused ? icons.active : icons.icon} size={20} color={focused ? (route.name === 'shorts' ? '#FF0000' : colors.ink) : colors.white} />
+              <Ionicons name={focused ? icons.active : icons.icon} size={focused ? 22 : 20} color={focused ? colors.white : icons.tint} />
             </Pressable>
           )
         })}
@@ -52,7 +57,7 @@ export function FloatingTabBar({ state, descriptors, navigateToTab }: TabBarProp
   )
 }
 
-// Reference design: dark capsule; every tab is its own round button (dark grey), the active one white.
+// Dark capsule; every tab is its own round button with a coloured icon, the active one filled in its colour.
 const styles = StyleSheet.create({
   wrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center' },
   bar: {
@@ -61,8 +66,11 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: 999,
     backgroundColor: '#141416',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
     ...shadow,
   },
-  button: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: '#2C2C30' },
-  buttonActive: { backgroundColor: colors.white },
+  button: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: '#232327' },
+  // Coloured glow under the active button (iOS shadow / Android elevation).
+  buttonActive: { shadowOpacity: 0.55, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 6 },
 })

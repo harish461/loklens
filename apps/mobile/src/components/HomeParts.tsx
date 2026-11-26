@@ -1,10 +1,13 @@
 /** Home-screen building blocks (follow the light/dark theme): header, category pills, LIVE strip, section header. */
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
 import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 import type { CategoryRef } from '@/lib/api/types'
+
+const HEADER_LOGO = require('../../assets/brand/logo-header.webp')
 import { formatToday } from '@/lib/format'
 import { colors, fonts, radius, spacing, toggleThemeMode, type, useTheme } from '@/theme'
 
@@ -23,17 +26,15 @@ export function CircleButton({ icon, label, onPress }: { icon: keyof typeof Ioni
   )
 }
 
-/** Reference header: small date line above a large title; two large round buttons (search, theme) on the right. */
+/** Home header: brand logo and today's date on the left; two large round buttons (search, theme) on the right. */
 export function AppHeader() {
   const t = useTheme()
   return (
     <View style={styles.header}>
+      <Image source={HEADER_LOGO} style={styles.logo} contentFit="contain" accessibilityLabel="LokLens News" />
       <View style={{ flex: 1 }}>
-        <Text style={[styles.date, { color: t.muted }]} numberOfLines={1}>
+        <Text style={[styles.date, { color: t.muted }]} numberOfLines={2}>
           {formatToday()}
-        </Text>
-        <Text style={[styles.brand, { color: t.text }]} numberOfLines={1}>
-          लोक Lens न्यूज़
         </Text>
       </View>
       <CircleButton icon="search-outline" label="खोजें" onPress={() => router.push('/search')} />
@@ -124,7 +125,8 @@ export function SectionHeader({ title, onSeeAll, first = false }: { title: strin
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm },
   date: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 20 },
-  brand: { fontFamily: fonts.bold, fontSize: 26, lineHeight: 38 },
+  // Header logo: the boxed लोक Lens NEWS mark (assets/brand/logo-header.webp, 251×240).
+  logo: { width: 63, height: 60, borderRadius: radius.sm },
   circle: { width: 52, height: 52, borderRadius: 26, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   tabs: { gap: spacing.sm, paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md },
   chip: { borderRadius: radius.pill, borderWidth: 1, paddingHorizontal: spacing.xl, paddingVertical: 10 },

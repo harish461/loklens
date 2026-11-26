@@ -10,14 +10,15 @@ import { useCallback, useMemo, useState } from 'react'
 import { FlatList, RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { RankedRow, StoryRow } from '@/components/ArticleCards'
-import { CategoryMasonry } from '@/components/CategoryMasonry'
+import { StoryRow } from '@/components/ArticleCards'
+import { CategorySlider } from '@/components/CategorySlider'
 import { ScreenBackground } from '@/components/ScreenBackground'
 import { TAB_BAR_SPACE } from '@/components/FloatingTabBar'
 import { AppHeader, CategoryTabs, NewsTicker, SectionHeader, type TickerItem } from '@/components/HomeParts'
 import { EmptyState, ErrorState, FooterLoader, HomeSkeleton, OfflineBanner } from '@/components/States'
 import { SwipeDeck } from '@/components/SwipeDeck'
-import { useArticleFeed, useCategories, useHome, useTrending } from '@/lib/api/queries'
+import { useArticleFeed, useCategories, useHome } from '@/lib/api/queries'
+import { queryClient } from '@/lib/queryClient'
 import type { ArticleCard, Home } from '@/lib/api/types'
 import { colors, spacing, useTheme } from '@/theme'
 
@@ -57,7 +58,6 @@ function DeckArea({ articles }: { articles: ArticleCard[] }) {
 export default function HomeScreen() {
   const home = useHome()
   const categories = useCategories()
-  const trending = useTrending()
   const feed = useArticleFeed()
   const [refreshing, setRefreshing] = useState(false)
   const focused = useIsFocused()
@@ -70,13 +70,11 @@ export default function HomeScreen() {
     const shown = new Set(deck.map((a) => a.id))
     const latest = h.latest.filter((a) => !shown.has(a.id)).slice(0, 5)
     latest.forEach((a) => shown.add(a.id))
-    const trendingItems = (trending.data?.items ?? []).slice(0, 5)
-    const sections = h.sections
-      .map((s) => ({ category: s.category, articles: s.articles.filter((a) => !shown.has(a.id)).slice(0, 5) }))
-      .filter((s) => s.articles.length > 0)
-    sections.forEach((s) => s.articles.forEach((a) => shown.add(a.id)))
-    return { ticker: tickerFor(h), deck, latest, trendingItems, sections, shown }
-  }, [home.data, trending.data])
+    // Each category slider shows that category's full list (it loads it itself), so nothing is filtered out
+    // here and the rows do not hide articles from the "सभी खबरें" feed below. Empty categories are skipped.
+    const sections = h.sections.filter((s) => s.articles.length > 0)
+    return { ticker: tickerFor(h), deck, latest, sections, shown }
+  }, [home.data])
 
   const feedItems = useMemo(() => {
     const all = feed.data?.pages.flatMap((p) => p.items) ?? []
@@ -85,9 +83,14 @@ export default function HomeScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
-    await Promise.allSettled([home.refetch(), categories.refetch(), trending.refetch(), feed.refetch()])
+    // Every article list (the feed below and each category slider) shares the ['articles', 'feed', …] key.
+    await Promise.allSettled([
+      home.refetch(),
+      categories.refetch(),
+      queryClient.invalidateQueries({ queryKey: ['articles', 'feed'] }),
+    ])
     setRefreshing(false)
-  }, [home, categories, trending, feed])
+  }, [home, categories])
 
   const onEndReached = useCallback(() => {
     if (feed.hasNextPage && !feed.isFetchingNextPage) feed.fetchNextPage()
@@ -111,8 +114,16 @@ export default function HomeScreen() {
       <CategoryTabs categories={tabs} />
       {home.error && <OfflineBanner />}
       {layout.ticker && <NewsTicker label={layout.ticker.label} live={layout.ticker.live} items={layout.ticker.items} />}
+      {/* Order: hero cards → category sliders → ताज़ा खबरें → सभी खबरें (the list below). */}
       <SectionHeader first title="प्रमुख खबरें" onSeeAll={() => router.push('/latest')} />
       <DeckArea articles={layout.deck} />
+
+      {layout.sections.map((s) => (
+        <View key={s.category.id}>
+          <SectionHeader title={s.category.name} onSeeAll={() => router.push({ pathname: '/category/[slug]', params: { slug: s.category.slug } })} />
+          <CategorySlider category={s.category.slug} initialArticles={s.articles} />
+        </View>
+      ))}
 
       {layout.latest.length > 0 && (
         <>
@@ -124,24 +135,6 @@ export default function HomeScreen() {
           </View>
         </>
       )}
-
-      {layout.trendingItems.length > 0 && (
-        <>
-          <SectionHeader title="ट्रेंडिंग" />
-          <View style={[styles.trending, { backgroundColor: t.surface }]}>
-            {layout.trendingItems.map((a, i) => (
-              <RankedRow key={a.id} article={a} rank={i + 1} />
-            ))}
-          </View>
-        </>
-      )}
-
-      {layout.sections.map((s) => (
-        <View key={s.category.id}>
-          <SectionHeader title={s.category.name} onSeeAll={() => router.push({ pathname: '/category/[slug]', params: { slug: s.category.slug } })} />
-          <CategoryMasonry articles={s.articles} />
-        </View>
-      ))}
 
       {feedItems.length > 0 && <SectionHeader title="सभी खबरें" />}
     </View>
@@ -181,6 +174,5 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   stack: { paddingHorizontal: spacing.lg, gap: spacing.md },
-  trending: { marginHorizontal: spacing.lg, paddingHorizontal: spacing.md, borderRadius: 20 },
   feedItem: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md },
 })
