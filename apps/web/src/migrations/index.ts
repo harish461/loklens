@@ -5,6 +5,7 @@ import * as migration_20261124_114007_add_app_users from './20261124_114007_add_
 import * as migration_20261126_125206_push_notifications from './20261126_125206_push_notifications';
 import * as migration_20261126_131229_push_job_tasks from './20261126_131229_push_job_tasks';
 import * as migration_20261127_071849_push_send_lease from './20261127_071849_push_send_lease';
+import * as migration_20261127_081621_enable_rls_public_tables from './20261127_081621_enable_rls_public_tables';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20261127_071849_push_send_lease.up,
     down: migration_20261127_071849_push_send_lease.down,
-    name: '20261127_071849_push_send_lease'
+    name: '20261127_071849_push_send_lease',
+  },
+  {
+    up: migration_20261127_081621_enable_rls_public_tables.up,
+    down: migration_20261127_081621_enable_rls_public_tables.down,
+    name: '20261127_081621_enable_rls_public_tables'
   },
 ];
