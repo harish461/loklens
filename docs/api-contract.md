@@ -239,6 +239,7 @@ skipped, never crash the renderer.
 | v1 draft 2 | 2026-11-09 | QA fixes: published-only enforcement, IST serializer, fallback images, cursor pagination, byline rule, sanitising, extra web helpers, Cloudflare rate limits, deferred locations/devices |
 | v1 draft 3 | 2026-11-09 | No content migration: legacy URLs return 410 unless an editor adds a Redirect |
 | v1 draft 4 | 2026-11-09 | Backend implementation (`apps/web/src/lib/data`), decisions made while implementing: invalid query values (page, pageSize, cursor, flag, q, hours, slugs) throw `BadRequestError` (map with `toApiError` → 400); an unknown category/tag/author filter returns an empty list, while single-item helpers return `null`; `search` is not cached (architecture §4); other helpers use `unstable_cache` with the architecture tags plus `settings` on article reads and a 300 s safety net; `sections` lists every `showInNav` category, empty ones included; `latest` is not filtered by `featured`; `listSitemapEntries` URLs, `EPaper.pdfUrl` and `Image.url` are absolute when `NEXT_PUBLIC_SITE_URL` is set; a video without its own thumbnail gets the YouTube `hqdefault` image with `isFallback: false`; raw REST `GET /api/users` never returns `email`, `role`, or session data to anonymous clients |
+| v1 draft 9 | 2026-11-26 | Push notifications (§8): device registration, per-device preferences, open events; payload `data` and deep link; "accepted" vs "handed to Android/iOS" reporting. New internal collections `push-devices`, `push-notifications`, `push-deliveries`, `push-events` and the article field `pushOnPublish` are never exposed on the public read API. |
 | v1 draft 8 | 2026-11-24 | Customer accounts (§7): register, login, Google sign-in, password reset, /me and logout on the new app-users collection. Staff users are not used. |
 | v1 draft 7 | 2026-11-24 | Added `GET /api/v1/shorts` (YouTube Shorts list for the app's Shorts tab) and the `Short` shape. Additive, no other changes. |
 | v1 draft 6 | 2026-11-23 | Phase 6 start: the §2 mobile HTTP endpoints are implemented in `apps/web/src/app/api/v1/*` with the §3 status codes and Cache-Control values, plus the §3 "HTTP details" (GET/OPTIONS only, CORS for any origin, `no-store` errors, 404 for unknown v1 paths). No shape changes. Push/devices still deferred. |
@@ -281,3 +282,42 @@ the app then signs in again with the new password.
 
 **Not part of v1 auth:** email verification, profile editing, and server-side bookmarks (bookmarks stay on the
 device).
+
+## 8. Push notifications — draft v9
+
+Signed-in readers can receive push notifications on Android (iOS once an iOS build exists). The app gets an
+Expo push token with `expo-notifications` and registers it here. All routes need `Authorization: JWT <token>`
+(section 7); the server takes the user from the session, never from the request body. Responses are
+`Cache-Control: no-store`. Only GET, POST and OPTIONS are served.
+
+| HTTP | Purpose | Body → Response |
+|---|---|---|
+| `POST /api/v1/push/devices` | Register or refresh this device's token | `{ token, platform: 'android' \| 'ios', deviceId?, appVersion? }` → `{ device }` |
+| `POST /api/v1/push/devices/unregister` | Stop pushes to this device (sign-out) | `{ token }` → `{ ok: true }` |
+| `GET /api/v1/push/preferences?token=…` | This device's settings and the category list | → `{ preferences, categories }` |
+| `POST /api/v1/push/preferences` | Save this device's settings | `{ token, preferences }` → `{ preferences }` |
+| `POST /api/v1/push/events` | Record that a notification was opened | `{ notificationId, token?, type: 'opened' }` → `{ ok: true }` |
+
+**Token rules:** `token` must look like an Expo push token (`ExponentPushToken[…]` or `ExpoPushToken[…]`). One
+record per token: registering again updates it (platform, app version, user, last seen) and reactivates it.
+A token registered by another account moves to the current account. Unregister and preference calls only
+touch a token that belongs to the current account (`404` otherwise).
+
+**Preferences shape:** `{ enabled: boolean, breaking: boolean, general: boolean, mutedCategories: number[] }`.
+`enabled` is the master switch. `mutedCategories` lists category IDs the reader turned off, so new categories
+are on by default. `categories` is `{ id, name, slug }[]`, the same list as `GET /api/v1/categories`.
+
+**Who receives a notification:** active devices with `enabled` on, and
+- type `breaking`: `breaking` on;
+- type `article` (category news): the article's category not in `mutedCategories`;
+- type `general` (announcements): `general` on.
+
+**Payload sent to Expo:** `title`, `body`, optional image, Android channel `news`, and `data`:
+`{ notificationId, notificationType, articleId?, articleSlug?, category?, deepLink }`, where `deepLink` is
+`loklens://article/{articleId}` for article notifications and `loklens://` otherwise. Tapping opens `deepLink`.
+
+**Delivery status:** "accepted" means Expo accepted the message (push ticket `ok`); a receipt `ok` means
+Expo handed it to Apple/Google. Neither proves the phone showed it, so the admin reports them as
+"accepted" and "handed to Android/iOS", never as "delivered". Receipts with `DeviceNotRegistered` deactivate the device.
+
+**Errors:** `401` (no or bad session), `404` (token not registered to this account), `422 VALIDATION`.

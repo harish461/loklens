@@ -32,7 +32,7 @@ export function toAppUser(doc: Record<string, unknown>): AppUser {
 export class AuthApiError extends Error {
   constructor(
     readonly status: number,
-    readonly code: 'UNAUTHORIZED' | 'CONFLICT' | 'VALIDATION' | 'TOO_MANY_REQUESTS' | 'SERVER_ERROR',
+    readonly code: 'UNAUTHORIZED' | 'NOT_FOUND' | 'CONFLICT' | 'VALIDATION' | 'TOO_MANY_REQUESTS' | 'SERVER_ERROR',
     message: string,
   ) {
     super(message)

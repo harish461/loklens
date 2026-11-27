@@ -18,6 +18,10 @@ import { Pages } from './collections/Pages'
 import { Redirects } from './collections/Redirects'
 import { Tags } from './collections/Tags'
 import { AppUsers } from './collections/AppUsers'
+import { PushDeliveries } from './collections/PushDeliveries'
+import { PushDevices } from './collections/PushDevices'
+import { PushEvents } from './collections/PushEvents'
+import { PushNotifications } from './collections/PushNotifications'
 import { Users } from './collections/Users'
 import { Videos } from './collections/Videos'
 import { newsEditor } from './fields/richText'
@@ -26,6 +30,7 @@ import { SiteSettings } from './globals/SiteSettings'
 import { Ticker } from './globals/Ticker'
 import { hi } from './i18n/hi'
 import { expireBreakingTask } from './jobs/expireBreaking'
+import { pushArticlePublishTask, pushReceiptsTask, pushSendTask } from './jobs/push'
 import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
@@ -75,6 +80,11 @@ function resolveDatabasePoolConfig(): {
     // Let pg handle non-URL connection strings if used
   }
   return { connectionString: url }
+}
+
+function databasePoolMax(): number {
+  const value = Number(process.env.DB_POOL_MAX)
+  return Number.isInteger(value) && value > 0 && value <= 50 ? value : 5
 }
 
 const S3_ENV_NAMES = ['S3_BUCKET', 'S3_REGION', 'S3_ENDPOINT', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const
@@ -189,6 +199,12 @@ export default buildConfig({
           path: '/review',
           exact: true,
         },
+        // Push notifications (api-contract §8): admins only, checked inside the view and in its actions.
+        notifications: {
+          Component: '@/components/admin/NotificationsView#NotificationsView',
+          path: '/notifications',
+          exact: true,
+        },
         reporters: {
           Component: '@/components/admin/ReviewViews#ReportersView',
           path: '/reporters',
@@ -199,7 +215,23 @@ export default buildConfig({
       Nav: '@/components/admin/AdminNav#AdminNav',
     },
   },
-  collections: [Articles, Categories, Tags, Locations, Media, Videos, EPapers, Pages, Redirects, Users, AppUsers],
+  collections: [
+    Articles,
+    Categories,
+    Tags,
+    Locations,
+    Media,
+    Videos,
+    EPapers,
+    Pages,
+    Redirects,
+    Users,
+    AppUsers,
+    PushDevices,
+    PushNotifications,
+    PushDeliveries,
+    PushEvents,
+  ],
   globals: [SiteSettings, Navigation, Ticker],
   plugins: [
     s3Storage({
@@ -226,7 +258,9 @@ export default buildConfig({
   ],
   editor: newsEditor,
   db: postgresAdapter({
-    pool: resolveDatabasePoolConfig(),
+    // Cap connections per process: Supabase's session pooler allows 15 clients in total and the live site
+    // ran out ("max clients reached"). DB_POOL_MAX overrides the default of 5.
+    pool: { ...resolveDatabasePoolConfig(), max: databasePoolMax() },
     idType: 'serial',
     // Schema changes only through migrations (src/migrations), never dev push.
     push: false,
@@ -244,7 +278,7 @@ export default buildConfig({
     supportedLanguages: { en, hi } as unknown as NonNullable<Config['i18n']>['supportedLanguages'],
   },
   jobs: {
-    tasks: [expireBreakingTask],
+    tasks: [expireBreakingTask, pushArticlePublishTask, pushSendTask, pushReceiptsTask],
     // Runs queued jobs (scheduled publish + expireBreaking) every minute inside the app process.
     autoRun: [{ cron: '* * * * *', queue: 'default', limit: 50 }],
     // Never auto-run in CLI scripts (migrate, seed, generate:types) — only in the Next server.

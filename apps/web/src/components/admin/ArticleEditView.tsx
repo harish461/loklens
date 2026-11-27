@@ -263,6 +263,7 @@ export async function ArticleEditView(props: Props) {
     isFeatured: Boolean(doc?.isFeatured),
     isBreaking: Boolean(doc?.isBreaking),
     isTrending: Boolean(doc?.isTrending),
+    pushOnPublish: doc?.pushOnPublish === 'send' || doc?.pushOnPublish === 'skip' ? doc.pushOnPublish : 'auto',
     publishedAt: formattedLocalDateTime,
     publishedAtIso: toIST((doc?.publishedAt as string | Date | undefined) ?? (doc?.createdAt as string | Date | undefined) ?? new Date()),
     updatedAtIso: toIST((doc?.updatedAt as string | Date | undefined) ?? new Date()),

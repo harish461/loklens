@@ -22,6 +22,7 @@ import {
 } from '../hooks/articles'
 import { normalizeCollectionData } from '../hooks/normalize'
 import { revalidateArticleAfterChange, revalidateArticleAfterDelete } from '../hooks/revalidate'
+import { queuePushOnPublish } from '../lib/push/publish'
 
 /** Runs before validation so publishedAt / breakingUntil exist when the document is validated. */
 const publishDefaults: CollectionBeforeValidateHook = ({ data, originalDoc }) =>
@@ -73,7 +74,7 @@ export const Articles: CollectionConfig = {
     beforeValidate: [normalizeCollectionData, publishDefaults],
     // Order matters: the guard sees the client's raw request, then the workflow fields are derived.
     beforeChange: [guardReporterChanges, syncWorkflow, requireFeaturedImageOnPublish],
-    afterChange: [revalidateArticleAfterChange],
+    afterChange: [revalidateArticleAfterChange, queuePushOnPublish],
     afterDelete: [revalidateArticleAfterDelete],
   },
   fields: [
@@ -168,6 +169,20 @@ export const Articles: CollectionConfig = {
           defaultValue: false,
           index: true,
           access: { create: editorialFlagField, update: editorialFlagField },
+        },
+        {
+          // Push notification when the article is first published (api-contract §8, lib/push/publish.ts).
+          name: 'pushOnPublish',
+          label: 'Push notification on publish',
+          type: 'select',
+          defaultValue: 'auto',
+          options: [
+            { label: 'Automatic (breaking news only)', value: 'auto' },
+            { label: 'Send', value: 'send' },
+            { label: "Don't send", value: 'skip' },
+          ],
+          access: { create: editorialFlagField, update: editorialFlagField },
+          admin: { description: 'Sent once, the first time the article is published.' },
         },
       ],
     },
