@@ -25,7 +25,7 @@ export const pushSendTask: TaskConfig<{ input: { notificationId: number }; outpu
     if (!result.done) {
       await req.payload.jobs.queue({ task: 'pushSend', input: { notificationId: input.notificationId }, req })
     }
-    return { output: result }
+    return { output: { done: result.done, sentTo: result.sentTo } }
   },
 }
 

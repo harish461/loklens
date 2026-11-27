@@ -73,6 +73,8 @@ export const PushNotifications: CollectionConfig = {
     { name: 'createdBy', type: 'relationship', relationTo: 'users' },
     // Fan-out cursor: the last push-devices ID already sent to (the send job works in slices).
     { name: 'cursor', type: 'number', defaultValue: 0 },
+    // Short lease taken atomically before each slice, so two job runners can never send the same slice twice.
+    { name: 'leaseUntil', type: 'date', admin: { hidden: true } },
     { name: 'error', type: 'text', maxLength: 500 },
     // Counters (written by the jobs).
     { name: 'targeted', type: 'number', defaultValue: 0 },
