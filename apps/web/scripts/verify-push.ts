@@ -7,10 +7,12 @@
  * tokens are well-formed but fake, so Expo answers with ticket errors; that exercises targeting, delivery rows,
  * counters, dead-token deactivation and duplicate prevention without a phone.
  */
+import { sql } from '@payloadcms/db-postgres'
 import { getPayload, type Payload } from 'payload'
 
 import { validateManualNotification } from '../src/lib/push/manual'
 import { cancelManualNotification, createManualNotification } from '../src/lib/push/manualSend'
+import { sendNotificationSlice } from '../src/lib/push/send'
 import config from '../src/payload.config'
 
 let failures = 0
@@ -167,6 +169,20 @@ async function main(): Promise<void> {
     const cancelled = later.ok ? await cancelManualNotification(payload, later.id) : { ok: false as const, error: 'not created' }
     const cancelledDoc = later.ok ? await payload.findByID({ collection: 'push-notifications', id: later.id, depth: 0, overrideAccess: true }) : null
     check('a scheduled notification can be cancelled', cancelled.ok && cancelledDoc?.status === 'cancelled', String(cancelledDoc?.status))
+
+    // 6. Two job runners sending the same notification at the same moment: only one may send.
+    const racer = await device(7, { enabled: true, breaking: true, general: true, mutedCategories: [] })
+    const race = await payload.create({
+      collection: 'push-notifications',
+      data: { title: `दौड़ ${run}`, body: 'संदेश', type: 'general', audience: 'all', source: 'manual', status: 'queued', dedupeKey: `verify-race-${run}` },
+      overrideAccess: true,
+    })
+    created.push({ collection: 'push-notifications', id: race.id })
+    const [r1, r2] = await Promise.all([sendNotificationSlice(payload, race.id), sendNotificationSlice(payload, race.id)])
+    const raceDeliveries = (await payload.find({ collection: 'push-deliveries', where: { and: [{ notification: { equals: race.id } }, { device: { equals: racer.id } }] }, depth: 0, overrideAccess: true })).docs
+    check('two runners at once: exactly one sends (the other steps aside)', raceDeliveries.length === 1 && [r1.busy, r2.busy].filter(Boolean).length === 1, `deliveries ${raceDeliveries.length}, busy ${r1.busy}/${r2.busy}`)
+    const leaseAfter = (await payload.db.drizzle.execute(sql`SELECT "lease_until" FROM "push_notifications" WHERE "id" = ${race.id}`)) as { rows: { lease_until: unknown }[] }
+    check('the lease is released after the slice', leaseAfter.rows[0]?.lease_until == null)
   } finally {
     // Clean up in dependency order (deliveries/events reference notifications and devices).
     const notificationIds = created.filter((c) => c.collection === 'push-notifications').map((c) => c.id)

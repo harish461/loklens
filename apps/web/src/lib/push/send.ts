@@ -48,6 +48,8 @@ const idOf = (value: unknown): number | null => {
 export interface SliceResult {
   done: boolean
   sentTo: number
+  /** Another runner held the notification; a follow-up job was queued for when its lease ends. */
+  busy?: boolean
 }
 
 /**
@@ -55,6 +57,37 @@ export interface SliceResult {
  * after each slice, so a retried job continues where it stopped instead of re-sending.
  */
 export async function sendNotificationSlice(payload: Payload, notificationId: number, req?: PayloadRequest): Promise<SliceResult> {
+  // Claim the notification first: if another job runner is already sending it, step aside and look again
+  // once its lease has run out (by then it has finished, or crashed and left the rest to us).
+  if (!(await claimLease(payload, notificationId))) {
+    await payload.jobs.queue({ task: 'pushSend', input: { notificationId }, waitUntil: new Date(Date.now() + LEASE_MS + 5_000), req })
+    return { done: true, sentTo: 0, busy: true }
+  }
+  try {
+    return await sendClaimedSlice(payload, notificationId, req)
+  } finally {
+    await releaseLease(payload, notificationId)
+  }
+}
+
+/** How long a runner may hold a notification. A slice (≤ 5 Expo requests with retries) ends well before. */
+export const LEASE_MS = 3 * 60 * 1000
+
+/** Atomic in Postgres: only one runner gets the row while the lease is live. */
+export async function claimLease(payload: Payload, notificationId: number): Promise<boolean> {
+  const res = (await payload.db.drizzle.execute(sql`
+    UPDATE "push_notifications"
+    SET "lease_until" = now() + make_interval(secs => ${LEASE_MS / 1000})
+    WHERE "id" = ${notificationId} AND ("lease_until" IS NULL OR "lease_until" < now())
+    RETURNING "id"`)) as { rows: unknown[] }
+  return res.rows.length === 1
+}
+
+async function releaseLease(payload: Payload, notificationId: number): Promise<void> {
+  await payload.db.drizzle.execute(sql`UPDATE "push_notifications" SET "lease_until" = NULL WHERE "id" = ${notificationId}`)
+}
+
+async function sendClaimedSlice(payload: Payload, notificationId: number, req?: PayloadRequest): Promise<SliceResult> {
   const n = await payload.findByID({ collection: 'push-notifications', id: notificationId, depth: 1, overrideAccess: true, req }).catch(() => null)
   if (!n) return { done: true, sentTo: 0 }
   if (n.status === 'sent' || n.status === 'cancelled' || n.status === 'failed') return { done: true, sentTo: 0 }

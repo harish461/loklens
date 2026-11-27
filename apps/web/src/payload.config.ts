@@ -279,10 +279,12 @@ export default buildConfig({
   },
   jobs: {
     tasks: [expireBreakingTask, pushArticlePublishTask, pushSendTask, pushReceiptsTask],
-    // Runs queued jobs (scheduled publish + expireBreaking) every minute inside the app process.
+    // Runs queued jobs (scheduled publish, breaking expiry, push) every minute inside the app process.
     autoRun: [{ cron: '* * * * *', queue: 'default', limit: 50 }],
-    // Never auto-run in CLI scripts (migrate, seed, generate:types) — only in the Next server.
-    shouldAutoRun: () => Boolean(process.env.NEXT_RUNTIME),
+    // Never auto-run in CLI scripts (migrate, seed, generate:types) — only in the Next server. And not where
+    // CRON_SECRET is set: there an external cron calls /api/cron every minute, which is the single runner.
+    // (On Hostinger the built-in runner started twice and two runners picked the same job at once.)
+    shouldAutoRun: () => Boolean(process.env.NEXT_RUNTIME) && !process.env.CRON_SECRET,
     deleteJobOnComplete: true,
     access: { queue: editorsCanQueue, run: editorsCanQueue, cancel: editorsCanQueue },
   },

@@ -716,6 +716,7 @@ export interface PushNotification {
   sentAt?: string | null;
   createdBy?: (number | null) | User;
   cursor?: number | null;
+  leaseUntil?: string | null;
   error?: string | null;
   targeted?: number | null;
   accepted?: number | null;
@@ -1353,6 +1354,7 @@ export interface PushNotificationsSelect<T extends boolean = true> {
   sentAt?: T;
   createdBy?: T;
   cursor?: T;
+  leaseUntil?: T;
   error?: T;
   targeted?: T;
   accepted?: T;
