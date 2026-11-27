@@ -123,6 +123,15 @@ export async function refreshMe(): Promise<void> {
 }
 
 /** Ends this device's session on the server, then forgets the token locally, even if the server call fails. */
+/**
+ * Deletes the account permanently (contract §7). Password accounts send the current password; Google
+ * accounts only the confirmation. On success the session is cleared, which sends the reader to sign-in.
+ */
+export async function deleteAccount(password?: string): Promise<void> {
+  await call<{ ok: boolean }>('/me/delete', { auth: true, body: { confirm: 'DELETE', ...(password ? { password } : {}) } })
+  await clearSession()
+}
+
 export async function logout(): Promise<void> {
   try {
     await call<{ ok: boolean }>('/auth/logout', { auth: true })

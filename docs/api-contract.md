@@ -239,6 +239,7 @@ skipped, never crash the renderer.
 | v1 draft 2 | 2026-11-09 | QA fixes: published-only enforcement, IST serializer, fallback images, cursor pagination, byline rule, sanitising, extra web helpers, Cloudflare rate limits, deferred locations/devices |
 | v1 draft 3 | 2026-11-09 | No content migration: legacy URLs return 410 unless an editor adds a Redirect |
 | v1 draft 4 | 2026-11-09 | Backend implementation (`apps/web/src/lib/data`), decisions made while implementing: invalid query values (page, pageSize, cursor, flag, q, hours, slugs) throw `BadRequestError` (map with `toApiError` → 400); an unknown category/tag/author filter returns an empty list, while single-item helpers return `null`; `search` is not cached (architecture §4); other helpers use `unstable_cache` with the architecture tags plus `settings` on article reads and a 300 s safety net; `sections` lists every `showInNav` category, empty ones included; `latest` is not filtered by `featured`; `listSitemapEntries` URLs, `EPaper.pdfUrl` and `Image.url` are absolute when `NEXT_PUBLIC_SITE_URL` is set; a video without its own thumbnail gets the YouTube `hqdefault` image with `isFallback: false`; raw REST `GET /api/users` never returns `email`, `role`, or session data to anonymous clients |
+| v1 draft 10 | 2026-11-27 | Account deletion (§7): `POST /api/v1/me/delete` with `{ confirm: 'DELETE', password? }` deletes the reader, their sessions, push devices, deliveries and events. Website page `/account/delete` for Google Play. |
 | v1 draft 9 | 2026-11-26 | Push notifications (§8): device registration, per-device preferences, open events; payload `data` and deep link; "accepted" vs "handed to Android/iOS" reporting. New internal collections `push-devices`, `push-notifications`, `push-deliveries`, `push-events` and the article field `pushOnPublish` are never exposed on the public read API. |
 | v1 draft 8 | 2026-11-24 | Customer accounts (§7): register, login, Google sign-in, password reset, /me and logout on the new app-users collection. Staff users are not used. |
 | v1 draft 7 | 2026-11-24 | Added `GET /api/v1/shorts` (YouTube Shorts list for the app's Shorts tab) and the `Short` shape. Additive, no other changes. |
@@ -264,6 +265,7 @@ secure device storage and sends `Authorization: JWT <token>` on authenticated re
 | `POST /api/v1/auth/reset` | Set a new password | reset token | `{ token, password }` → `{ ok: true }` |
 | `GET /api/v1/me` | Current user | JWT | → `{ user }` |
 | `POST /api/v1/auth/logout` | End the session | JWT | → `{ ok: true }` |
+| `POST /api/v1/me/delete` | Delete the account permanently | JWT | `{ confirm: 'DELETE', password? }` → `{ ok: true }` |
 
 **User shape (`AppUser`):** `{ id, name, email, provider: 'password' | 'google', createdAt }`. Never returned:
 password hash, Google subject ID, reset tokens, session list.
@@ -279,6 +281,15 @@ expiry, and a verified Google email. A Google sign-in never links to an existing
 (`409 CONFLICT`); that customer signs in with the password instead. Google accounts have no usable password: a new random
 password is set on each Google sign-in, so the only way in is Google. `/api/v1/auth/reset` returns only `{ ok: true }`;
 the app then signs in again with the new password.
+
+**Account deletion (v1 draft 10):** required by Google Play for apps with sign-up. `confirm` must be the exact
+string `DELETE`. Password accounts must also send the current `password` (`401` if wrong; failed attempts count
+towards the 5-attempt lock). Google accounts have no usable password, so the confirmation and a valid session are
+enough. On success the server deletes the `app-users` record (and with it every session), the reader's
+`push-devices` and their `push-deliveries`, and their `push-events`. Aggregate notification counters keep their
+numbers but no longer point to the reader. Bookmarks live only on the device. The app then forgets its token and
+returns to sign-in. The website page `/account/delete` explains the in-app steps and how to request deletion by
+email; its URL is the one given to Google Play.
 
 **Not part of v1 auth:** email verification, profile editing, and server-side bookmarks (bookmarks stay on the
 device).

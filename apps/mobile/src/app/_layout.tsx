@@ -68,6 +68,7 @@ export default function RootLayout() {
               <Stack.Screen name="search" />
               <Stack.Screen name="page/[slug]" />
               <Stack.Screen name="notification-settings" />
+              <Stack.Screen name="delete-account" />
             </Stack.Protected>
             <Stack.Protected guard={!signedIn}>
               <Stack.Screen name="sign-in" />

@@ -98,6 +98,9 @@ function AccountCard() {
       <Pressable onPress={() => void signOut()} style={[styles.accountBtn, { backgroundColor: t.raised }]} accessibilityRole="button">
         <Text style={[styles.accountBtnText, { color: t.text }]}>Log out</Text>
       </Pressable>
+      <Pressable onPress={() => router.push('/delete-account')} style={styles.accountLink} accessibilityRole="link">
+        <Text style={[styles.accountLinkText, { color: t.muted }]}>Delete account</Text>
+      </Pressable>
     </View>
   )
 }

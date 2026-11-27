@@ -129,6 +129,11 @@ export async function unregisterThisDevice(): Promise<void> {
   await AsyncStorage.removeItem(TOKEN_KEY).catch(() => {})
 }
 
+/** After account deletion: the server already removed the device; forget the token on the phone too. */
+export async function forgetPushToken(): Promise<void> {
+  await AsyncStorage.multiRemove([TOKEN_KEY, PROMPT_KEY]).catch(() => {})
+}
+
 /** Whether to show the home "turn on alerts" card: supported, not asked before, permission not decided. */
 export async function shouldOfferPush(): Promise<boolean> {
   if (!isPushSupported() || !getSession().token) return false
