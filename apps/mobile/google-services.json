@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "977262364056",
+    "project_id": "loklens-news",
+    "storage_bucket": "loklens-news.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977262364056:android:912ca8e34479fe26d0d7ed",
+        "android_client_info": {
+          "package_name": "com.loklensnews.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgTIMDXCX7FXzUFV-PDuYVBaKdKU_AsLo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

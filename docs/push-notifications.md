@@ -64,10 +64,10 @@ and from closed), the permission prompt, token rotation, and receipts for a real
 Expo's push service delivers to Android through Firebase Cloud Messaging (FCM).
 
 1. https://console.firebase.google.com → **Add project** (e.g. "LokLens News"). Analytics is not needed.
-2. **Add app → Android**, package name **`com.loklensnews.app`** → download **`google-services.json`**.
-   Send it to me (or place it at `apps/mobile/google-services.json`); I then add
-   `"googleServicesFile": "./google-services.json"` under `android` in `apps/mobile/app.json`.
-   This file is Firebase *client* configuration, not a secret, and may be committed.
+2. **Done (2026-11-27):** Firebase project **`loklens-news`** (LokLens Gmail account) has the Android app
+   `com.loklensnews.app`; its `google-services.json` is in `apps/mobile/` and referenced by
+   `android.googleServicesFile` in `apps/mobile/app.json`. It is Firebase *client* configuration, not a secret.
+   To refresh it: `firebase apps:sdkconfig ANDROID 1:977262364056:android:912ca8e34479fe26d0d7ed --project loklens-news`.
 3. Firebase → ⚙ **Project settings → Service accounts → Generate new private key**. This JSON **is a secret**:
    do not commit it, do not send it in chat.
 4. Upload it to Expo: https://expo.dev → project **loklens-news** → **Credentials** → **Android** →
