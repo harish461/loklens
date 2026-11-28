@@ -294,8 +294,14 @@ export default buildConfig({
   },
   jobs: {
     tasks: [expireBreakingTask, pushArticlePublishTask, pushSendTask, pushReceiptsTask, footageRetentionTask, youtubePublishTask],
-    // Runs queued jobs (scheduled publish, breaking expiry, push) every minute inside the app process.
-    autoRun: [{ cron: '* * * * *', queue: 'default', limit: 50 }],
+    // Runs queued jobs every minute inside the app process: the default queue (scheduled publish, breaking
+    // expiry, push, footage retention) and, one step at a time, the YouTube publisher. Only on sites WITHOUT
+    // CRON_SECRET (local, dev site); with CRON_SECRET the two cron calls (/api/cron and ?queue=youtube) run them.
+    // The publisher leases each post, so even a doubled runner never works on the same post twice.
+    autoRun: [
+      { cron: '* * * * *', queue: 'default', limit: 50 },
+      { cron: '* * * * *', queue: 'youtube', limit: 1 },
+    ],
     // Never auto-run in CLI scripts (migrate, seed, generate:types) — only in the Next server. And not where
     // CRON_SECRET is set: there an external cron calls /api/cron every minute, which is the single runner.
     // (On Hostinger the built-in runner started twice and two runners picked the same job at once.)

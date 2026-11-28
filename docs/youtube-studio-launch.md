@@ -63,6 +63,13 @@ Hostinger builds `develop`.
    - `curl -s -X POST https://dev.loklensnews.com/api/cron` without the secret → `401`;
      with the secret and `?queue=everything` → `400`.
 
+**Done 2026-11-28:** PR #1 merged (ef005db). Hostinger auto-deploys `develop` to **both** `dev.loklensnews.com`
+and `loklensnews.com`; both builds completed (07:56 UTC). Smoke test on both sites passed: home, `/api/v1/home`,
+`/api/v1/shorts`, reporter login 200; `/admin/youtube` shows the admin login when signed out (no studio content);
+`/reporter/footage` redirects; `/api/youtube/footage/1` 404; `/api/cron` and `?queue=youtube` without the secret
+401; `footage`, `youtube-posts`, `youtube-settings` REST 403 for anonymous visitors. The app booted, so the
+migrations ran. Still to check by a signed-in admin: no "YouTube Studio" sidebar item.
+
 ## 4. Environment variables (user, hPanel → the site → Node.js → Environment variables)
 
 Set on `dev.loklensnews.com` first; production later. Saving restarts the app.
@@ -80,6 +87,10 @@ The `S3_*` variables are already set and are reused for the footage bucket. Host
 variable list on save in some views: check the existing ones are still there afterwards.
 
 ## 5. Second cron entry (user, hPanel → Advanced → Cron Jobs, every minute)
+
+Only for sites **with** `CRON_SECRET` (production). A site without it (the dev site, local development) runs the
+`default` and `youtube` queues inside the app every minute (`jobs.autoRun` in `payload.config.ts`), so it needs no
+cron entry at all.
 
 ```bash
 curl -s -m 100 -X POST -H "x-cron-secret: YOUR_CRON_SECRET" "https://dev.loklensnews.com/api/cron?queue=youtube" > /dev/null
