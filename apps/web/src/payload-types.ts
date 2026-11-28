@@ -83,6 +83,9 @@ export interface Config {
     'push-notifications': PushNotification;
     'push-deliveries': PushDelivery;
     'push-events': PushEvent;
+    footage: Footage;
+    'youtube-posts': YoutubePost;
+    'youtube-post-events': YoutubePostEvent;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -106,6 +109,9 @@ export interface Config {
     'push-notifications': PushNotificationsSelect<false> | PushNotificationsSelect<true>;
     'push-deliveries': PushDeliveriesSelect<false> | PushDeliveriesSelect<true>;
     'push-events': PushEventsSelect<false> | PushEventsSelect<true>;
+    footage: FootageSelect<false> | FootageSelect<true>;
+    'youtube-posts': YoutubePostsSelect<false> | YoutubePostsSelect<true>;
+    'youtube-post-events': YoutubePostEventsSelect<false> | YoutubePostEventsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -120,12 +126,14 @@ export interface Config {
     'site-settings': SiteSetting;
     navigation: Navigation;
     ticker: Ticker;
+    'youtube-settings': YoutubeSetting;
     'payload-jobs-stats': PayloadJobsStat;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     navigation: NavigationSelect<false> | NavigationSelect<true>;
     ticker: TickerSelect<false> | TickerSelect<true>;
+    'youtube-settings': YoutubeSettingsSelect<false> | YoutubeSettingsSelect<true>;
     'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
   };
   locale: null;
@@ -139,6 +147,8 @@ export interface Config {
       pushArticlePublish: TaskPushArticlePublish;
       pushSend: TaskPushSend;
       pushReceipts: TaskPushReceipts;
+      footageRetention: TaskFootageRetention;
+      youtubePublish: TaskYoutubePublish;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -759,6 +769,144 @@ export interface PushEvent {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footage".
+ */
+export interface Footage {
+  id: number;
+  title: string;
+  /**
+   * Reporter brief: what happened, where, who, when.
+   */
+  notes?: string | null;
+  location?: (number | null) | Location;
+  category?: (number | null) | Category;
+  /**
+   * Our own footage, and the people shown agreed to be filmed.
+   */
+  rightsConfirmed?: boolean | null;
+  credit?: string | null;
+  uploadStatus: 'uploading' | 'uploaded' | 'failed' | 'deleted';
+  storagePrefix?: string | null;
+  bucket?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  sizeBytes?: number | null;
+  segmentBytes?: number | null;
+  segmentCount?: number | null;
+  durationSeconds?: number | null;
+  width?: number | null;
+  height?: number | null;
+  orientation?: ('landscape' | 'vertical' | 'square') | null;
+  lockedAt?: string | null;
+  retainUntil?: string | null;
+  createdBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-posts".
+ */
+export interface YoutubePost {
+  id: number;
+  postType: 'video' | 'short';
+  footage?: (number | null) | Footage;
+  /**
+   * Optional: the related article.
+   */
+  article?: (number | null) | Article;
+  title?: string | null;
+  /**
+   * At most 5000 bytes (about 1600 Hindi characters).
+   */
+  description?: string | null;
+  tags?: string[] | null;
+  hashtags?: string[] | null;
+  /**
+   * YouTube category (25 = News & Politics).
+   */
+  categoryId?: string | null;
+  defaultLanguage?: string | null;
+  /**
+   * Sent to YouTube as JPEG.
+   */
+  thumbnail?: (number | null) | Media;
+  privacyStatus: 'public' | 'unlisted' | 'private';
+  /**
+   * Optional. Uploads as private; YouTube publishes it at this time.
+   */
+  publishAt?: string | null;
+  notifySubscribers?: boolean | null;
+  madeForKids?: boolean | null;
+  containsSyntheticMedia?: boolean | null;
+  status:
+    | 'draft'
+    | 'pending_review'
+    | 'approved'
+    | 'uploading'
+    | 'processing'
+    | 'scheduled'
+    | 'published'
+    | 'failed'
+    | 'cancelled';
+  reviewNote?: string | null;
+  submittedBy?: (number | null) | User;
+  submittedAt?: string | null;
+  approvedBy?: (number | null) | User;
+  approvedAt?: string | null;
+  approvedHash?: string | null;
+  youtubeVideoId?: string | null;
+  youtubeUrl?: string | null;
+  uploadSessionUri?: string | null;
+  bytesUploaded?: number | null;
+  leaseUntil?: string | null;
+  attempts?: number | null;
+  lastError?: string | null;
+  uploadStartedAt?: string | null;
+  nextCheckAt?: string | null;
+  thumbnailSetAt?: string | null;
+  publishedAt?: string | null;
+  createdBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-post-events".
+ */
+export interface YoutubePostEvent {
+  id: number;
+  post?: (number | null) | YoutubePost;
+  type:
+    | 'created'
+    | 'submitted'
+    | 'rejected'
+    | 'approved'
+    | 'upload_started'
+    | 'chunk'
+    | 'uploaded'
+    | 'thumbnail_set'
+    | 'processed'
+    | 'scheduled'
+    | 'published'
+    | 'failed'
+    | 'retried'
+    | 'cancelled';
+  actor?: (number | null) | User;
+  detail?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -826,7 +974,15 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'expireBreaking' | 'pushArticlePublish' | 'pushSend' | 'pushReceipts' | 'schedulePublish';
+        taskSlug:
+          | 'inline'
+          | 'expireBreaking'
+          | 'pushArticlePublish'
+          | 'pushSend'
+          | 'pushReceipts'
+          | 'footageRetention'
+          | 'youtubePublish'
+          | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -860,7 +1016,17 @@ export interface PayloadJob {
       }[]
     | null;
   taskSlug?:
-    ('inline' | 'expireBreaking' | 'pushArticlePublish' | 'pushSend' | 'pushReceipts' | 'schedulePublish') | null;
+    | (
+        | 'inline'
+        | 'expireBreaking'
+        | 'pushArticlePublish'
+        | 'pushSend'
+        | 'pushReceipts'
+        | 'footageRetention'
+        | 'youtubePublish'
+        | 'schedulePublish'
+      )
+    | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -942,6 +1108,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'push-events';
         value: number | PushEvent;
+      } | null)
+    | ({
+        relationTo: 'footage';
+        value: number | Footage;
+      } | null)
+    | ({
+        relationTo: 'youtube-posts';
+        value: number | YoutubePost;
+      } | null)
+    | ({
+        relationTo: 'youtube-post-events';
+        value: number | YoutubePostEvent;
       } | null);
   globalSlug?: string | null;
   user:
@@ -1395,6 +1573,89 @@ export interface PushEventsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footage_select".
+ */
+export interface FootageSelect<T extends boolean = true> {
+  title?: T;
+  notes?: T;
+  location?: T;
+  category?: T;
+  rightsConfirmed?: T;
+  credit?: T;
+  uploadStatus?: T;
+  storagePrefix?: T;
+  bucket?: T;
+  filename?: T;
+  mimeType?: T;
+  sizeBytes?: T;
+  segmentBytes?: T;
+  segmentCount?: T;
+  durationSeconds?: T;
+  width?: T;
+  height?: T;
+  orientation?: T;
+  lockedAt?: T;
+  retainUntil?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-posts_select".
+ */
+export interface YoutubePostsSelect<T extends boolean = true> {
+  postType?: T;
+  footage?: T;
+  article?: T;
+  title?: T;
+  description?: T;
+  tags?: T;
+  hashtags?: T;
+  categoryId?: T;
+  defaultLanguage?: T;
+  thumbnail?: T;
+  privacyStatus?: T;
+  publishAt?: T;
+  notifySubscribers?: T;
+  madeForKids?: T;
+  containsSyntheticMedia?: T;
+  status?: T;
+  reviewNote?: T;
+  submittedBy?: T;
+  submittedAt?: T;
+  approvedBy?: T;
+  approvedAt?: T;
+  approvedHash?: T;
+  youtubeVideoId?: T;
+  youtubeUrl?: T;
+  uploadSessionUri?: T;
+  bytesUploaded?: T;
+  leaseUntil?: T;
+  attempts?: T;
+  lastError?: T;
+  uploadStartedAt?: T;
+  nextCheckAt?: T;
+  thumbnailSetAt?: T;
+  publishedAt?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-post-events_select".
+ */
+export interface YoutubePostEventsSelect<T extends boolean = true> {
+  post?: T;
+  type?: T;
+  actor?: T;
+  detail?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1568,6 +1829,26 @@ export interface Ticker {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-settings".
+ */
+export interface YoutubeSetting {
+  id: number;
+  /**
+   * Allow uploads to YouTube.
+   */
+  enabled?: boolean | null;
+  dailyUploadLimit?: number | null;
+  maxFootageMB?: number | null;
+  footageRetentionDays?: number | null;
+  defaultPrivacy?: ('public' | 'unlisted' | 'private') | null;
+  defaultHashtags?: string[] | null;
+  requireThumbnailForVideos?: boolean | null;
+  channelTitle?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs-stats".
  */
 export interface PayloadJobsStat {
@@ -1670,6 +1951,23 @@ export interface TickerSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-settings_select".
+ */
+export interface YoutubeSettingsSelect<T extends boolean = true> {
+  enabled?: T;
+  dailyUploadLimit?: T;
+  maxFootageMB?: T;
+  footageRetentionDays?: T;
+  defaultPrivacy?: T;
+  defaultHashtags?: T;
+  requireThumbnailForVideos?: T;
+  channelTitle?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs-stats_select".
  */
 export interface PayloadJobsStatsSelect<T extends boolean = true> {
@@ -1732,6 +2030,30 @@ export interface TaskPushReceipts {
   input?: unknown;
   output: {
     resolved: number;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskFootageRetention".
+ */
+export interface TaskFootageRetention {
+  input?: unknown;
+  output: {
+    expired: number;
+    abandoned: number;
+    skipped: number;
+    errors: number;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskYoutubePublish".
+ */
+export interface TaskYoutubePublish {
+  input?: unknown;
+  output: {
+    action: string;
+    postId: number;
   };
 }
 /**

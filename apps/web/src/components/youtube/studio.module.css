@@ -1,0 +1,312 @@
+/* YouTube Studio admin view (mobile first). Uses the admin CSS variables (--cms-*). */
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.row {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 4px;
+  border-top: 1px solid var(--cms-border, #e2e8f0);
+  flex-wrap: wrap;
+}
+.row:first-child {
+  border-top: 0;
+}
+.rowMain {
+  min-width: 0;
+  flex: 1 1 240px;
+}
+.rowTitle {
+  font-weight: 600;
+  color: var(--cms-ink, #0f172a);
+  text-decoration: none;
+}
+.rowTitle:hover {
+  text-decoration: underline;
+}
+.meta {
+  font-size: 13px;
+  color: var(--cms-muted, #64748b);
+  margin-top: 2px;
+}
+.badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.neutral {
+  background: #e2e8f0;
+  color: #334155;
+}
+.warn {
+  background: #fef9c3;
+  color: #854d0e;
+}
+.ok {
+  background: #dcfce7;
+  color: #166534;
+}
+.bad {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.info {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.grid {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 960px) {
+  .grid {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
+.form {
+  display: grid;
+  gap: 14px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+.label {
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.counter {
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--cms-muted, #64748b);
+}
+.counterOver {
+  color: #b91c1c;
+  font-weight: 600;
+}
+.hint {
+  font-size: 12.5px;
+  color: var(--cms-muted, #64748b);
+}
+.input,
+.select,
+.textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  background: #fff;
+  color: #0f172a;
+}
+.textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+.inline {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.check input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.radioGroup {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.radio {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.radioActive {
+  border-color: #0f172a;
+  background: #f1f5f9;
+  font-weight: 600;
+}
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 8px;
+  max-height: 260px;
+  overflow: auto;
+}
+.thumb {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0;
+  background: #f1f5f9;
+  cursor: pointer;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.thumbActive {
+  border-color: #84cc16;
+}
+.player {
+  width: 100%;
+  max-height: 60vh;
+  background: #000;
+  border-radius: 10px;
+}
+.preview {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+  background: #fff;
+}
+.previewTitle {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.previewDesc {
+  white-space: pre-wrap;
+  font-size: 14px;
+  color: #334155;
+  max-height: 220px;
+  overflow: auto;
+}
+.thumbPreview {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #f1f5f9;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.button,
+.buttonSecondary,
+.buttonDanger,
+.buttonLime {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 18px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.button {
+  background: #0f172a;
+  color: #fff;
+}
+.buttonLime {
+  background: #d5f46a;
+  color: #0f172a;
+}
+.buttonSecondary {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.buttonDanger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.button:disabled,
+.buttonLime:disabled,
+.buttonSecondary:disabled,
+.buttonDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.success {
+  color: #166534;
+  background: #f0fdf4;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.note {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  display: grid;
+  gap: 6px;
+}
+.empty {
+  color: var(--cms-muted, #64748b);
+  font-size: 14px;
+  padding: 8px 0;
+}
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+/* Payload's admin styles underline links; the tab pills are links. */
+.pillLinks a {
+  text-decoration: none;
+}

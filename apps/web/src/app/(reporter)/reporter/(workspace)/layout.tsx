@@ -4,6 +4,7 @@ import { ReporterNav } from '@/components/reporter/ReporterNav'
 import styles from '@/components/reporter/reporter.module.css'
 import { myStats } from '@/lib/reporter/queries'
 import { requireReporter } from '@/lib/reporter/session'
+import { youtubeStudioEnabled } from '@/lib/youtube/flags'
 
 function initialsOf(name: string): string {
   const words = name.trim().split(/\s+/).filter(Boolean)
@@ -22,6 +23,7 @@ export default async function WorkspaceLayout({ children }: { children: ReactNod
         userInitials={initialsOf(session.user.name)}
         designation={session.user.designation ?? ''}
         pendingCount={stats.pending_review}
+        showFootage={youtubeStudioEnabled()}
       />
       <main className={styles.main} id="main">
         {children}

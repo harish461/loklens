@@ -8,6 +8,7 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
+  Clapperboard,
   FilePlus2,
   LayoutGrid,
   LogOut,
@@ -28,6 +29,8 @@ interface Props {
   userInitials: string
   designation: string
   pendingCount: number
+  /** YouTube Studio footage upload (only while YOUTUBE_STUDIO_ENABLED is on). */
+  showFootage?: boolean
 }
 
 interface Item {
@@ -38,7 +41,7 @@ interface Item {
   isActive: (path: string) => boolean
 }
 
-export function ReporterNav({ userName, userInitials, designation, pendingCount }: Props) {
+export function ReporterNav({ userName, userInitials, designation, pendingCount, showFootage = false }: Props) {
   const pathname = usePathname() ?? ''
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
@@ -67,6 +70,9 @@ export function ReporterNav({ userName, userInitials, designation, pendingCount 
       icon: <FilePlus2 size={18} />,
       isActive: (p) => p.startsWith('/reporter/articles/new'),
     },
+    ...(showFootage
+      ? [{ label: 'Video Footage', href: '/reporter/footage', icon: <Clapperboard size={18} />, isActive: (p: string) => p.startsWith('/reporter/footage') }]
+      : []),
     { label: 'Profile', href: '/reporter/profile', icon: <UserRound size={18} />, isActive: (p) => p.startsWith('/reporter/profile') },
   ]
 

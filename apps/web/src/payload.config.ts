@@ -24,12 +24,17 @@ import { PushEvents } from './collections/PushEvents'
 import { PushNotifications } from './collections/PushNotifications'
 import { Users } from './collections/Users'
 import { Videos } from './collections/Videos'
+import { Footage } from './collections/Footage'
+import { YoutubePostEvents, YoutubePosts } from './collections/YoutubePosts'
 import { newsEditor } from './fields/richText'
 import { Navigation } from './globals/Navigation'
 import { SiteSettings } from './globals/SiteSettings'
 import { Ticker } from './globals/Ticker'
+import { YoutubeSettings } from './globals/YoutubeSettings'
 import { hi } from './i18n/hi'
 import { expireBreakingTask } from './jobs/expireBreaking'
+import { footageRetentionTask } from './jobs/footageRetention'
+import { youtubePublishTask } from './jobs/youtube'
 import { pushArticlePublishTask, pushReceiptsTask, pushSendTask } from './jobs/push'
 import { migrations } from './migrations'
 
@@ -210,6 +215,12 @@ export default buildConfig({
           path: '/reporters',
           exact: true,
         },
+        // YouTube Studio (api-contract §9): editors and admins, checked inside the view and in its actions.
+        youtube: {
+          Component: '@/components/admin/YoutubeStudioView#YoutubeStudioView',
+          path: '/youtube',
+          exact: true,
+        },
       },
       // LokLens sidebar: dark navy SaaS sidebar with lime-green active states and all 15 CMS modules.
       Nav: '@/components/admin/AdminNav#AdminNav',
@@ -231,8 +242,12 @@ export default buildConfig({
     PushNotifications,
     PushDeliveries,
     PushEvents,
+    // YouTube Studio (api-contract §9): staff only, never public.
+    Footage,
+    YoutubePosts,
+    YoutubePostEvents,
   ],
-  globals: [SiteSettings, Navigation, Ticker],
+  globals: [SiteSettings, Navigation, Ticker, YoutubeSettings],
   plugins: [
     s3Storage({
       enabled: s3.enabled,
@@ -278,7 +293,7 @@ export default buildConfig({
     supportedLanguages: { en, hi } as unknown as NonNullable<Config['i18n']>['supportedLanguages'],
   },
   jobs: {
-    tasks: [expireBreakingTask, pushArticlePublishTask, pushSendTask, pushReceiptsTask],
+    tasks: [expireBreakingTask, pushArticlePublishTask, pushSendTask, pushReceiptsTask, footageRetentionTask, youtubePublishTask],
     // Runs queued jobs (scheduled publish, breaking expiry, push) every minute inside the app process.
     autoRun: [{ cron: '* * * * *', queue: 'default', limit: 50 }],
     // Never auto-run in CLI scripts (migrate, seed, generate:types) — only in the Next server. And not where

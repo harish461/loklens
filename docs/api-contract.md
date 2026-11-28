@@ -239,6 +239,7 @@ skipped, never crash the renderer.
 | v1 draft 2 | 2026-11-09 | QA fixes: published-only enforcement, IST serializer, fallback images, cursor pagination, byline rule, sanitising, extra web helpers, Cloudflare rate limits, deferred locations/devices |
 | v1 draft 3 | 2026-11-09 | No content migration: legacy URLs return 410 unless an editor adds a Redirect |
 | v1 draft 4 | 2026-11-09 | Backend implementation (`apps/web/src/lib/data`), decisions made while implementing: invalid query values (page, pageSize, cursor, flag, q, hours, slugs) throw `BadRequestError` (map with `toApiError` → 400); an unknown category/tag/author filter returns an empty list, while single-item helpers return `null`; `search` is not cached (architecture §4); other helpers use `unstable_cache` with the architecture tags plus `settings` on article reads and a 300 s safety net; `sections` lists every `showInNav` category, empty ones included; `latest` is not filtered by `featured`; `listSitemapEntries` URLs, `EPaper.pdfUrl` and `Image.url` are absolute when `NEXT_PUBLIC_SITE_URL` is set; a video without its own thumbnail gets the YouTube `hqdefault` image with `isFallback: false`; raw REST `GET /api/users` never returns `email`, `role`, or session data to anonymous clients |
+| v1 draft 11 | 2026-11-27 | YouTube Studio (§9), **internal only**: new staff-only collections `footage`, `youtube-posts`, `youtube-post-events` and global `youtube-settings`, the post status values and the YouTube field limits. `POST /api/cron` gains `?queue=youtube`, and the plain call runs only the `default` queue. No `/api/v1` shape or route changes. |
 | v1 draft 10 | 2026-11-27 | Account deletion (§7): `POST /api/v1/me/delete` with `{ confirm: 'DELETE', password? }` deletes the reader, their sessions, push devices, deliveries and events. Website page `/account/delete` for Google Play. |
 | v1 draft 9 | 2026-11-26 | Push notifications (§8): device registration, per-device preferences, open events; payload `data` and deep link; "accepted" vs "handed to Android/iOS" reporting. New internal collections `push-devices`, `push-notifications`, `push-deliveries`, `push-events` and the article field `pushOnPublish` are never exposed on the public read API. |
 | v1 draft 8 | 2026-11-24 | Customer accounts (§7): register, login, Google sign-in, password reset, /me and logout on the new app-users collection. Staff users are not used. |
@@ -332,3 +333,67 @@ Expo handed it to Apple/Google. Neither proves the phone showed it, so the admin
 "accepted" and "handed to Android/iOS", never as "delivered". Receipts with `DeviceNotRegistered` deactivate the device.
 
 **Errors:** `401` (no or bad session), `404` (token not registered to this account), `422 VALIDATION`.
+
+## 9. YouTube Studio (internal) — draft v11
+
+Staff publish videos and Shorts to the @loklensnews channel from the Payload admin. Plan:
+`docs/youtube-studio-plan.md`. **Nothing in this section is public.** The `/api/v1` routes and shapes do not
+change: the website and app keep reading published videos from the channel feed (`GET /api/v1/videos`,
+`GET /api/v1/shorts`). The mobile app never calls these collections.
+
+**Collections and global (staff only, never readable anonymously):**
+
+| Slug | Purpose | Read | Write |
+|---|---|---|---|
+| `footage` | Raw reporter video in the **private** bucket (`FOOTAGE_S3_BUCKET`) | admin, editor: all; reporter: own | create: staff; update: owner while unused, editor/admin; delete: editor/admin |
+| `youtube-posts` | One YouTube upload: metadata, privacy, approval, upload state | editor, admin | editor, admin (status rules below) |
+| `youtube-post-events` | Append-only history of each post | editor, admin | server only (no update/delete over the API) |
+| `youtube-settings` (global) | Switches and limits | admin | admin |
+
+Raw Payload REST on these slugs follows the same access rules and is not a supported API: the admin uses
+server actions (`src/lib/youtube/actions.ts`, reporters `src/lib/reporter/footageActions.ts`).
+
+**Footage storage (decided 2026-11-27):** Supabase Free caps every object at 50 MB, so a video is stored as
+segments of at most 45 MiB (a multiple of 256 KiB) under `footage/<id>-<random>/seg-0001` … with the segment
+count and sizes on the `footage` row. The browser uploads each segment with its own presigned PUT (valid 1 hour);
+resume skips segments already stored. On completion the server checks every segment's size and the container
+magic bytes (MP4/MOV/WebM). Footage is never served through a public URL. Staff preview it through
+`GET /api/youtube/footage/:id` (internal, signed-in staff, read as the user so a reporter only gets their own;
+HTTP Range across segments, at most 4 MB per response, `Cache-Control: private, no-store`, 404 while the studio
+is switched off). Default limits: 2 GB per file. Unused footage is deleted 30 days after upload
+(`youtube-settings.footageRetentionDays`), and uploads never finished within 48 hours are deleted too (hourly
+`footageRetention` job, default queue). A post in review or on its way to YouTube keeps its footage.
+
+**`youtube-posts.status`:** `draft` → `pending_review` → `approved` → `uploading` → `processing` →
+`published`, or `scheduled` (with `publishAt`), then `published`. A rejection returns the post to `draft` with a
+`reviewNote` (required when an admin returns it). `failed` can be retried (back to `approved`), and `cancelled` is
+final. Only admins approve or retry, and only after ticking the 4-point checklist (rights and consent, no
+identification of minors or victims, no defamation, accurate title and description). Approval locks the footage
+(no expiry while in use); cancelling releases it.
+Only the publisher job moves a post to `uploading`, `processing`, `published`, `scheduled` or `failed`. Editing the
+title, description, tags, thumbnail or footage of an approved post sends it back to `pending_review`.
+
+**Field rules (YouTube's limits, checked on the server):** `title` 1–100 characters, no `<` or `>`;
+`description` at most 5000 **bytes** (Devanagari ≈ 3 bytes per character); `tags` at most 500 characters in total;
+`hashtags` at most 15; `privacyStatus` `public | unlisted | private` (always sent, default `unlisted`);
+`publishAt` forces a private upload that YouTube publishes later; `postType` `video | short` (a Short must be
+vertical or square and at most 3 minutes); the `thumbnail` is a `media` image, sent as JPEG.
+
+**Metadata is typed by editors.** AI suggestions are off (`YOUTUBE_AI_ENABLED` unset). When switched on later,
+they only fill the form and still go through review.
+
+**Jobs and cron:** a plain `POST /api/cron` (with `x-cron-secret`) runs only the `default` queue.
+`POST /api/cron?queue=youtube` runs one job from the `youtube` queue per call; Hostinger calls it every minute.
+The `youtubePublish` task (scheduled every minute on that queue) does one step per call for the most urgent
+post: open the resumable upload (approved → uploading), send chunks for about 40 seconds reading the footage
+segments (resuming from the offset YouTube reports), set the thumbnail (videos only), and poll processing
+(→ published, or scheduled when `publishAt` is in the future). A lease on the post stops two runners from working
+on it. Quota errors wait an hour, network or 5xx errors back off (failed after 8 attempts), an expired upload
+session starts a new one, and other errors mark the post failed with a short reason. The daily upload limit
+(`youtube-settings.dailyUploadLimit`, India day) is checked before each new upload. Publishing releases the
+footage for retention. Nothing runs unless `YOUTUBE_STUDIO_ENABLED` and `youtube-settings.enabled` are both on;
+with the env switch off the admin screens show "बंद है".
+
+**Environment (names only):** `YOUTUBE_STUDIO_ENABLED`, `YOUTUBE_OAUTH_CLIENT_ID`,
+`YOUTUBE_OAUTH_CLIENT_SECRET`, `YOUTUBE_OAUTH_REFRESH_TOKEN`, `FOOTAGE_S3_BUCKET`, and optionally
+`YOUTUBE_CHUNK_MB` (default 8) and `YOUTUBE_AI_ENABLED`. The footage bucket uses the existing `S3_*` credentials.

@@ -6,6 +6,9 @@ import * as migration_20261126_125206_push_notifications from './20261126_125206
 import * as migration_20261126_131229_push_job_tasks from './20261126_131229_push_job_tasks';
 import * as migration_20261127_071849_push_send_lease from './20261127_071849_push_send_lease';
 import * as migration_20261127_081621_enable_rls_public_tables from './20261127_081621_enable_rls_public_tables';
+import * as migration_20261127_172614_youtube_studio from './20261127_172614_youtube_studio';
+import * as migration_20261127_174523_footage_retention_task from './20261127_174523_footage_retention_task';
+import * as migration_20261128_071732_youtube_publisher from './20261128_071732_youtube_publisher';
 
 export const migrations = [
   {
@@ -46,6 +49,21 @@ export const migrations = [
   {
     up: migration_20261127_081621_enable_rls_public_tables.up,
     down: migration_20261127_081621_enable_rls_public_tables.down,
-    name: '20261127_081621_enable_rls_public_tables'
+    name: '20261127_081621_enable_rls_public_tables',
+  },
+  {
+    up: migration_20261127_172614_youtube_studio.up,
+    down: migration_20261127_172614_youtube_studio.down,
+    name: '20261127_172614_youtube_studio',
+  },
+  {
+    up: migration_20261127_174523_footage_retention_task.up,
+    down: migration_20261127_174523_footage_retention_task.down,
+    name: '20261127_174523_footage_retention_task',
+  },
+  {
+    up: migration_20261128_071732_youtube_publisher.up,
+    down: migration_20261128_071732_youtube_publisher.down,
+    name: '20261128_071732_youtube_publisher'
   },
 ];
