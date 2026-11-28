@@ -6,6 +6,8 @@
 import { getTranslation } from '@payloadcms/translations'
 import type { CollectionSlug, Payload, TypedUser } from 'payload'
 
+import { youtubeStudioEnabled } from '@/lib/youtube/flags'
+
 import { AdminNavClient, type ExtraEntityItem } from './AdminNavClient'
 
 type Props = {
@@ -109,6 +111,7 @@ export async function AdminNav({ payload, i18n, visibleEntities, user }: Props) 
         pendingReview,
       }}
       isAdmin={u.role === 'admin'}
+      showYoutube={youtubeStudioEnabled() && (u.role === 'admin' || u.role === 'editor')}
       userName={userName}
       userRole={userRole}
       userEmail={userEmail}

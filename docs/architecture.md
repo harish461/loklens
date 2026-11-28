@@ -331,6 +331,36 @@ Rules: each fetch has a 3-second timeout; a failed or unconfigured platform show
 short fallback message instead of posts, and never breaks the page. Tokens live only in server env vars.
 Setup steps for the tokens: `docs/social-feeds-setup.md`.
 
+### YouTube Studio (added 2026-11-27, Release 1 planned)
+
+Staff upload reporter footage and publish it to `@loklensnews` as videos or Shorts from the admin, after an
+admin approves. Full plan, findings and phases: `docs/youtube-studio-plan.md`. Internal contract:
+`docs/api-contract.md` §9.
+
+```
+reporter /reporter/footage  or  editor /admin/youtube
+  └─ browser cuts the file into ≤45 MiB segments → presigned PUT each → private bucket loklens-footage
+footage (row)  →  youtube-posts (editor: title, description, tags, thumbnail→media, privacy, schedule)
+  └─ submit → admin approves → job queue "youtube" (POST /api/cron?queue=youtube, every minute, 1 job)
+       ytUploadStart → ytUploadChunk (≤60 s per run; reads segments with ranged GETs; resumes from YouTube's offset)
+       → ytSetThumbnail (WebP → JPEG) → ytCheckStatus → published / scheduled / failed
+  youtube-post-events records every step
+```
+
+- **Storage:** Supabase Free caps each object at 50 MB, so footage is stored as segments. The footage bucket is
+  private; there are no public URLs. Thumbnails reuse `media`, and raw video never enters `media`.
+- **Google:** one OAuth client ("LokLens YouTube Studio") in the existing `loklensnews` Cloud project, which also
+  holds Google Sign-In. The consent screen is In production. The YouTube scope (`youtube.force-ssl`) is
+  requested only by the one-time channel consent, never by reader sign-in. The refresh token lives in a server env var.
+- **Safety:** the kill switch `YOUTUBE_STUDIO_ENABLED`; explicit `privacyStatus` (default unlisted); approval
+  stamped with a content hash; a lease per post, so two runners never upload the same post; no DB transaction held
+  during network calls (pool of 5).
+- **Cron change:** the plain `POST /api/cron` runs only the `default` queue (push and scheduled publishing), so a
+  long YouTube step never delays push. YouTube gets its own Hostinger cron entry.
+- **AI:** off for Release 1 (`YOUTUBE_AI_ENABLED` unset). Editors type the metadata themselves.
+- **Cost:** YouTube API quota is free (100 uploads a day), storage stays on Supabase Free, and footage is
+  deleted 30 days after use.
+
 ---
 
 ## 10. Decisions and open questions

@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Clapperboard,
   ClipboardCheck,
   FilePlus2,
   Flame,
@@ -59,6 +60,8 @@ export interface AdminNavClientProps {
   extraEntities: ExtraEntityItem[]
   /** Admin-only items (Reporters, Notifications) are hidden from editors. */
   isAdmin?: boolean
+  /** YouTube Studio (editors and admins, only while YOUTUBE_STUDIO_ENABLED is on). */
+  showYoutube?: boolean
 }
 
 type NavKey =
@@ -68,6 +71,7 @@ type NavKey =
   | 'review'
   | 'reporters'
   | 'notifications'
+  | 'youtube'
   | 'categories'
   | 'subcategories'
   | 'media'
@@ -104,6 +108,8 @@ function renderNavIcon(key: NavKey, className?: string) {
       return <Users size={size} className={className} />
     case 'notifications':
       return <Bell size={size} className={className} />
+    case 'youtube':
+      return <Clapperboard size={size} className={className} />
     case 'categories':
       return <FolderTree size={size} className={className} />
     case 'subcategories':
@@ -136,6 +142,7 @@ export function AdminNavClient({
   userInitials,
   extraEntities,
   isAdmin = false,
+  showYoutube = false,
 }: AdminNavClientProps) {
   const pathname = usePathname() ?? '/admin'
   const [collapsed, setCollapsed] = useState(false)
@@ -182,6 +189,16 @@ export function AdminNavClient({
       badgeTone: 'lime',
       isActive: (p) => p.startsWith('/admin/review'),
     },
+    ...(showYoutube
+      ? [
+          {
+            key: 'youtube' as const,
+            label: 'YouTube Studio',
+            href: '/admin/youtube',
+            isActive: (p: string) => p.startsWith('/admin/youtube'),
+          },
+        ]
+      : []),
     ...(isAdmin
       ? [
           {
