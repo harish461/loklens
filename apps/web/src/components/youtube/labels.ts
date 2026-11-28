@@ -1,15 +1,17 @@
 import type { YtPostStatus } from '@/access/youtubeLimits'
 
+// YouTube Studio UI text is English (user decision 2026-11-28); the content (titles, descriptions) stays Hindi.
+
 export const STATUS_LABEL: Record<YtPostStatus, string> = {
-  draft: 'ड्राफ़्ट',
-  pending_review: 'समीक्षा में',
-  approved: 'मंज़ूर (कतार में)',
-  uploading: 'अपलोड हो रहा है',
-  processing: 'यूट्यूब पर प्रोसेस',
-  scheduled: 'शेड्यूल्ड',
-  published: 'प्रकाशित',
-  failed: 'विफल',
-  cancelled: 'रद्द',
+  draft: 'Draft',
+  pending_review: 'In review',
+  approved: 'Approved (queued)',
+  uploading: 'Uploading',
+  processing: 'Processing on YouTube',
+  scheduled: 'Scheduled',
+  published: 'Published',
+  failed: 'Failed',
+  cancelled: 'Cancelled',
 }
 
 export const STATUS_TONE: Record<YtPostStatus, 'neutral' | 'warn' | 'ok' | 'bad' | 'info'> = {
@@ -24,35 +26,35 @@ export const STATUS_TONE: Record<YtPostStatus, 'neutral' | 'warn' | 'ok' | 'bad'
   cancelled: 'neutral',
 }
 
-export const PRIVACY_LABEL: Record<string, string> = { public: 'सार्वजनिक', unlisted: 'अनलिस्टेड (केवल लिंक से)', private: 'निजी' }
+export const PRIVACY_LABEL: Record<string, string> = { public: 'Public', unlisted: 'Unlisted (link only)', private: 'Private' }
 
 export const EVENT_LABEL: Record<string, string> = {
-  created: 'बनाई गई',
-  submitted: 'समीक्षा के लिए भेजी गई',
-  rejected: 'लौटाई गई',
-  approved: 'मंज़ूर',
-  upload_started: 'अपलोड शुरू',
-  chunk: 'अपलोड जारी',
-  uploaded: 'अपलोड पूरा',
-  thumbnail_set: 'थंबनेल लगा',
-  processed: 'यूट्यूब प्रोसेसिंग पूरी',
-  scheduled: 'शेड्यूल हुई',
-  published: 'प्रकाशित',
-  failed: 'विफल',
-  retried: 'फिर से कोशिश',
-  cancelled: 'रद्द',
+  created: 'Created',
+  submitted: 'Sent for review',
+  rejected: 'Returned',
+  approved: 'Approved',
+  upload_started: 'Upload started',
+  chunk: 'Uploading',
+  uploaded: 'Upload finished',
+  thumbnail_set: 'Thumbnail set',
+  processed: 'Processed by YouTube',
+  scheduled: 'Scheduled',
+  published: 'Published',
+  failed: 'Failed',
+  retried: 'Retried',
+  cancelled: 'Cancelled',
 }
 
-export const ORIENTATION_LABEL: Record<string, string> = { landscape: 'आड़ा', vertical: 'खड़ा', square: 'चौकोर' }
+export const ORIENTATION_LABEL: Record<string, string> = { landscape: 'Landscape', vertical: 'Vertical', square: 'Square' }
 
 export const CHECKLIST_LABEL = {
-  rights: 'फ़ुटेज हमारा है और दिखाए गए लोगों की सहमति है।',
-  minors: 'किसी नाबालिग, पीड़ित या आरोपी की पहचान उजागर नहीं होती।',
-  defamation: 'वीडियो और विवरण में कोई मानहानिकारक या अपुष्ट आरोप नहीं है।',
-  accuracy: 'शीर्षक और विवरण सटीक हैं, भ्रामक नहीं।',
+  rights: 'The footage is ours, and the people shown agreed to be filmed.',
+  minors: 'No minor, victim or accused person can be identified.',
+  defamation: 'No defamatory or unverified allegations in the video or the text.',
+  accuracy: 'The title and description are accurate, not misleading.',
 } as const
 
 export function formatIst(iso: string | null): string {
   if (!iso) return ''
-  return new Date(iso).toLocaleString('hi-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }

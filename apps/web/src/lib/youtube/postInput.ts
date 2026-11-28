@@ -78,7 +78,7 @@ export function isoToIst(iso: string | null | undefined): string {
 export function cleanPostInput(input: PostFormInput): { data: Record<string, unknown>; errors: string[] } {
   const errors: string[] = []
   const publishAt = istToIso(input.publishAtIst)
-  if (publishAt === undefined) errors.push('शेड्यूल का समय सही नहीं है।')
+  if (publishAt === undefined) errors.push('The schedule time is not valid.')
   const privacy = ['public', 'unlisted', 'private'].includes(String(input.privacyStatus)) ? String(input.privacyStatus) : 'unlisted'
   const data: Record<string, unknown> = {
     postType: input.postType === 'short' ? 'short' : 'video',

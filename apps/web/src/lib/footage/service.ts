@@ -15,6 +15,7 @@ import { randomBytes } from 'node:crypto'
 import type { Payload } from 'payload'
 
 import { isEditorOrAdmin, type MaybeUser } from '@/access'
+import { parseHashtags } from '@/lib/youtube/postInput'
 import type { Footage, User } from '@/payload-types'
 
 import {
@@ -43,6 +44,18 @@ export interface StartInput extends StartRequest {
   notes?: unknown
   location?: unknown
   category?: unknown
+  /** Media ID of a suggested thumbnail image (uploaded first through /api/media). */
+  image?: unknown
+  /** Suggested hashtags, space- or comma-separated ("#" is added when missing). */
+  hashtags?: unknown
+}
+
+/** A media ID only if it exists and is an image the user may read. */
+async function imageId(payload: Payload, user: User, v: unknown): Promise<number | null> {
+  const id = positiveId(v)
+  if (!id) return null
+  const m = await payload.findByID({ collection: 'media', id, depth: 0, disableErrors: true, ...as(user) })
+  return m && /^image\//.test(m.mimeType ?? '') ? m.id : null
 }
 
 const DAY_MS = 24 * 3600 * 1000
@@ -84,6 +97,8 @@ export async function startFootageUpload(payload: Payload, user: User, input: St
       notes: typeof input.notes === 'string' ? input.notes.trim().slice(0, 2000) : undefined,
       location: positiveId(input.location),
       category: positiveId(input.category),
+      image: await imageId(payload, user, input.image),
+      hashtags: parseHashtags(input.hashtags).slice(0, 15),
       rightsConfirmed: true,
       // Ignored for clients by field access (the default 'uploading' applies); present to satisfy the type.
       uploadStatus: 'uploading',
@@ -113,10 +128,10 @@ export async function startFootageUpload(payload: Payload, user: User, input: St
 /** Fresh URLs for the segments still missing. Only for the uploader's own unfinished upload (or editors). */
 export async function resumeFootageUpload(payload: Payload, user: User, footageId: unknown, sizeBytes: unknown): Promise<Result<UploadPlan>> {
   const row = await ownFootage(payload, user, footageId)
-  if (!row || row.uploadStatus !== 'uploading' || !row.storagePrefix) return { ok: false, error: 'यह अपलोड अब जारी नहीं रखा जा सकता। फिर से शुरू करें।' }
-  if (Number(row.sizeBytes) !== sizeBytes) return { ok: false, error: 'यह वही फ़ाइल नहीं है। फिर से शुरू करें।' }
+  if (!row || row.uploadStatus !== 'uploading' || !row.storagePrefix) return { ok: false, error: 'This upload can no longer be resumed. Start again.' }
+  if (Number(row.sizeBytes) !== sizeBytes) return { ok: false, error: 'This is not the same file. Start again.' }
   if (!isEditorOrAdmin(user as unknown as MaybeUser) && String(idOf(row.createdBy)) !== String(user.id)) {
-    return { ok: false, error: 'यह अपलोड आपका नहीं है।' }
+    return { ok: false, error: 'This upload is not yours.' }
   }
   return { ok: true, ...(await plan(row)) }
 }
@@ -128,19 +143,19 @@ export async function completeFootageUpload(
   facts: { durationSeconds?: unknown; width?: unknown; height?: unknown },
 ): Promise<Result<{ footageId: number }>> {
   const row = await ownFootage(payload, user, footageId)
-  if (!row || !row.storagePrefix) return { ok: false, error: 'फ़ुटेज नहीं मिला।' }
+  if (!row || !row.storagePrefix) return { ok: false, error: 'Footage not found.' }
   if (row.uploadStatus === 'uploaded') return { ok: true, footageId: row.id }
-  if (row.uploadStatus !== 'uploading') return { ok: false, error: 'यह अपलोड रद्द हो चुका है।' }
+  if (row.uploadStatus !== 'uploading') return { ok: false, error: 'This upload was cancelled.' }
 
   const prefix = row.storagePrefix
   const missing = missingSegments(prefix, Number(row.sizeBytes), await listPrefix(prefix))
-  if (missing.length) return { ok: false, error: `${missing.length} हिस्से अभी अपलोड नहीं हुए। फिर से कोशिश करें।` }
+  if (missing.length) return { ok: false, error: `${missing.length} part(s) have not been uploaded yet. Try again.` }
 
   const container = detectContainer(await readHead(segmentKey(prefix, 1)))
   if (!container) {
     await deletePrefix(prefix)
     await payload.update({ collection: 'footage', id: row.id, data: { uploadStatus: 'failed' }, overrideAccess: true })
-    return { ok: false, error: 'यह फ़ाइल MP4, MOV या WebM वीडियो नहीं है।' }
+    return { ok: false, error: 'This file is not an MP4, MOV or WebM video.' }
   }
 
   const { retentionDays } = await settings(payload)
@@ -161,15 +176,15 @@ export async function completeFootageUpload(
 /** Stops an upload, or deletes unused footage: removes the segments and marks the row deleted. */
 export async function discardFootage(payload: Payload, user: User, footageId: unknown): Promise<Result<object>> {
   const row = await ownFootage(payload, user, footageId)
-  if (!row) return { ok: false, error: 'फ़ुटेज नहीं मिला।' }
+  if (!row) return { ok: false, error: 'Footage not found.' }
   const editor = isEditorOrAdmin(user as unknown as MaybeUser)
-  if (!editor && (String(idOf(row.createdBy)) !== String(user.id) || row.lockedAt)) return { ok: false, error: 'आप इसे नहीं हटा सकते।' }
+  if (!editor && (String(idOf(row.createdBy)) !== String(user.id) || row.lockedAt)) return { ok: false, error: 'You cannot delete this footage.' }
   const usedBy = await payload.count({
     collection: 'youtube-posts',
     where: { and: [{ footage: { equals: row.id } }, { status: { not_in: ['cancelled'] } }] },
     overrideAccess: true,
   })
-  if (usedBy.totalDocs > 0) return { ok: false, error: 'यह फ़ुटेज किसी यूट्यूब पोस्ट में इस्तेमाल हो रहा है।' }
+  if (usedBy.totalDocs > 0) return { ok: false, error: 'This footage is used by a YouTube post.' }
   if (row.storagePrefix) await deletePrefix(row.storagePrefix)
   await payload.update({ collection: 'footage', id: row.id, data: { uploadStatus: 'deleted', retainUntil: null }, overrideAccess: true })
   return { ok: true }

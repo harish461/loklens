@@ -173,3 +173,18 @@
   cursor: pointer;
   padding: 4px 0;
 }
+.imagePreview {
+  max-width: 240px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.thumbSmall {
+  width: 64px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex: none;
+  background: #f1f5f9;
+}

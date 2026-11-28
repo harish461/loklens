@@ -38,14 +38,14 @@ const EMPTY: Form = {
 const bytes = (t: string) => new TextEncoder().encode(t).length
 
 async function uploadThumbnail(file: File, alt: string): Promise<MediaOption | string> {
-  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return 'केवल JPG, PNG या WebP चित्र।'
-  if (file.size > 10 * 1024 * 1024) return 'चित्र 10 MB से बड़ा है।'
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return 'Only JPG, PNG or WebP images.'
+  if (file.size > 10 * 1024 * 1024) return 'The image is larger than 10 MB.'
   const form = new FormData()
   form.append('file', file)
-  form.append('_payload', JSON.stringify({ alt: alt || 'यूट्यूब थंबनेल' }))
+  form.append('_payload', JSON.stringify({ alt: alt || 'YouTube thumbnail' }))
   const res = await fetch('/api/media', { method: 'POST', credentials: 'include', body: form }).catch(() => null)
   const body = (await res?.json().catch(() => null)) as { doc?: { id: number; url?: string; alt?: string; sizes?: { thumb?: { url?: string } } }; errors?: { message?: string }[] } | null
-  if (!res?.ok || !body?.doc) return body?.errors?.[0]?.message || 'थंबनेल अपलोड नहीं हुआ।'
+  if (!res?.ok || !body?.doc) return body?.errors?.[0]?.message || 'The thumbnail could not be uploaded.'
   return { id: body.doc.id, url: body.doc.sizes?.thumb?.url ?? body.doc.url ?? '', alt: body.doc.alt ?? '' }
 }
 
@@ -60,7 +60,12 @@ interface Props {
 export function PostEditor({ post, footage, thumbnails, articles, requireThumbnail }: Props) {
   const router = useRouter()
   const [form, setForm] = useState<Form>(post?.form ?? EMPTY)
-  const [thumbs, setThumbs] = useState<MediaOption[]>(thumbnails)
+  // The reporters' suggested images come first, so they are easy to pick.
+  const [thumbs, setThumbs] = useState<MediaOption[]>(() => {
+    const fromFootage = footage.filter((f) => f.imageId && f.imageUrl).map((f) => ({ id: f.imageId as number, url: f.imageUrl as string, alt: f.title }))
+    const seen = new Set<number>()
+    return [...fromFootage, ...thumbnails].filter((t) => (seen.has(t.id) ? false : (seen.add(t.id), true)))
+  })
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [pending, start] = useTransition()
@@ -86,19 +91,30 @@ export function PostEditor({ post, footage, thumbnails, articles, requireThumbna
   const shortWarning =
     form.postType === 'short' && selectedFootage
       ? selectedFootage.orientation === 'landscape'
-        ? 'शॉर्ट के लिए खड़ा (vertical) या चौकोर वीडियो चाहिए।'
+        ? 'A Short needs vertical or square footage.'
         : selectedFootage.durationSeconds && selectedFootage.durationSeconds > YT_LIMITS.shortMaxSeconds
-          ? 'शॉर्ट अधिकतम 3 मिनट का हो सकता है।'
+          ? 'A Short can be at most 3 minutes long.'
           : ''
       : ''
 
   const set = <K extends keyof Form>(key: K, value: Form[K]) => setForm((f) => ({ ...f, [key]: value }))
 
+  /** Choosing footage pre-fills the reporter's image and hashtags where the post has none yet. */
+  function chooseFootage(id: number | null) {
+    const f = footageList.find((x) => x.id === id) ?? null
+    setForm((prev) => ({
+      ...prev,
+      footage: id,
+      thumbnail: prev.thumbnail ?? f?.imageId ?? null,
+      hashtags: prev.hashtags.trim() ? prev.hashtags : (f?.hashtags ?? []).join(' '),
+    }))
+  }
+
   function save(then?: 'submit') {
     setError('')
     setNotice('')
     if (then === 'submit' && requireThumbnail && form.postType === 'video' && !form.thumbnail) {
-      setError('वीडियो के लिए थंबनेल चुनें।')
+      setError('Choose a thumbnail for the video.')
       return
     }
     start(async () => {
@@ -115,7 +131,7 @@ export function PostEditor({ post, footage, thumbnails, articles, requireThumbna
         router.refresh()
         return
       }
-      setNotice(r.status === 'pending_review' && post?.status === 'approved' ? 'बदलाव सहेजे गए। मंज़ूरी के बाद बदलाव हुआ, इसलिए पोस्ट फिर से समीक्षा में है।' : 'सहेजा गया।')
+      setNotice(r.status === 'pending_review' && post?.status === 'approved' ? 'Saved. It was changed after approval, so the post is back in review.' : 'Saved.')
       if (!post) router.replace(`/admin/youtube?tab=edit&id=${r.id}`)
       router.refresh()
     })
@@ -123,7 +139,7 @@ export function PostEditor({ post, footage, thumbnails, articles, requireThumbna
 
   function act(action: 'withdraw' | 'cancel') {
     if (!post) return
-    if (action === 'cancel' && !window.confirm('यह पोस्ट रद्द हो जाएगी। जारी रखें?')) return
+    if (action === 'cancel' && !window.confirm('This post will be cancelled. Continue?')) return
     setError('')
     start(async () => {
       const r = await youtubePostAction(post.id, action)
@@ -151,103 +167,103 @@ export function PostEditor({ post, footage, thumbnails, articles, requireThumbna
             <span className={`${s.badge} ${s[STATUS_TONE[status]]}`}>{STATUS_LABEL[status]}</span>
             {post.youtubeUrl && (
               <a href={post.youtubeUrl} target="_blank" rel="noopener noreferrer">
-                यूट्यूब पर देखें
+                View on YouTube
               </a>
             )}
           </div>
         )}
-        {post?.reviewNote && status === 'draft' && <div className={s.note}>समीक्षक की टिप्पणी: {post.reviewNote}</div>}
-        {post?.lastError && status === 'failed' && <div className={s.error}>त्रुटि: {post.lastError}</div>}
-        {locked && <div className={s.note}>यह पोस्ट यूट्यूब पर जा चुकी है या रद्द है, इसलिए यहां बदली नहीं जा सकती।</div>}
+        {post?.reviewNote && status === 'draft' && <div className={s.note}>Reviewer note: {post.reviewNote}</div>}
+        {post?.lastError && status === 'failed' && <div className={s.error}>Error: {post.lastError}</div>}
+        {locked && <div className={s.note}>This post has gone to YouTube or was cancelled, so it can no longer be changed here.</div>}
 
         <fieldset disabled={locked || pending} style={{ border: 0, padding: 0, margin: 0, display: 'grid', gap: 14 }}>
           <div className={s.field}>
-            <span className={s.label}>प्रकार</span>
+            <span className={s.label}>Type</span>
             <div className={s.radioGroup}>
               {(['video', 'short'] as const).map((t) => (
                 <label key={t} className={`${s.radio} ${form.postType === t ? s.radioActive : ''}`}>
                   <input type="radio" name="postType" checked={form.postType === t} onChange={() => set('postType', t)} />
-                  {t === 'video' ? 'वीडियो' : 'शॉर्ट (खड़ा, 3 मिनट तक)'}
+                  {t === 'video' ? 'Video' : 'Short (vertical, up to 3 min)'}
                 </label>
               ))}
             </div>
           </div>
 
           <label className={s.field}>
-            <span className={s.label}>फ़ुटेज</span>
-            <select className={s.select} value={form.footage ?? ''} onChange={(e) => set('footage', e.target.value ? Number(e.target.value) : null)}>
-              <option value="">— फ़ुटेज चुनें —</option>
+            <span className={s.label}>Footage</span>
+            <select className={s.select} value={form.footage ?? ''} onChange={(e) => chooseFootage(e.target.value ? Number(e.target.value) : null)}>
+              <option value="">— Choose footage —</option>
               {footageList.map((f) => (
                 <option key={f.id} value={f.id}>
                   {f.title}
                   {f.orientation ? ` · ${ORIENTATION_LABEL[f.orientation]}` : ''}
-                  {f.durationSeconds ? ` · ${Math.round(f.durationSeconds)} से.` : ''}
+                  {f.durationSeconds ? ` · ${Math.round(f.durationSeconds)} s` : ''}
                   {f.uploader ? ` · ${f.uploader}` : ''}
                 </option>
               ))}
             </select>
             <span className={s.hint}>
-              फ़ुटेज नहीं दिख रहा? <Link href="/admin/youtube?tab=footage">फ़ुटेज टैब</Link> में अपलोड करें।
+              Footage missing? Upload it in the <Link href="/admin/youtube?tab=footage">Footage tab</Link>.
             </span>
           </label>
           {selectedFootage && (
             <>
               <video key={selectedFootage.id} className={s.player} controls preload="metadata" src={`/api/youtube/footage/${selectedFootage.id}`} />
-              {selectedFootage.notes && <div className={s.note}>रिपोर्टर का ब्योरा: {selectedFootage.notes}</div>}
+              {selectedFootage.notes && <div className={s.note}>Reporter brief: {selectedFootage.notes}</div>}
             </>
           )}
           {shortWarning && <div className={s.error}>{shortWarning}</div>}
 
           <label className={s.field}>
             <span className={s.label}>
-              शीर्षक
+              Title
               <span className={`${s.counter} ${titleLen > YT_LIMITS.titleChars ? s.counterOver : ''}`}>
                 {titleLen}/{YT_LIMITS.titleChars}
               </span>
             </span>
             <input className={s.input} value={form.title} onChange={(e) => set('title', e.target.value)} />
-            <span className={s.hint}>सटीक और साफ़; क्लिकबेट नहीं। &lt; और &gt; नहीं चलेंगे।</span>
+            <span className={s.hint}>Accurate and clear, no clickbait. &lt; and &gt; are not allowed.</span>
           </label>
 
           <label className={s.field}>
             <span className={s.label}>
-              विवरण
+              Description
               <span className={`${s.counter} ${descBytes > YT_LIMITS.descriptionBytes ? s.counterOver : ''}`}>
-                {descBytes}/{YT_LIMITS.descriptionBytes} बाइट
+                {descBytes}/{YT_LIMITS.descriptionBytes} bytes
               </span>
             </span>
             <textarea className={s.textarea} value={form.description} onChange={(e) => set('description', e.target.value)} />
-            <span className={s.hint}>यूट्यूब बाइट गिनता है: एक हिंदी अक्षर लगभग 3 बाइट।</span>
+            <span className={s.hint}>YouTube counts bytes: one Hindi character is about 3 bytes. Hashtags are added at the end and count too.</span>
           </label>
 
           <label className={s.field}>
             <span className={s.label}>
-              टैग
+              Tags
               <span className={`${s.counter} ${tagLen > YT_LIMITS.tagsChars ? s.counterOver : ''}`}>
                 {tagLen}/{YT_LIMITS.tagsChars}
               </span>
             </span>
             <input className={s.input} value={form.tags} onChange={(e) => set('tags', e.target.value)} placeholder="देहरादून न्यूज़, uttarakhand news" />
-            <span className={s.hint}>कॉमा से अलग करें।</span>
+            <span className={s.hint}>Separate with commas.</span>
           </label>
 
           <label className={s.field}>
             <span className={s.label}>
-              हैशटैग
+              Hashtags
               <span className={`${s.counter} ${hashList.length > YT_LIMITS.hashtags ? s.counterOver : ''}`}>
                 {hashList.length}/{YT_LIMITS.hashtags}
               </span>
             </span>
             <input className={s.input} value={form.hashtags} onChange={(e) => set('hashtags', e.target.value)} placeholder="#उत्तराखंड #Dehradun" />
-            <span className={s.hint}>पहले तीन शीर्षक के ऊपर दिखते हैं।</span>
+            <span className={s.hint}>The first three are shown above the title.</span>
           </label>
 
           <div className={s.field}>
             <span className={s.label}>
-              थंबनेल{form.postType === 'video' && requireThumbnail ? ' (ज़रूरी)' : ' (वैकल्पिक)'}
+              Thumbnail{form.postType === 'video' && requireThumbnail ? ' (required)' : ' (optional)'}
             </span>
-            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => void onThumbFile(e.target.files?.[0] ?? null)} disabled={uploading} aria-label="नया थंबनेल अपलोड करें" />
-            {uploading && <span className={s.hint}>अपलोड हो रहा है…</span>}
+            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => void onThumbFile(e.target.files?.[0] ?? null)} disabled={uploading} aria-label="Upload a new thumbnail" />
+            {uploading && <span className={s.hint}>Uploading…</span>}
             <div className={s.thumbs}>
               {thumbs.map((t) => (
                 <button key={t.id} type="button" className={`${s.thumb} ${form.thumbnail === t.id ? s.thumbActive : ''}`} onClick={() => set('thumbnail', form.thumbnail === t.id ? null : t.id)} aria-pressed={form.thumbnail === t.id} title={t.alt}>
@@ -256,11 +272,11 @@ export function PostEditor({ post, footage, thumbnails, articles, requireThumbna
                 </button>
               ))}
             </div>
-            <span className={s.hint}>16:9, कम से कम 1280×720 सबसे अच्छा। यूट्यूब पर JPEG बनाकर भेजा जाएगा।</span>
+            <span className={s.hint}>16:9, at least 1280×720 works best. Sent to YouTube as a JPEG. Images the reporters attached are shown first.</span>
           </div>
 
           <div className={s.field}>
-            <span className={s.label}>कौन देख सकता है</span>
+            <span className={s.label}>Who can see it</span>
             <div className={s.radioGroup}>
               {(['unlisted', 'public', 'private'] as const).map((p) => (
                 <label key={p} className={`${s.radio} ${form.privacyStatus === p ? s.radioActive : ''}`}>
@@ -272,15 +288,15 @@ export function PostEditor({ post, footage, thumbnails, articles, requireThumbna
           </div>
 
           <label className={s.field}>
-            <span className={s.label}>शेड्यूल (भारतीय समय, वैकल्पिक)</span>
+            <span className={s.label}>Schedule (India time, optional)</span>
             <input type="datetime-local" className={s.input} value={form.publishAtIst} onChange={(e) => set('publishAtIst', e.target.value)} />
-            <span className={s.hint}>खाली = मंज़ूरी के बाद अपलोड होते ही। शेड्यूल होने पर वीडियो पहले निजी रहता है, फिर तय समय पर खुलता है।</span>
+            <span className={s.hint}>Empty = as soon as it is uploaded after approval. With a schedule the video stays private, then opens at that time.</span>
           </label>
 
           <label className={s.field}>
-            <span className={s.label}>संबंधित खबर (वैकल्पिक)</span>
+            <span className={s.label}>Related article (optional)</span>
             <select className={s.select} value={form.article ?? ''} onChange={(e) => set('article', e.target.value ? Number(e.target.value) : null)}>
-              <option value="">— कोई नहीं —</option>
+              <option value="">— None —</option>
               {articles.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.title}
@@ -292,15 +308,15 @@ export function PostEditor({ post, footage, thumbnails, articles, requireThumbna
           <div className={s.inline}>
             <label className={s.check}>
               <input type="checkbox" checked={form.notifySubscribers} onChange={(e) => set('notifySubscribers', e.target.checked)} />
-              <span>सब्सक्राइबर्स को सूचना भेजें</span>
+              <span>Notify subscribers</span>
             </label>
             <label className={s.check}>
               <input type="checkbox" checked={form.madeForKids} onChange={(e) => set('madeForKids', e.target.checked)} />
-              <span>बच्चों के लिए बनाया गया</span>
+              <span>Made for kids</span>
             </label>
             <label className={s.check}>
               <input type="checkbox" checked={form.containsSyntheticMedia} onChange={(e) => set('containsSyntheticMedia', e.target.checked)} />
-              <span>इसमें AI से बनाया/बदला गया दृश्य है</span>
+              <span>Contains AI-generated or altered scenes</span>
             </label>
           </div>
         </fieldset>
@@ -311,29 +327,29 @@ export function PostEditor({ post, footage, thumbnails, articles, requireThumbna
         {!locked && (
           <div className={s.actions}>
             <button type="button" className={s.buttonSecondary} onClick={() => save()} disabled={pending}>
-              सहेजें
+              Save
             </button>
             {(status === 'draft' || !post) && (
               <button type="button" className={s.buttonLime} onClick={() => save('submit')} disabled={pending}>
-                समीक्षा के लिए भेजें
+                Send for review
               </button>
             )}
             {status === 'pending_review' && (
               <button type="button" className={s.buttonSecondary} onClick={() => act('withdraw')} disabled={pending}>
-                वापस ड्राफ़्ट में लें
+                Back to draft
               </button>
             )}
             {post && (
               <button type="button" className={s.buttonDanger} onClick={() => act('cancel')} disabled={pending}>
-                पोस्ट रद्द करें
+                Cancel post
               </button>
             )}
           </div>
         )}
       </div>
 
-      <aside className={s.preview} aria-label="यूट्यूब पर कैसा दिखेगा">
-        <p className={s.sectionTitle}>पूर्वावलोकन</p>
+      <aside className={s.preview} aria-label="How it will look on YouTube">
+        <p className={s.sectionTitle}>Preview</p>
         {selectedThumb ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img className={s.thumbPreview} src={selectedThumb.url} alt="" />
@@ -341,15 +357,15 @@ export function PostEditor({ post, footage, thumbnails, articles, requireThumbna
           <div className={s.thumbPreview} />
         )}
         {hashList.length > 0 && <div className={s.meta}>{hashList.slice(0, 3).join(' ')}</div>}
-        <div className={s.previewTitle}>{form.title || 'शीर्षक'}</div>
+        <div className={s.previewTitle}>{form.title || 'Title'}</div>
         <div className={s.meta}>
           {PRIVACY_LABEL[form.privacyStatus]}
           {form.publishAtIst ? ` · ${formatIst(new Date(`${form.publishAtIst}:00+05:30`).toISOString())}` : ''}
         </div>
-        <div className={s.previewDesc}>{form.description || 'विवरण'}</div>
+        <div className={s.previewDesc}>{form.description || 'Description'}</div>
         {post && post.events.length > 0 && (
           <>
-            <p className={s.sectionTitle}>इतिहास</p>
+            <p className={s.sectionTitle}>History</p>
             <EventList events={post.events} />
           </>
         )}

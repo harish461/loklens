@@ -247,3 +247,11 @@ Findings so far (2026-11-27):
 | 6 | AI metadata | Claude suggest, limits, ai-runs | Mocked tests + 5 real suggestions reviewed by user |
 | 7 | Publisher jobs (**done 2026-11-28, uncommitted, not deployed**) | `lib/google/oauth.ts` (refresh-token exchange, cached), `lib/youtube/{api,publishPlan,publisher}.ts`, task `youtubePublish` (every minute, `youtube` queue, one step per call: session → ~40 s of chunks from segments → thumbnail JPEG 1280×720 → poll → published/scheduled), lease per post, error classes (quota wait 1 h, retry with backoff up to 8, session reset, permanent → failed), daily upload limit by India day, footage released after publishing. Hashtags go at the end of the description and count toward the 5000 bytes. New fields `nextCheckAt`, `thumbnailSetAt`; migration `20261128_071732_youtube_publisher`. | `tests/unit/youtube-publish-plan.test.ts` (15, incl. mocked upload protocol); `scripts/verify-publisher.ts` against the REAL channel: private upload of a 3.4 MB clip in 4 time-boxed 1 MB steps, thumbnail set, processed → published as private, history complete, then the video was deleted; job wiring checked (default queue does not run it, youtube queue does). Payload queues a scheduled job for its next minute, so in production each cron call runs the one queued a minute earlier. **Not yet measured:** Hostinger → YouTube speed (Phase 8, kill switch on, private uploads). |
 | 8 | Launch (**prepared 2026-11-28, not started**) | step-by-step in `docs/youtube-studio-launch.md`: branch + merge, deploy with the switch off, env vars, second cron entry (`-m 100`), private test on the dev site (measures Hostinger → YouTube speed), then production with unlisted default; rollback and first-week watch list | Live checks |
+
+## 14. Changes after launch
+
+- **2026-11-28:** sites without `CRON_SECRET` (dev, local) run the `youtube` queue in-app (PR #2).
+- **2026-11-28 (user request):** footage gets an optional **image** (suggested thumbnail) and **hashtags**; a new
+  post pre-fills thumbnail and hashtags from the footage. The YouTube Studio, footage and reporter footage screens
+  are in **English** (overrides the Hindi-UI rule for this section). Migration `20261128_112452_footage_image_hashtags`
+  (`footage.image_id`, table `footage_texts` with RLS).

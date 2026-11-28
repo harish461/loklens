@@ -57,6 +57,10 @@ export interface FootageOption {
   sizeMB: number | null
   rightsConfirmed: boolean
   uploader: string | null
+  /** The reporter's suggested image (media) and hashtags, used to pre-fill a new post. */
+  imageId: number | null
+  imageUrl: string | null
+  hashtags: string[]
 }
 
 export interface MediaOption {
@@ -87,6 +91,9 @@ function footageOption(d: Record<string, unknown>): FootageOption {
     sizeMB: typeof d.sizeBytes === 'number' ? Math.round((d.sizeBytes / 1024 / 1024) * 10) / 10 : null,
     rightsConfirmed: Boolean(d.rightsConfirmed),
     uploader: name(d.createdBy),
+    imageId: relId(d.image),
+    imageUrl: d.image && typeof d.image === 'object' ? (((d.image as { sizes?: { thumb?: { url?: string } }; url?: string }).sizes?.thumb?.url ?? (d.image as { url?: string }).url) || null) : null,
+    hashtags: Array.isArray(d.hashtags) ? (d.hashtags as string[]) : [],
   }
 }
 
@@ -95,7 +102,7 @@ export async function listPosts(payload: Payload, user: User, opts: { statuses?:
   const res = await payload.find({ collection: 'youtube-posts', where, sort: '-updatedAt', limit: opts.limit ?? 50, depth: 1, ...as(user) })
   return res.docs.map((d) => ({
     id: d.id,
-    title: d.title || '(बिना शीर्षक)',
+    title: d.title || '(untitled)',
     postType: d.postType,
     status: d.status,
     privacyStatus: d.privacyStatus,

@@ -69,16 +69,16 @@ export function validateStart(req: StartRequest, maxBytes: number): { ok: true; 
   const errors: string[] = []
   const filename = cleanFilename(req.filename)
   const size = typeof req.sizeBytes === 'number' && Number.isSafeInteger(req.sizeBytes) ? req.sizeBytes : -1
-  if (size <= 0) errors.push('फ़ाइल खाली है या उसका आकार पता नहीं चला।')
-  else if (size > maxBytes) errors.push(`फ़ाइल बहुत बड़ी है: अधिकतम ${Math.floor(maxBytes / 1024 / 1024)} MB।`)
-  else if (segmentCount(size) > MAX_SEGMENTS) errors.push('फ़ाइल बहुत बड़ी है।')
+  if (size <= 0) errors.push('The file is empty or its size is unknown.')
+  else if (size > maxBytes) errors.push(`The file is too large: at most ${Math.floor(maxBytes / 1024 / 1024)} MB.`)
+  else if (segmentCount(size) > MAX_SEGMENTS) errors.push('The file is too large.')
   const ext = filename.toLowerCase().split('.').pop() ?? ''
   const declared = typeof req.mimeType === 'string' ? req.mimeType.toLowerCase() : ''
   const mimeType = (FOOTAGE_MIME_TYPES as readonly string[]).includes(declared) ? (declared as FootageMime) : EXT_TO_MIME[ext]
-  if (!mimeType) errors.push('केवल MP4, MOV या WebM वीडियो अपलोड करें।')
+  if (!mimeType) errors.push('Upload an MP4, MOV or WebM video.')
   const title = typeof req.title === 'string' ? req.title.trim().slice(0, 200) : ''
-  if (!title) errors.push('फ़ुटेज का शीर्षक लिखें।')
-  if (req.rightsConfirmed !== true) errors.push('पुष्टि करें कि यह हमारा अपना फ़ुटेज है और दिखाए गए लोगों की सहमति है।')
+  if (!title) errors.push('Enter a title for the footage.')
+  if (req.rightsConfirmed !== true) errors.push('Confirm that this is our own footage and the people shown agreed to be filmed.')
   if (errors.length || !mimeType) return { ok: false, errors }
   return { ok: true, value: { filename, sizeBytes: size, mimeType, title } }
 }

@@ -40,6 +40,9 @@ export const Footage: CollectionConfig = {
       maxLength: 2000,
       admin: { description: 'Reporter brief: what happened, where, who, when.' },
     },
+    // Suggested by the reporter; the post editor pre-fills its thumbnail and hashtags from these.
+    { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'Suggested thumbnail image.' } },
+    { name: 'hashtags', type: 'text', hasMany: true, maxRows: 15, admin: { description: 'Suggested hashtags, e.g. #Dehradun.' } },
     { name: 'location', type: 'relationship', relationTo: 'locations' },
     { name: 'category', type: 'relationship', relationTo: 'categories' },
     {
