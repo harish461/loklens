@@ -17,17 +17,17 @@ export function PostList({ rows, linkTo, empty }: { rows: PostRow[]; linkTo: 'ed
               {r.title}
             </Link>
             <div className={s.meta}>
-              {r.postType === 'short' ? 'शॉर्ट' : 'वीडियो'} · {PRIVACY_LABEL[r.privacyStatus] ?? r.privacyStatus}
+              {r.postType === 'short' ? 'Short' : 'Video'} · {PRIVACY_LABEL[r.privacyStatus] ?? r.privacyStatus}
               {r.footageTitle ? ` · ${r.footageTitle}` : ''} · {formatIst(r.updatedAt)}
-              {r.publishAt ? ` · शेड्यूल ${formatIst(r.publishAt)}` : ''}
+              {r.publishAt ? ` · scheduled ${formatIst(r.publishAt)}` : ''}
             </div>
-            {r.status === 'draft' && r.reviewNote && <div className={s.meta}>लौटाई गई: {r.reviewNote}</div>}
-            {r.status === 'failed' && r.lastError && <div className={s.meta}>त्रुटि: {r.lastError}</div>}
+            {r.status === 'draft' && r.reviewNote && <div className={s.meta}>Returned: {r.reviewNote}</div>}
+            {r.status === 'failed' && r.lastError && <div className={s.meta}>Error: {r.lastError}</div>}
           </div>
           <div className={s.actions} style={{ alignItems: 'center' }}>
             {r.youtubeUrl && (
               <a href={r.youtubeUrl} target="_blank" rel="noopener noreferrer">
-                यूट्यूब
+                YouTube
               </a>
             )}
             <span className={`${s.badge} ${s[STATUS_TONE[r.status]]}`}>{STATUS_LABEL[r.status]}</span>

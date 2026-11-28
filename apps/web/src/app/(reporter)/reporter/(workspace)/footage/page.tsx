@@ -9,7 +9,7 @@ import { listFootage } from '@/lib/footage/queries'
 import { requireReporter } from '@/lib/reporter/session'
 import { STUDIO_OFF_MESSAGE, youtubeStudioEnabled } from '@/lib/youtube/flags'
 
-export const metadata: Metadata = { title: 'वीडियो फ़ुटेज' }
+export const metadata: Metadata = { title: 'Video Footage' }
 
 /** Reporter footage upload (YouTube Studio, api-contract §9). Reporters see and manage only their own footage. */
 export default async function ReporterFootagePage() {
@@ -24,8 +24,8 @@ export default async function ReporterFootagePage() {
             <Clapperboard size={20} />
           </span>
           <div>
-            <h1 className={adminStyles.pageTitle}>वीडियो फ़ुटेज</h1>
-            <p className={adminStyles.pageSubtitle}>यूट्यूब के लिए वीडियो भेजें। संपादक इसे देखकर चैनल पर डालेंगे।</p>
+            <h1 className={adminStyles.pageTitle}>Video Footage</h1>
+            <p className={adminStyles.pageSubtitle}>Send video for YouTube. An editor reviews it and publishes it on the channel.</p>
           </div>
         </div>
       </header>

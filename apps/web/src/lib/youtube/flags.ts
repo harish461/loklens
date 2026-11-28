@@ -3,4 +3,4 @@ export function youtubeStudioEnabled(): boolean {
   return process.env.YOUTUBE_STUDIO_ENABLED?.trim().toLowerCase() === 'true'
 }
 
-export const STUDIO_OFF_MESSAGE = 'यूट्यूब स्टूडियो अभी बंद है।'
+export const STUDIO_OFF_MESSAGE = 'YouTube Studio is switched off.'

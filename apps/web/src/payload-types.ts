@@ -778,6 +778,14 @@ export interface Footage {
    * Reporter brief: what happened, where, who, when.
    */
   notes?: string | null;
+  /**
+   * Suggested thumbnail image.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Suggested hashtags, e.g. #Dehradun.
+   */
+  hashtags?: string[] | null;
   location?: (number | null) | Location;
   category?: (number | null) | Category;
   /**
@@ -1578,6 +1586,8 @@ export interface PushEventsSelect<T extends boolean = true> {
 export interface FootageSelect<T extends boolean = true> {
   title?: T;
   notes?: T;
+  image?: T;
+  hashtags?: T;
   location?: T;
   category?: T;
   rightsConfirmed?: T;

@@ -30,11 +30,11 @@ export function ReviewPanel({ post, isAdmin }: { post: PostDetail; isAdmin: bool
 
   function decide(action: 'approve' | 'retry' | 'reject') {
     setError('')
-    if (action === 'reject' && !note.trim()) return setError('लौटाने का कारण लिखें।')
+    if (action === 'reject' && !note.trim()) return setError('Write why the post is returned.')
     start(async () => {
       const r = await youtubePostAction(post.id, action, { note, checklist: action === 'reject' ? undefined : checks })
       if (!r.ok) return setError(r.error)
-      setDone(action === 'reject' ? 'पोस्ट संपादक को लौटा दी गई।' : 'मंज़ूर। यह यूट्यूब अपलोड की कतार में है।')
+      setDone(action === 'reject' ? 'Returned to the editor.' : 'Approved. It is in the YouTube upload queue.')
       router.refresh()
     })
   }
@@ -45,30 +45,30 @@ export function ReviewPanel({ post, isAdmin }: { post: PostDetail; isAdmin: bool
         <div className={s.actions} style={{ alignItems: 'center' }}>
           <span className={`${s.badge} ${s[STATUS_TONE[post.status]]}`}>{STATUS_LABEL[post.status]}</span>
           <span className={s.meta}>
-            {f.postType === 'short' ? 'शॉर्ट' : 'वीडियो'} · {PRIVACY_LABEL[f.privacyStatus]}
-            {f.publishAtIst ? ` · शेड्यूल ${formatIst(new Date(`${f.publishAtIst}:00+05:30`).toISOString())}` : ''}
+            {f.postType === 'short' ? 'Short' : 'Video'} · {PRIVACY_LABEL[f.privacyStatus]}
+            {f.publishAtIst ? ` · scheduled ${formatIst(new Date(`${f.publishAtIst}:00+05:30`).toISOString())}` : ''}
           </span>
         </div>
         {post.footage ? (
           <>
             <video className={s.player} controls preload="metadata" src={`/api/youtube/footage/${post.footage.id}`} />
             <div className={s.meta}>
-              फ़ुटेज: {post.footage.title}
+              Footage: {post.footage.title}
               {post.footage.orientation ? ` · ${ORIENTATION_LABEL[post.footage.orientation]}` : ''}
-              {post.footage.durationSeconds ? ` · ${Math.round(post.footage.durationSeconds)} सेकंड` : ''}
+              {post.footage.durationSeconds ? ` · ${Math.round(post.footage.durationSeconds)} s` : ''}
               {post.footage.uploader ? ` · ${post.footage.uploader}` : ''}
-              {post.footage.rightsConfirmed ? ' · अधिकार की पुष्टि: हां' : ' · अधिकार की पुष्टि: नहीं'}
+              {post.footage.rightsConfirmed ? ' · rights confirmed: yes' : ' · rights confirmed: no'}
             </div>
-            {post.footage.notes && <div className={s.note}>रिपोर्टर का ब्योरा: {post.footage.notes}</div>}
+            {post.footage.notes && <div className={s.note}>Reporter brief: {post.footage.notes}</div>}
           </>
         ) : (
-          <div className={s.error}>कोई फ़ुटेज नहीं चुना गया।</div>
+          <div className={s.error}>No footage chosen.</div>
         )}
-        {post.lastError && <div className={s.error}>पिछली त्रुटि: {post.lastError}</div>}
+        {post.lastError && <div className={s.error}>Last error: {post.lastError}</div>}
 
         {canDecide ? (
           <div className={s.form}>
-            <p className={s.sectionTitle}>जांच-सूची</p>
+            <p className={s.sectionTitle}>Checklist</p>
             {REVIEW_CHECKLIST.map((k) => (
               <label key={k} className={s.check}>
                 <input type="checkbox" checked={checks[k] === true} onChange={(e) => setChecks((c) => ({ ...c, [k]: e.target.checked }))} />
@@ -76,44 +76,44 @@ export function ReviewPanel({ post, isAdmin }: { post: PostDetail; isAdmin: bool
               </label>
             ))}
             <label className={s.field}>
-              <span className={s.label}>टिप्पणी (लौटाने पर ज़रूरी)</span>
+              <span className={s.label}>Note (required when returning)</span>
               <textarea className={s.textarea} style={{ minHeight: 80 }} value={note} onChange={(e) => setNote(e.target.value)} maxLength={1000} />
             </label>
             {error && <p className={s.error}>{error}</p>}
             {done && <p className={s.success}>{done}</p>}
             <div className={s.actions}>
               <button type="button" className={s.buttonLime} onClick={() => decide(post.status === 'failed' ? 'retry' : 'approve')} disabled={pending || !allChecked}>
-                {post.status === 'failed' ? 'फिर से अपलोड करें' : 'मंज़ूर करें'}
+                {post.status === 'failed' ? 'Upload again' : 'Approve'}
               </button>
               {post.status === 'pending_review' && (
                 <button type="button" className={s.buttonSecondary} onClick={() => decide('reject')} disabled={pending}>
-                  सुधार के लिए लौटाएं
+                  Return for changes
                 </button>
               )}
             </div>
           </div>
         ) : (
-          <div className={s.note}>{isAdmin ? 'इस पोस्ट पर अभी कोई फ़ैसला बाकी नहीं है।' : 'केवल एडमिन मंज़ूरी दे सकते हैं।'}</div>
+          <div className={s.note}>{isAdmin ? 'No decision is pending on this post.' : 'Only admins can approve.'}</div>
         )}
       </div>
 
-      <aside className={s.preview} aria-label="यूट्यूब पर क्या जाएगा">
-        <p className={s.sectionTitle}>यूट्यूब पर क्या जाएगा</p>
+      <aside className={s.preview} aria-label="What goes to YouTube">
+        <p className={s.sectionTitle}>What goes to YouTube</p>
         {post.thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img className={s.thumbPreview} src={post.thumbnailUrl} alt="" />
         ) : (
-          <div className={s.meta}>थंबनेल नहीं चुना गया (यूट्यूब अपना चुनेगा)।</div>
+          <div className={s.meta}>No thumbnail chosen (YouTube will pick a frame).</div>
         )}
         {hashtags.length > 0 && <div className={s.meta}>{hashtags.slice(0, 3).join(' ')}</div>}
         <div className={s.previewTitle}>{f.title}</div>
         <div className={s.previewDesc}>{f.description}</div>
-        {f.tags && <div className={s.meta}>टैग: {f.tags}</div>}
+        {f.tags && <div className={s.meta}>Tags: {f.tags}</div>}
         <div className={s.meta}>
-          सब्सक्राइबर सूचना: {f.notifySubscribers ? 'हां' : 'नहीं'} · बच्चों के लिए: {f.madeForKids ? 'हां' : 'नहीं'} · AI दृश्य:{' '}
-          {f.containsSyntheticMedia ? 'हां' : 'नहीं'}
+          Notify subscribers: {f.notifySubscribers ? 'yes' : 'no'} · Made for kids: {f.madeForKids ? 'yes' : 'no'} · AI scenes:{' '}
+          {f.containsSyntheticMedia ? 'yes' : 'no'}
         </div>
-        <p className={s.sectionTitle}>इतिहास</p>
+        <p className={s.sectionTitle}>History</p>
         <EventList events={post.events} />
       </aside>
     </div>

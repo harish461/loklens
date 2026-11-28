@@ -27,7 +27,7 @@ const relId = (v: unknown): number | null => {
 export function errorText(err: unknown): string {
   const e = err as { message?: string; data?: { errors?: { message?: string; path?: string }[] } }
   const details = e?.data?.errors?.map((x) => (x.path ? `${x.path}: ${x.message}` : x.message)).filter(Boolean)
-  return details?.length ? details.join(' ') : e?.message || 'कुछ गलत हो गया।'
+  return details?.length ? details.join(' ') : e?.message || 'Something went wrong.'
 }
 
 async function logEvent(payload: Payload, postId: number, type: EventType, actor: User, detail?: Record<string, unknown>) {
@@ -76,13 +76,13 @@ async function releaseFootage(payload: Payload, footageId: number | null, except
 
 /** Create (status draft) or update a post's details. Never changes the status (except the guard's own reset). */
 export async function savePost(payload: Payload, user: User, input: PostFormInput & { id?: unknown }): Promise<Result<{ id: number; status: string }>> {
-  if (!isEditorOrAdmin(roleOf(user))) return { ok: false, error: 'केवल संपादक और एडमिन यूट्यूब पोस्ट बना सकते हैं।' }
+  if (!isEditorOrAdmin(roleOf(user))) return { ok: false, error: 'Only editors and admins can create YouTube posts.' }
   const { data, errors } = cleanPostInput(input)
   if (errors.length) return { ok: false, error: errors.join(' ') }
   try {
     if (input.id !== undefined && input.id !== null) {
       const existing = await load(payload, user, input.id)
-      if (!existing) return { ok: false, error: 'पोस्ट नहीं मिली।' }
+      if (!existing) return { ok: false, error: 'Post not found.' }
       const doc = await payload.update({ collection: 'youtube-posts', id: existing.id, data, ...as(user) })
       // The guard sends an approved post back to review when what goes to YouTube changed.
       if (existing.status !== doc.status) {
@@ -109,9 +109,9 @@ export async function changePostStatus(
   action: PostAction,
   opts: { note?: unknown; checklist?: ReviewChecklist } = {},
 ): Promise<Result<{ status: string }>> {
-  if (!isEditorOrAdmin(roleOf(user))) return { ok: false, error: 'अनुमति नहीं है।' }
+  if (!isEditorOrAdmin(roleOf(user))) return { ok: false, error: 'You do not have permission to do this.' }
   const post = await load(payload, user, id)
-  if (!post) return { ok: false, error: 'पोस्ट नहीं मिली।' }
+  if (!post) return { ok: false, error: 'Post not found.' }
   const admin = isAdmin(roleOf(user))
   const note = typeof opts.note === 'string' ? opts.note.trim().slice(0, 1000) : ''
 
@@ -127,15 +127,15 @@ export async function changePostStatus(
       event = 'rejected'
       break
     case 'reject':
-      if (!admin) return { ok: false, error: 'केवल एडमिन लौटा सकते हैं।' }
-      if (!note) return { ok: false, error: 'लौटाने का कारण लिखें।' }
+      if (!admin) return { ok: false, error: 'Only admins can return a post.' }
+      if (!note) return { ok: false, error: 'Write why the post is returned.' }
       data = { status: 'draft', reviewNote: note }
       event = 'rejected'
       break
     case 'approve':
     case 'retry':
-      if (!admin) return { ok: false, error: 'केवल एडमिन मंज़ूरी दे सकते हैं।' }
-      if (!checklistComplete(opts.checklist)) return { ok: false, error: 'मंज़ूरी से पहले जांच-सूची के सभी बिंदु चुनें।' }
+      if (!admin) return { ok: false, error: 'Only admins can approve.' }
+      if (!checklistComplete(opts.checklist)) return { ok: false, error: 'Tick every checklist item before approving.' }
       data = { status: 'approved', ...(note ? { reviewNote: note } : {}) }
       event = action === 'approve' ? 'approved' : 'retried'
       break
@@ -144,7 +144,7 @@ export async function changePostStatus(
       event = 'cancelled'
       break
     default:
-      return { ok: false, error: 'अज्ञात कार्रवाई।' }
+      return { ok: false, error: 'Unknown action.' }
   }
 
   try {

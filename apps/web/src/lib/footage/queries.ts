@@ -13,6 +13,8 @@ export interface FootageRow {
   createdAt: string
   uploader: string | null
   locked: boolean
+  imageUrl: string | null
+  hashtags: string[]
 }
 
 export async function listFootage(payload: Payload, user: User, { limit = 30 } = {}): Promise<FootageRow[]> {
@@ -37,6 +39,8 @@ export async function listFootage(payload: Payload, user: User, { limit = 30 } =
       createdAt: d.createdAt,
       uploader: by ? by.displayName || by.name || null : null,
       locked: Boolean(d.lockedAt),
+      imageUrl: d.image && typeof d.image === 'object' ? (d.image.sizes?.thumb?.url ?? d.image.url ?? null) : null,
+      hashtags: d.hashtags ?? [],
     }
   })
 }

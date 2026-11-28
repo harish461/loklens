@@ -17,7 +17,7 @@ import { changePostStatus, savePost, type PostAction, type Result } from './post
 async function editor() {
   if (!youtubeStudioEnabled()) return { error: STUDIO_OFF_MESSAGE }
   const { payload, user } = await getSessionUser()
-  if (!user || user.isActive === false || !isEditorOrAdmin(user as unknown as MaybeUser)) return { error: 'अनुमति नहीं है।' }
+  if (!user || user.isActive === false || !isEditorOrAdmin(user as unknown as MaybeUser)) return { error: 'You do not have permission to do this.' }
   return { payload, user: user as User }
 }
 

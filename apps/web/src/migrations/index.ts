@@ -9,6 +9,7 @@ import * as migration_20261127_081621_enable_rls_public_tables from './20261127_
 import * as migration_20261127_172614_youtube_studio from './20261127_172614_youtube_studio';
 import * as migration_20261127_174523_footage_retention_task from './20261127_174523_footage_retention_task';
 import * as migration_20261128_071732_youtube_publisher from './20261128_071732_youtube_publisher';
+import * as migration_20261128_112452_footage_image_hashtags from './20261128_112452_footage_image_hashtags';
 
 export const migrations = [
   {
@@ -64,6 +65,11 @@ export const migrations = [
   {
     up: migration_20261128_071732_youtube_publisher.up,
     down: migration_20261128_071732_youtube_publisher.down,
-    name: '20261128_071732_youtube_publisher'
+    name: '20261128_071732_youtube_publisher',
+  },
+  {
+    up: migration_20261128_112452_footage_image_hashtags.up,
+    down: migration_20261128_112452_footage_image_hashtags.down,
+    name: '20261128_112452_footage_image_hashtags'
   },
 ];

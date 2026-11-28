@@ -63,6 +63,17 @@ function putSegment(url: string, body: Blob, onProgress: (sent: number) => void,
   })
 }
 
+/** Uploads the image to the media library (staff, including reporters, may create media). Returns its ID. */
+async function uploadImage(file: File, alt: string): Promise<number | string> {
+  const form = new FormData()
+  form.append('file', file)
+  form.append('_payload', JSON.stringify({ alt: alt.trim() || 'Footage image' }))
+  const res = await fetch('/api/media', { method: 'POST', credentials: 'include', body: form }).catch(() => null)
+  const body = (await res?.json().catch(() => null)) as { doc?: { id: number }; errors?: { message?: string }[] } | null
+  if (!res?.ok || !body?.doc) return body?.errors?.[0]?.message || 'The image could not be uploaded.'
+  return body.doc.id
+}
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 export function FootageUploader() {
@@ -70,6 +81,9 @@ export function FootageUploader() {
   const [title, setTitle] = useState('')
   const [notes, setNotes] = useState('')
   const [rights, setRights] = useState(false)
+  const [hashtags, setHashtags] = useState('')
+  const [image, setImage] = useState<File | null>(null)
+  const [imageUrl, setImageUrl] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [facts, setFacts] = useState<Facts | null>(null)
   const [canResume, setCanResume] = useState(false)
@@ -94,6 +108,18 @@ export function FootageUploader() {
     if (f) setFacts(await readFacts(f))
   }
 
+  function pickImage(f: File | null) {
+    if (imageUrl) URL.revokeObjectURL(imageUrl)
+    if (f && (!/^image\/(jpeg|png|webp)$/.test(f.type) || f.size > 10 * 1024 * 1024)) {
+      setMessage('The image must be a JPG, PNG or WebP of at most 10 MB.')
+      setImage(null)
+      setImageUrl('')
+      return
+    }
+    setImage(f)
+    setImageUrl(f ? URL.createObjectURL(f) : '')
+  }
+
   async function upload() {
     if (!file) return
     setMessage('')
@@ -105,7 +131,13 @@ export function FootageUploader() {
       let plan = saved > 0 ? await resumeFootage(saved, file.size) : null
       if (!plan || !plan.ok) {
         localStorage.removeItem(resumeKey(file))
-        plan = await startFootage({ filename: file.name, sizeBytes: file.size, mimeType: file.type, title, notes, rightsConfirmed: rights })
+        let imageId: number | null = null
+        if (image) {
+          const up = await uploadImage(image, title)
+          if (typeof up === 'string') throw new Error(up)
+          imageId = up
+        }
+        plan = await startFootage({ filename: file.name, sizeBytes: file.size, mimeType: file.type, title, notes, hashtags, image: imageId, rightsConfirmed: rights })
       }
       if (!plan.ok) throw new Error(plan.error)
       const { footageId, segmentBytes, segments } = plan
@@ -152,11 +184,13 @@ export function FootageUploader() {
       setHasUpload(false)
       setCanResume(false)
       setPhase('done')
-      setMessage('फ़ुटेज अपलोड हो गया।')
+      setMessage('Footage uploaded.')
       setFile(null)
       setInputKey((k) => k + 1)
       setTitle('')
       setNotes('')
+      setHashtags('')
+      pickImage(null)
       setRights(false)
       router.refresh()
     } catch (err) {
@@ -165,7 +199,7 @@ export function FootageUploader() {
       setCanResume(true)
       setMessage(
         (err as Error).message === 'network' || /^HTTP /.test((err as Error).message)
-          ? 'कनेक्शन टूट गया। वही फ़ाइल चुनकर "फिर से कोशिश करें" दबाएं; जो हिस्से पहुंच चुके हैं, वे दोबारा नहीं भेजे जाएंगे।'
+          ? 'The connection dropped. Choose the same file and press "Try again": parts already sent are not sent again.'
           : (err as Error).message,
       )
     } finally {
@@ -183,7 +217,7 @@ export function FootageUploader() {
     if (id) await discardFootageAction(id)
     footageIdRef.current = null
     setHasUpload(false)
-    setMessage('अपलोड रद्द किया गया।')
+    setMessage('Upload cancelled.')
     router.refresh()
   }
 
@@ -200,27 +234,41 @@ export function FootageUploader() {
       }}
     >
       <label className={styles.field}>
-        <span className={styles.label}>शीर्षक</span>
+        <span className={styles.label}>Title</span>
         <input className={styles.input} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} disabled={busy} required />
       </label>
       <label className={styles.field}>
-        <span className={styles.label}>ब्योरा</span>
-        <span className={styles.hint}>क्या हुआ, कहां, कौन, कब। वीडियो में कौन बोल रहा है।</span>
+        <span className={styles.label}>Brief</span>
+        <span className={styles.hint}>What happened, where, who, when. Who is speaking in the video.</span>
         <textarea className={styles.textarea} value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={2000} disabled={busy} />
       </label>
       <div className={styles.fileBox}>
-        <input key={inputKey} type="file" accept={ACCEPT} onChange={(e) => void onPick(e.target.files?.[0] ?? null)} disabled={busy} aria-label="वीडियो फ़ाइल चुनें" />
+        <input key={inputKey} type="file" accept={ACCEPT} onChange={(e) => void onPick(e.target.files?.[0] ?? null)} disabled={busy} aria-label="Choose the video file" />
         {file && (
           <div className={styles.fileInfo}>
             {file.name} · {mb(file.size)} MB
-            {facts?.durationSeconds ? ` · ${Math.round(facts.durationSeconds)} सेकंड` : ''}
+            {facts?.durationSeconds ? ` · ${Math.round(facts.durationSeconds)} s` : ''}
             {facts?.width && facts?.height ? ` · ${facts.width}×${facts.height}` : ''}
           </div>
         )}
       </div>
+      <label className={styles.field}>
+        <span className={styles.label}>Hashtags</span>
+        <span className={styles.hint}>Space-separated, e.g. #Uttarakhand #Dehradun. Used as suggestions for the YouTube post.</span>
+        <input className={styles.input} value={hashtags} onChange={(e) => setHashtags(e.target.value)} placeholder="#Uttarakhand #Dehradun" maxLength={400} disabled={busy} />
+      </label>
+      <div className={styles.field}>
+        <span className={styles.label}>Image (optional)</span>
+        <span className={styles.hint}>A photo for the thumbnail: JPG, PNG or WebP, up to 10 MB, ideally 16:9.</span>
+        <input key={`img-${inputKey}`} type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => pickImage(e.target.files?.[0] ?? null)} disabled={busy} aria-label="Choose an image" />
+        {imageUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageUrl} alt="" className={styles.imagePreview} />
+        )}
+      </div>
       <label className={styles.check}>
         <input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} disabled={busy} />
-        <span>यह हमारा अपना फ़ुटेज है, और वीडियो में दिखाए गए लोगों ने फ़िल्माए जाने की सहमति दी है।</span>
+        <span>This is our own footage, and the people shown agreed to be filmed.</span>
       </label>
 
       {(busy || phase === 'error') && file && (
@@ -229,7 +277,7 @@ export function FootageUploader() {
             <div className={styles.progressBar} style={{ width: `${percent}%` }} />
           </div>
           <p className={styles.status}>
-            {phase === 'finishing' ? 'जांच हो रही है…' : `${percent}% (${mb(sent)} / ${mb(file.size)} MB)`}
+            {phase === 'finishing' ? 'Checking…' : `${percent}% (${mb(sent)} / ${mb(file.size)} MB)`}
           </p>
         </div>
       )}
@@ -237,11 +285,11 @@ export function FootageUploader() {
 
       <div className={styles.actions}>
         <button type="submit" className={styles.button} disabled={!ready}>
-          {canResume ? 'फिर से कोशिश करें' : 'अपलोड करें'}
+          {canResume ? 'Try again' : 'Upload'}
         </button>
         {(busy || (phase === 'error' && hasUpload)) && (
           <button type="button" className={styles.buttonSecondary} onClick={() => void cancel()}>
-            रद्द करें
+            Cancel
           </button>
         )}
       </div>

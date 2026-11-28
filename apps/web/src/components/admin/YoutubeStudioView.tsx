@@ -62,13 +62,13 @@ export async function YoutubeStudioView(props: AdminViewServerProps) {
           <Clapperboard size={20} />
         </span>
         <div>
-          <h1 className={styles.pageTitle}>यूट्यूब स्टूडियो</h1>
-          <p className={styles.pageSubtitle}>फ़ुटेज से यूट्यूब वीडियो और शॉर्ट्स: लिखें, मंज़ूर करें, प्रकाशित करें।</p>
+          <h1 className={styles.pageTitle}>YouTube Studio</h1>
+          <p className={styles.pageSubtitle}>YouTube videos and Shorts from footage: write, approve, publish.</p>
         </div>
       </div>
       <div className={styles.headerActions}>
         <Link href="/admin/youtube?tab=edit" className={styles.primaryLimeBtn}>
-          <Plus size={16} /> नई पोस्ट
+          <Plus size={16} /> New post
         </Link>
       </div>
     </header>
@@ -89,11 +89,11 @@ export async function YoutubeStudioView(props: AdminViewServerProps) {
   const counts = await statusCounts(payload, user)
   const reviewCount = counts.pending_review + counts.failed
   const tabs: { key: Tab; label: string; href: string; count?: number }[] = [
-    { key: 'posts', label: 'सभी पोस्ट', href: '/admin/youtube' },
-    { key: 'edit', label: postId && tab === 'edit' ? 'संपादन' : 'नई पोस्ट', href: '/admin/youtube?tab=edit' },
-    { key: 'review', label: 'समीक्षा', href: '/admin/youtube?tab=review', count: reviewCount },
-    { key: 'history', label: 'इतिहास', href: '/admin/youtube?tab=history' },
-    { key: 'footage', label: 'फ़ुटेज', href: '/admin/youtube?tab=footage' },
+    { key: 'posts', label: 'All posts', href: '/admin/youtube' },
+    { key: 'edit', label: postId && tab === 'edit' ? 'Edit' : 'New post', href: '/admin/youtube?tab=edit' },
+    { key: 'review', label: 'Review', href: '/admin/youtube?tab=review', count: reviewCount },
+    { key: 'history', label: 'History', href: '/admin/youtube?tab=history' },
+    { key: 'footage', label: 'Footage', href: '/admin/youtube?tab=footage' },
   ]
 
   let body: React.ReactNode
@@ -107,7 +107,7 @@ export async function YoutubeStudioView(props: AdminViewServerProps) {
     ])
     body =
       postId && !post ? (
-        <p className={ys.empty}>पोस्ट नहीं मिली।</p>
+        <p className={ys.empty}>Post not found.</p>
       ) : (
         <PostEditor
           key={post?.id ?? 'new'}
@@ -120,13 +120,13 @@ export async function YoutubeStudioView(props: AdminViewServerProps) {
       )
   } else if (tab === 'review' && postId) {
     const post = await postDetail(payload, user, postId)
-    body = post ? <ReviewPanel post={post} isAdmin={admin} /> : <p className={ys.empty}>पोस्ट नहीं मिली।</p>
+    body = post ? <ReviewPanel post={post} isAdmin={admin} /> : <p className={ys.empty}>Post not found.</p>
   } else if (tab === 'review') {
     const rows = await listPosts(payload, user, { statuses: ['pending_review', 'failed'] })
-    body = <PostList rows={rows} linkTo="review" empty="समीक्षा के लिए कोई पोस्ट नहीं है।" />
+    body = <PostList rows={rows} linkTo="review" empty="Nothing to review." />
   } else if (tab === 'history') {
     const rows = await listPosts(payload, user, { statuses: HISTORY, limit: 100 })
-    body = <PostList rows={rows} linkTo="review" empty="अभी कोई पोस्ट मंज़ूर नहीं हुई।" />
+    body = <PostList rows={rows} linkTo="review" empty="No post has been approved yet." />
   } else if (tab === 'footage') {
     const rows = await listFootage(payload, user, { limit: 50 })
     body = (
@@ -141,9 +141,9 @@ export async function YoutubeStudioView(props: AdminViewServerProps) {
     const rows = await listPosts(payload, user, { statuses: statusFilter ? [statusFilter] : undefined, limit: 100 })
     body = (
       <>
-        <div className={`${ys.tabs} ${ys.pillLinks}`} role="tablist" aria-label="स्थिति">
+        <div className={`${ys.tabs} ${ys.pillLinks}`} role="tablist" aria-label="Status">
           <Link href="/admin/youtube" className={`${styles.statusTabPill} ${!statusFilter ? styles.statusTabPillActive : ''}`}>
-            सभी
+            All
           </Link>
           {YT_POST_STATUSES.filter((st) => counts[st] > 0).map((st) => (
             <Link key={st} href={`/admin/youtube?status=${st}`} className={`${styles.statusTabPill} ${statusFilter === st ? styles.statusTabPillActive : ''}`}>
@@ -151,7 +151,7 @@ export async function YoutubeStudioView(props: AdminViewServerProps) {
             </Link>
           ))}
         </div>
-        <PostList rows={rows} linkTo="edit" empty="अभी कोई पोस्ट नहीं है। ऊपर “नई पोस्ट” से शुरू करें।" />
+        <PostList rows={rows} linkTo="edit" empty="No posts yet. Start with “New post” above." />
       </>
     )
   }

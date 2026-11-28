@@ -10,15 +10,15 @@ import type { FootageRow } from '@/lib/footage/queries'
 import styles from './footage.module.css'
 
 const STATUS: Record<string, { label: string; className: string }> = {
-  uploading: { label: 'अपलोड अधूरा', className: styles.badgeWarn },
-  uploaded: { label: 'तैयार', className: styles.badgeOk },
-  failed: { label: 'विफल', className: styles.badgeBad },
+  uploading: { label: 'Upload incomplete', className: styles.badgeWarn },
+  uploaded: { label: 'Ready', className: styles.badgeOk },
+  failed: { label: 'Failed', className: styles.badgeBad },
 }
 
-const ORIENTATION: Record<string, string> = { landscape: 'आड़ा', vertical: 'खड़ा', square: 'चौकोर' }
+const ORIENTATION: Record<string, string> = { landscape: 'Landscape', vertical: 'Vertical', square: 'Square' }
 
 function when(iso: string): string {
-  return new Date(iso).toLocaleString('hi-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 }
 
 export function FootageList({ rows, showUploader = false }: { rows: FootageRow[]; showUploader?: boolean }) {
@@ -27,7 +27,7 @@ export function FootageList({ rows, showUploader = false }: { rows: FootageRow[]
   const [error, setError] = useState('')
 
   async function remove(id: number) {
-    if (!window.confirm('यह फ़ुटेज हमेशा के लिए हटा दिया जाएगा। जारी रखें?')) return
+    if (!window.confirm('This footage will be deleted permanently. Continue?')) return
     setBusy(id)
     setError('')
     const r = await discardFootageAction(id)
@@ -36,7 +36,7 @@ export function FootageList({ rows, showUploader = false }: { rows: FootageRow[]
     router.refresh()
   }
 
-  if (rows.length === 0) return <p className={styles.empty}>अभी कोई फ़ुटेज नहीं है।</p>
+  if (rows.length === 0) return <p className={styles.empty}>No footage yet.</p>
   return (
     <>
       {error && <p className={styles.error}>{error}</p>}
@@ -46,21 +46,26 @@ export function FootageList({ rows, showUploader = false }: { rows: FootageRow[]
           const meta = [
             when(r.createdAt),
             r.sizeMB !== null ? `${r.sizeMB} MB` : null,
-            r.durationSeconds ? `${Math.round(r.durationSeconds)} सेकंड` : null,
+            r.durationSeconds ? `${Math.round(r.durationSeconds)} s` : null,
             r.orientation ? ORIENTATION[r.orientation] : null,
             showUploader && r.uploader ? r.uploader : null,
           ].filter(Boolean)
           return (
             <li key={r.id} className={styles.item}>
-              <div>
+              {r.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={r.imageUrl} alt="" className={styles.thumbSmall} />
+              ) : null}
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div className={styles.itemTitle}>{r.title}</div>
                 <div className={styles.itemMeta}>{meta.join(' · ')}</div>
+                {r.hashtags.length > 0 && <div className={styles.itemMeta}>{r.hashtags.join(' ')}</div>}
               </div>
               <div className={styles.actions}>
-                <span className={`${styles.badge} ${s.className}`}>{r.locked ? 'पोस्ट में इस्तेमाल' : s.label}</span>
+                <span className={`${styles.badge} ${s.className}`}>{r.locked ? 'Used in a post' : s.label}</span>
                 {!r.locked && (
                   <button type="button" className={styles.linkButton} onClick={() => void remove(r.id)} disabled={busy === r.id}>
-                    {busy === r.id ? 'हटा रहे हैं…' : 'हटाएं'}
+                    {busy === r.id ? 'Deleting…' : 'Delete'}
                   </button>
                 )}
               </div>

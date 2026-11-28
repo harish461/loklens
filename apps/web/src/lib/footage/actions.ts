@@ -25,7 +25,7 @@ import { footageStorageProblems } from './storage'
 
 async function actor() {
   if (!youtubeStudioEnabled()) return { error: STUDIO_OFF_MESSAGE }
-  if (footageStorageProblems().length) return { error: 'फ़ुटेज स्टोरेज कॉन्फ़िगर नहीं है।' }
+  if (footageStorageProblems().length) return { error: 'Footage storage is not configured.' }
   const { payload, user } = await getSessionUser()
   const u = user as unknown as MaybeUser
   if (user && isEditorOrAdmin(u) && user.isActive !== false) return { payload, user: user as User }
@@ -33,12 +33,12 @@ async function actor() {
     const check = await checkReporter()
     if (check.ok) return { payload: check.session.payload, user: check.session.user }
   }
-  return { error: 'आपका सत्र समाप्त हो गया है। फिर से साइन इन करें।' }
+  return { error: 'Your session has ended. Please sign in again.' }
 }
 
 function fail(err: unknown): { ok: false; error: string } {
   console.error('[footage]', err)
-  return { ok: false, error: 'कुछ गलत हो गया। फिर से कोशिश करें।' }
+  return { ok: false, error: 'Something went wrong. Please try again.' }
 }
 
 function refresh() {

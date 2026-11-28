@@ -353,6 +353,11 @@ change: the website and app keep reading published videos from the channel feed 
 Raw Payload REST on these slugs follows the same access rules and is not a supported API: the admin uses
 server actions (`src/lib/youtube/actions.ts`, reporters `src/lib/reporter/footageActions.ts`).
 
+**Footage details (2026-11-28):** besides title and brief, a reporter can attach a suggested `image` (a `media`
+image, uploaded first through `/api/media`) and suggested `hashtags` (≤15). A new post pre-fills its thumbnail and
+hashtags from the chosen footage when it has none yet. The YouTube Studio and footage screens use **English** UI
+text (user decision 2026-11-28); post content stays Hindi.
+
 **Footage storage (decided 2026-11-27):** Supabase Free caps every object at 50 MB, so a video is stored as
 segments of at most 45 MiB (a multiple of 256 KiB) under `footage/<id>-<random>/seg-0001` … with the segment
 count and sizes on the `footage` row. The browser uploads each segment with its own presigned PUT (valid 1 hour);
